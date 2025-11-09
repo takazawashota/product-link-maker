@@ -6,13 +6,13 @@
  */
 
 .product-item-admin {
-	margin-top: 0.7rem;
+	margin-top: 7px;
 	font-size: 13px;
 }
 
 .product-item-box {
 	display: flex;
-	padding: 3rem 2.5rem;
+	padding: 30px 25px;
 	position: relative;
 	background: #fff;
 	box-shadow: 0 0 10px #eee;
@@ -20,9 +20,9 @@
 }
 
 .product-item-title {
-	font-size: 1.9rem;
+	font-size: 19px;
 	line-height: 1.4;
-	margin-bottom: 1.3rem;
+	margin-bottom: 13px;
 }
 
 .product-item-thumb {
@@ -32,46 +32,46 @@
 
 .product-item-content {
 	width: auto;
-	padding-left: 2.4rem;
+	padding-left: 24px;
 }
 
 .rakuten-item-snippet {
-	font-size: 1.6rem;
-	margin-bottom: 1.4rem;
+	font-size: 16px;
+	margin-bottom: 13px;
 }
 
 .product-item-maker {
-	margin-bottom: 0.5rem;
+	margin-bottom: 5px;
 }
 
 .product-item-price {
-	font-size: 1.6rem;
+	font-size: 16px;
 	font-weight: bold;
-	margin-bottom: 0.5rem;
+	margin-bottom: 5px;
 
 	.item-price {
-		font-size: 1.8rem;
+		font-size: 18px;
 		color: #e60012;
-		margin-right: 0.5rem;
+		margin-right: 5px;
 	}
 }
 
 .product-item-description {
-	font-size: 1.4rem;
-	margin-bottom: 1.9rem;
+	font-size: 14px;
+	margin-bottom: 19px;
 }
 
 .product-item-buttons {
 	display: flex;
 	flex-wrap: wrap;
-	gap: 1rem;
+	gap: 10px;
 }
 
 .product-item-buttons a {
 	display: flex;
 	padding: 6px 12px;
 	text-decoration: none;
-	font-size: 1.6rem;
+	font-size: 16px;
 	font-weight: bold;
 	color: #fff;
 	background: #222;
@@ -106,13 +106,13 @@
 @media (max-width: 768px) {
 	.product-item-box {
 		flex-direction: column;
-		padding: 2rem 1.5rem;
+		padding: 20px 15px;
 	}
 
 	.product-item-thumb {
 		width: 100%;
 		min-width: 100%;
-		margin-bottom: 1.5rem;
+		margin-bottom: 15px;
 		text-align: center;
 	}
 
@@ -122,15 +122,15 @@
 	}
 
 	.product-item-title {
-		font-size: 1.7rem;
+		font-size: 17px;
 	}
 
 	.product-item-buttons {
-		gap: 0.7rem;
+		gap: 7px;
 	}
 
 	.product-item-buttons a {
-		font-size: 1.4rem;
+		font-size: 14px;
 		padding: 5px 10px;
 	}
 }
