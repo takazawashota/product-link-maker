@@ -593,7 +593,9 @@ export default function Edit({ attributes, setAttributes }) {
 										);
 									}
 									if (settings.dmm && attributes.showDmm !== false) {
-										const dmmUrl = `https://www.dmm.com/search/=/searchstr=${encodeURIComponent(kwForUrl)}/analyze=V1ECCVYAUQQ_/limit=30/sort=rankprofile/?utm_medium=dmm_affiliate&utm_source=dummy&utm_term=dmm.com&utm_campaign=affiliate_link_tool&utm_content=link`;
+										// DMMは半角スペース区切りでキーワードを渡す（各キーワードを個別にエンコード）
+										const dmmSearchStr = kwArray.map(kw => encodeURIComponent(kw)).join(' ');
+										const dmmUrl = `https://www.dmm.com/search/=/searchstr=${dmmSearchStr}/analyze=V1ECCVYAUQQ_/limit=30/sort=rankprofile/?utm_medium=dmm_affiliate&utm_source=dummy&utm_term=dmm.com&utm_campaign=affiliate_link_tool&utm_content=link`;
 										buttons.push(
 											<div className="shoplinkdmm" key="dmm">
 												<a rel="nofollow noopener" href={dmmUrl} target="_blank" style={{ backgroundColor: '#00bcd4', color: '#fff', borderRadius: '4px', padding: '6px 16px', display: 'inline-block', textDecoration: 'none' }}>DMM</a>
