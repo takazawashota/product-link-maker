@@ -235,7 +235,7 @@ export default function Edit({ attributes, setAttributes }) {
 					/>
 
 				</PanelBody>
-				<PanelBody title={__('カスタムボタン（前）', 'product-link-maker')} initialOpen={false}>
+				<PanelBody title={__('カスタムボタン（前）', 'product-link-maker')} initialOpen={true}>
 					<p style={{ fontSize: '13px', color: '#757575', marginTop: 0 }}>
 						既存のボタンの前に表示されるカスタムボタンを追加できます
 					</p>
@@ -344,7 +344,7 @@ export default function Edit({ attributes, setAttributes }) {
 						ボタンを追加
 					</Button>
 				</PanelBody>
-				<PanelBody title={__('カスタムボタン（後）', 'product-link-maker')} initialOpen={false}>
+				<PanelBody title={__('カスタムボタン（後）', 'product-link-maker')} initialOpen={true}>
 					<p style={{ fontSize: '13px', color: '#757575', marginTop: 0 }}>
 						既存のボタンの後に表示されるカスタムボタンを追加できます
 					</p>
