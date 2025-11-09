@@ -82,6 +82,18 @@ return array(
 			'showDmm' => array(
 				'type' => 'boolean',
 				'default' => true
+			),
+			'customButtonsBefore' => array(
+				'type' => 'array',
+				'default' => array(
+					
+				)
+			),
+			'customButtonsAfter' => array(
+				'type' => 'array',
+				'default' => array(
+					
+				)
 			)
 		)
 	)

@@ -77,6 +77,14 @@
 		"showDmm": {
 			"type": "boolean",
 			"default": true
+		},
+		"customButtonsBefore": {
+			"type": "array",
+			"default": []
+		},
+		"customButtonsAfter": {
+			"type": "array",
+			"default": []
 		}
 	}
 }

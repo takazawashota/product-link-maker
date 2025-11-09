@@ -23,6 +23,10 @@ $showYahoo = isset( $attributes['showYahoo'] ) ? $attributes['showYahoo'] : true
 $showMercari = isset( $attributes['showMercari'] ) ? $attributes['showMercari'] : true;
 $showDmm = isset( $attributes['showDmm'] ) ? $attributes['showDmm'] : true;
 
+// カスタムボタン
+$customButtonsBefore = isset( $attributes['customButtonsBefore'] ) ? $attributes['customButtonsBefore'] : [];
+$customButtonsAfter = isset( $attributes['customButtonsAfter'] ) ? $attributes['customButtonsAfter'] : [];
+
 // Rakuten APIを使用して商品情報を取得する処理
 $affiliate_settings = get_option('affiliate_settings', []);
 $amazon_tracking_id = $affiliate_settings['amazon_tracking_id'] ?? '';
@@ -115,13 +119,27 @@ endif;
 					</div>
 				<?php endif; ?>
 			</div>
-			<div class="amazon-item-buttons product-item-buttons">
-			<?php
-			// キーワード指定があればボタンを出す
-			$kw_tokens = array_filter(array_map('trim', explode(',', $kw)));
-			if (count($kw_tokens) > 0):
-				$kw_for_url = implode(' ', $kw_tokens);
-				if ($showAmazon && !empty($amazon_tracking_id)) : ?>
+		<div class="amazon-item-buttons product-item-buttons">
+		<?php
+		// キーワード指定があればボタンを出す
+		$kw_tokens = array_filter(array_map('trim', explode(',', $kw)));
+		if (count($kw_tokens) > 0):
+			$kw_for_url = implode(' ', $kw_tokens);
+			
+			// カスタムボタン（前）
+			foreach ($customButtonsBefore as $btn) {
+				if (!empty($btn['text']) && !empty($btn['url'])) {
+					$target = (isset($btn['openInNewTab']) && $btn['openInNewTab'] !== false) ? '_blank' : '_self';
+					$color = !empty($btn['color']) ? esc_attr($btn['color']) : '#2196f3';
+					?>
+					<div class="shoplink-custom">
+						<a rel="nofollow noopener" href="<?php echo esc_url($btn['url']); ?>" target="<?php echo $target; ?>" style="background-color: <?php echo $color; ?>;"><?php echo esc_html($btn['text']); ?></a>
+					</div>
+					<?php
+				}
+			}
+			
+			if ($showAmazon && !empty($amazon_tracking_id)) : ?>
 					<div class="shoplinkamazon">
 						<a rel="nofollow noopener" href="https://www.amazon.co.jp/gp/search?keywords=<?php echo urlencode($kw_for_url); ?><?php echo $amazon_tracking_id ? '&tag=' . esc_attr($amazon_tracking_id) : ''; ?>" target="_blank">Amazon</a>
 					</div>
@@ -146,7 +164,21 @@ endif;
 					<a rel="nofollow noopener" href="https://www.dmm.com/search/=/searchstr=<?php echo urlencode($kw_for_url); ?>/analyze=V1ECCVYAUQQ_/limit=30/sort=rankprofile/?utm_medium=dmm_affiliate&utm_source=<?php echo esc_attr($dmm_affiliate_id); ?>&utm_term=dmm.com&utm_campaign=affiliate_link_tool&utm_content=link" target="_blank">DMM</a>
 				</div>
 			<?php endif; ?>
-			<?php endif; ?>
+			<?php
+			// カスタムボタン（後）
+			foreach ($customButtonsAfter as $btn) {
+				if (!empty($btn['text']) && !empty($btn['url'])) {
+					$target = (isset($btn['openInNewTab']) && $btn['openInNewTab'] !== false) ? '_blank' : '_self';
+					$color = !empty($btn['color']) ? esc_attr($btn['color']) : '#2196f3';
+					?>
+					<div class="shoplink-custom">
+						<a rel="nofollow noopener" href="<?php echo esc_url($btn['url']); ?>" target="<?php echo $target; ?>" style="background-color: <?php echo $color; ?>;"><?php echo esc_html($btn['text']); ?></a>
+					</div>
+					<?php
+				}
+			}
+			?>
+		<?php endif; ?>
 			</div>
 		</div>
 	</div>

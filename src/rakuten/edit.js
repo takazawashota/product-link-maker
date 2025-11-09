@@ -1,6 +1,6 @@
 import { __ } from '@wordpress/i18n';
 import { useBlockProps, MediaUpload, InspectorControls, MediaUploadCheck } from '@wordpress/block-editor';
-import { PanelBody, TextControl, ToggleControl, TextareaControl, FormTokenField, Button, Flex, __experimentalHeading as Heading } from '@wordpress/components';
+import { PanelBody, TextControl, ToggleControl, TextareaControl, FormTokenField, Button, Flex, __experimentalHeading as Heading, ColorPicker, Card, CardHeader, CardBody, Icon } from '@wordpress/components';
 
 // import './style.scss';
 import './editor.scss';
@@ -235,6 +235,224 @@ export default function Edit({ attributes, setAttributes }) {
 					/>
 
 				</PanelBody>
+				<PanelBody title={__('カスタムボタン（前）', 'rakuten')} initialOpen={false}>
+					<p style={{ fontSize: '13px', color: '#757575', marginTop: 0 }}>
+						既存のボタンの前に表示されるカスタムボタンを追加できます
+					</p>
+					{(attributes.customButtonsBefore || []).map((btn, index) => (
+						<Card key={index} style={{ marginBottom: '16px', border: '1px solid #ddd' }}>
+							<CardHeader>
+								<Flex justify="space-between" align="center">
+									<span style={{ fontWeight: 600 }}>ボタン {index + 1}</span>
+									<Button
+										isDestructive
+										isSmall
+										onClick={() => {
+											const newButtons = [...(attributes.customButtonsBefore || [])];
+											newButtons.splice(index, 1);
+											setAttributes({ customButtonsBefore: newButtons });
+										}}
+										icon="trash"
+									/>
+								</Flex>
+							</CardHeader>
+							<CardBody>
+								<TextControl
+									label="ボタンテキスト"
+									value={btn.text || ''}
+									onChange={(val) => {
+										const newButtons = [...(attributes.customButtonsBefore || [])];
+										newButtons[index] = { ...newButtons[index], text: val };
+										setAttributes({ customButtonsBefore: newButtons });
+									}}
+									placeholder="例: 公式サイト"
+								/>
+								<TextControl
+									label="リンクURL"
+									value={btn.url || ''}
+									onChange={(val) => {
+										const newButtons = [...(attributes.customButtonsBefore || [])];
+										newButtons[index] = { ...newButtons[index], url: val };
+										setAttributes({ customButtonsBefore: newButtons });
+									}}
+									placeholder="https://example.com"
+								/>
+								<ToggleControl
+									label="別タブで開く"
+									checked={btn.openInNewTab !== false}
+									onChange={(val) => {
+										const newButtons = [...(attributes.customButtonsBefore || [])];
+										newButtons[index] = { ...newButtons[index], openInNewTab: val };
+										setAttributes({ customButtonsBefore: newButtons });
+									}}
+								/>
+								<div style={{ marginTop: '12px' }}>
+									<Button
+										variant="secondary"
+										onClick={() => {
+											const newButtons = [...(attributes.customButtonsBefore || [])];
+											newButtons[index] = {
+												...newButtons[index],
+												showColorPicker: !newButtons[index].showColorPicker
+											};
+											setAttributes({ customButtonsBefore: newButtons });
+										}}
+										style={{ width: '100%', marginBottom: '8px' }}
+									>
+										{btn.showColorPicker ? '色を選択中' : 'ボタンの色を選択'}
+										<span style={{
+											marginLeft: '8px',
+											width: '20px',
+											height: '20px',
+											backgroundColor: btn.color || '#2196f3',
+											display: 'inline-block',
+											borderRadius: '3px',
+											border: '1px solid #ddd',
+											verticalAlign: 'middle'
+										}} />
+									</Button>
+									{btn.showColorPicker && (
+										<ColorPicker
+											color={btn.color || '#2196f3'}
+											onChange={(val) => {
+												const newButtons = [...(attributes.customButtonsBefore || [])];
+												newButtons[index] = { ...newButtons[index], color: val };
+												setAttributes({ customButtonsBefore: newButtons });
+											}}
+											enableAlpha
+											defaultValue="#2196f3"
+										/>
+									)}
+								</div>
+							</CardBody>
+						</Card>
+					))}
+					<Button
+						variant="secondary"
+						onClick={() => {
+							const newButtons = [...(attributes.customButtonsBefore || []), {
+								text: '',
+								url: '',
+								openInNewTab: true,
+								color: '#2196f3'
+							}];
+							setAttributes({ customButtonsBefore: newButtons });
+						}}
+						icon="plus"
+						style={{ width: '100%', justifyContent: 'center' }}
+					>
+						ボタンを追加
+					</Button>
+				</PanelBody>
+				<PanelBody title={__('カスタムボタン（後）', 'rakuten')} initialOpen={false}>
+					<p style={{ fontSize: '13px', color: '#757575', marginTop: 0 }}>
+						既存のボタンの後に表示されるカスタムボタンを追加できます
+					</p>
+					{(attributes.customButtonsAfter || []).map((btn, index) => (
+						<Card key={index} style={{ marginBottom: '16px', border: '1px solid #ddd' }}>
+							<CardHeader>
+								<Flex justify="space-between" align="center">
+									<span style={{ fontWeight: 600 }}>ボタン {index + 1}</span>
+									<Button
+										isDestructive
+										isSmall
+										onClick={() => {
+											const newButtons = [...(attributes.customButtonsAfter || [])];
+											newButtons.splice(index, 1);
+											setAttributes({ customButtonsAfter: newButtons });
+										}}
+										icon="trash"
+									/>
+								</Flex>
+							</CardHeader>
+							<CardBody>
+								<TextControl
+									label="ボタンテキスト"
+									value={btn.text || ''}
+									onChange={(val) => {
+										const newButtons = [...(attributes.customButtonsAfter || [])];
+										newButtons[index] = { ...newButtons[index], text: val };
+										setAttributes({ customButtonsAfter: newButtons });
+									}}
+									placeholder="例: 公式サイト"
+								/>
+								<TextControl
+									label="リンクURL"
+									value={btn.url || ''}
+									onChange={(val) => {
+										const newButtons = [...(attributes.customButtonsAfter || [])];
+										newButtons[index] = { ...newButtons[index], url: val };
+										setAttributes({ customButtonsAfter: newButtons });
+									}}
+									placeholder="https://example.com"
+								/>
+								<ToggleControl
+									label="別タブで開く"
+									checked={btn.openInNewTab !== false}
+									onChange={(val) => {
+										const newButtons = [...(attributes.customButtonsAfter || [])];
+										newButtons[index] = { ...newButtons[index], openInNewTab: val };
+										setAttributes({ customButtonsAfter: newButtons });
+									}}
+								/>
+								<div style={{ marginTop: '12px' }}>
+									<Button
+										variant="secondary"
+										onClick={() => {
+											const newButtons = [...(attributes.customButtonsAfter || [])];
+											newButtons[index] = {
+												...newButtons[index],
+												showColorPicker: !newButtons[index].showColorPicker
+											};
+											setAttributes({ customButtonsAfter: newButtons });
+										}}
+										style={{ width: '100%', marginBottom: '8px' }}
+									>
+										{btn.showColorPicker ? '色を選択中' : 'ボタンの色を選択'}
+										<span style={{
+											marginLeft: '8px',
+											width: '20px',
+											height: '20px',
+											backgroundColor: btn.color || '#2196f3',
+											display: 'inline-block',
+											borderRadius: '3px',
+											border: '1px solid #ddd',
+											verticalAlign: 'middle'
+										}} />
+									</Button>
+									{btn.showColorPicker && (
+										<ColorPicker
+											color={btn.color || '#2196f3'}
+											onChange={(val) => {
+												const newButtons = [...(attributes.customButtonsAfter || [])];
+												newButtons[index] = { ...newButtons[index], color: val };
+												setAttributes({ customButtonsAfter: newButtons });
+											}}
+											enableAlpha
+											defaultValue="#2196f3"
+										/>
+									)}
+								</div>
+							</CardBody>
+						</Card>
+					))}
+					<Button
+						variant="secondary"
+						onClick={() => {
+							const newButtons = [...(attributes.customButtonsAfter || []), {
+								text: '',
+								url: '',
+								openInNewTab: true,
+								color: '#2196f3'
+							}];
+							setAttributes({ customButtonsAfter: newButtons });
+						}}
+						icon="plus"
+						style={{ width: '100%', justifyContent: 'center' }}
+					>
+						ボタンを追加
+					</Button>
+				</PanelBody>
 				<PanelBody title={__('アフィリエイト設定', 'rakuten')} initialOpen={false}>
 					<Button
 						href={`${window.location.origin}/wp-admin/options-general.php?page=product-link-maker`}
@@ -320,6 +538,33 @@ export default function Edit({ attributes, setAttributes }) {
 									const kwForUrl = kwArray.join(' ');
 									const settings = window.MyAffiliateSettings || {};
 									const buttons = [];
+
+									// カスタムボタン（前）
+									(attributes.customButtonsBefore || []).forEach((btn, idx) => {
+										if (btn.text && btn.url) {
+											buttons.push(
+												<div className="shoplink-custom" key={`custom-before-${idx}`}>
+													<a
+														rel="nofollow noopener"
+														href={btn.url}
+														target={btn.openInNewTab !== false ? "_blank" : "_self"}
+														style={{
+															backgroundColor: btn.color || '#2196f3',
+															color: '#fff',
+															borderRadius: '4px',
+															padding: '6px 16px',
+															display: 'inline-block',
+															marginRight: '8px',
+															textDecoration: 'none'
+														}}
+													>
+														{btn.text}
+													</a>
+												</div>
+											);
+										}
+									});
+
 									if (settings.amazon && attributes.showAmazon !== false) {
 										buttons.push(
 											<div className="shoplinkamazon" key="amazon">
@@ -356,6 +601,33 @@ export default function Edit({ attributes, setAttributes }) {
 											</div>
 										);
 									}
+
+									// カスタムボタン（後）
+									(attributes.customButtonsAfter || []).forEach((btn, idx) => {
+										if (btn.text && btn.url) {
+											buttons.push(
+												<div className="shoplink-custom" key={`custom-after-${idx}`}>
+													<a
+														rel="nofollow noopener"
+														href={btn.url}
+														target={btn.openInNewTab !== false ? "_blank" : "_self"}
+														style={{
+															backgroundColor: btn.color || '#2196f3',
+															color: '#fff',
+															borderRadius: '4px',
+															padding: '6px 16px',
+															display: 'inline-block',
+															marginRight: '8px',
+															textDecoration: 'none'
+														}}
+													>
+														{btn.text}
+													</a>
+												</div>
+											);
+										}
+									});
+
 									return buttons;
 								})()}
 							</div>
