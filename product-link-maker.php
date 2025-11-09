@@ -365,8 +365,6 @@ add_action('enqueue_block_editor_assets', 'myplugin_enqueue_editor_assets');
 
 
 
-
-
 // 楽天APIリクエストURLを生成し、商品情報を取得する最小限のサンプル
 function get_rakuten_item_json($rakuten_application_id, $rakuten_affiliate_id, $item_id = null, $keyword = null) {
   if (empty($rakuten_application_id) || empty($rakuten_affiliate_id)) {
@@ -493,17 +491,3 @@ add_action('rest_api_init', function () {
         'permission_callback' => '__return_true',
     ]);
 });
-
-
-
-// //楽天アフィリエイト検索用のURL生成
-// if ( !function_exists( 'get_rakuten_affiliate_search_url' ) ):
-// function get_rakuten_affiliate_search_url($keyword, $rakuten_affiliate_id, $ng_keywords = null){
-//   $nitem = null;
-//   if (!empty($ng_keywords)) {
-//     $nitem = '%3Fnitem='.implode('%2B', $ng_keywords);
-//   }
-//   $decoded_url = 'https%3A%2F%2Fsearch.rakuten.co.jp%2Fsearch%2Fmall%2F'.urlencode($keyword).'%2F'.$nitem;
-//   return 'https://hb.afl.rakuten.co.jp/hgc/'.trim($rakuten_affiliate_id).'/?pc='.$decoded_url.'&m='.$decoded_url;
-// }
-// endif;
