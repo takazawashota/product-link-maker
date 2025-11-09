@@ -343,6 +343,58 @@ function affiliate_settings_options_page() {
                 </h2>
                 <table class="form-table">
                     <tr>
+                        <th scope="row">キャッシュ状況</th>
+                        <td>
+                            <?php
+                            global $wpdb;
+                            $cache_count = $wpdb->get_var(
+                                $wpdb->prepare(
+                                    "SELECT COUNT(*) FROM {$wpdb->options} WHERE option_name LIKE %s",
+                                    $wpdb->esc_like('_transient_rakuten_item_') . '%'
+                                )
+                            );
+                            
+                            // キャッシュデータのサイズを概算
+                            $cache_size = $wpdb->get_var(
+                                $wpdb->prepare(
+                                    "SELECT SUM(LENGTH(option_value)) FROM {$wpdb->options} WHERE option_name LIKE %s",
+                                    $wpdb->esc_like('_transient_rakuten_item_') . '%'
+                                )
+                            );
+                            $cache_size_mb = $cache_size ? round($cache_size / 1024 / 1024, 2) : 0;
+                            $cache_size_kb = $cache_size ? round($cache_size / 1024, 2) : 0;
+                            ?>
+                            <div style="display: flex; gap: 16px; margin-bottom: 12px;">
+                                <div style="flex: 1; padding: 20px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 8px; color: #fff; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+                                    <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 8px;">
+                                        <span class="dashicons dashicons-database-view" style="font-size: 28px; width: 28px; height: 28px;"></span>
+                                        <span style="font-size: 13px; opacity: 0.9; font-weight: 500;">キャッシュ件数</span>
+                                    </div>
+                                    <div style="font-size: 32px; font-weight: bold; line-height: 1;">
+                                        <?= number_format($cache_count) ?>
+                                    </div>
+                                    <div style="font-size: 12px; opacity: 0.8; margin-top: 4px;">件</div>
+                                </div>
+                                <div style="flex: 1; padding: 20px; background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); border-radius: 8px; color: #fff; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+                                    <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 8px;">
+                                        <span class="dashicons dashicons-chart-area" style="font-size: 28px; width: 28px; height: 28px;"></span>
+                                        <span style="font-size: 13px; opacity: 0.9; font-weight: 500;">データサイズ</span>
+                                    </div>
+                                    <div style="font-size: 32px; font-weight: bold; line-height: 1;">
+                                        <?= $cache_size_mb > 0 ? $cache_size_mb : $cache_size_kb ?>
+                                    </div>
+                                    <div style="font-size: 12px; opacity: 0.8; margin-top: 4px;">
+                                        <?= $cache_size_mb > 0 ? 'MB' : 'KB' ?> (概算)
+                                    </div>
+                                </div>
+                            </div>
+                            <p class="description">
+                                <span class="dashicons dashicons-info" style="color: #2271b1;"></span>
+                                楽天APIから取得したデータをキャッシュとして保存しています。キャッシュを利用することでAPI呼び出し回数を削減できます。
+                            </p>
+                        </td>
+                    </tr>
+                    <tr>
                         <th scope="row">成功時のキャッシュ時間</th>
                         <td>
                             <input type="number" name="affiliate_settings[cache_success_hours]" 
@@ -375,10 +427,23 @@ function affiliate_settings_options_page() {
                     <tr>
                         <th scope="row">キャッシュ削除</th>
                         <td>
-                            <button type="button" id="plm-clear-cache" class="button button-secondary">
+                            <button type="button" id="plm-clear-cache" class="button" style="
+                                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                                color: #fff;
+                                border: none;
+                                padding: 8px 20px;
+                                font-weight: 600;
+                                box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+                                transition: all 0.3s ease;
+                                cursor: pointer;
+                            " onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 4px 8px rgba(0,0,0,0.15)';" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 2px 4px rgba(0,0,0,0.1)';">
+                                <span class="dashicons dashicons-trash" style="margin-top: 3px;"></span>
                                 すべてのキャッシュを削除
                             </button>
-                            <p class="description">楽天API取得データのキャッシュをすべて削除します。</p>
+                            <p class="description" style="margin-top: 12px;">
+                                <span class="dashicons dashicons-warning" style="color: #d63638;"></span>
+                                <strong>注意:</strong> すべての楽天API取得データのキャッシュが削除されます。削除後は次回のアクセス時に再度APIが呼ばれます。
+                            </p>
                             <div id="plm-cache-message" style="margin-top: 10px;"></div>
                         </td>
                     </tr>
@@ -406,6 +471,10 @@ function affiliate_settings_options_page() {
                     success: function(response) {
                         messageDiv.html('<div class="notice notice-success inline"><p>' + response.message + '</p></div>');
                         button.prop('disabled', false).text('すべてのキャッシュを削除');
+                        // キャッシュ状況を更新するためにページをリロード
+                        setTimeout(function() {
+                            location.reload();
+                        }, 1000);
                     },
                     error: function() {
                         messageDiv.html('<div class="notice notice-error inline"><p>キャッシュの削除に失敗しました。</p></div>');

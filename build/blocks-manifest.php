@@ -13,6 +13,7 @@ return array(
 		'example' => array(
 			'attributes' => array(
 				'id' => 'book:11830886',
+				'kw' => 'サンプル商品',
 				'title' => 'サンプル商品タイトル',
 				'price' => '1,980',
 				'imageUrl' => 'https://placehold.co/300x300/e8e8e8/666?text=Product+Image',
@@ -20,10 +21,10 @@ return array(
 				'shopName' => '楽天ブックス',
 				'showShop' => true,
 				'showRakuten' => true,
-				'showAmazon' => false,
-				'showYahoo' => false,
-				'showMercari' => false,
-				'showDmm' => false
+				'showAmazon' => true,
+				'showYahoo' => true,
+				'showMercari' => true,
+				'showDmm' => true
 			)
 		),
 		'supports' => array(
