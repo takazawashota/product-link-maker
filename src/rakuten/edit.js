@@ -120,6 +120,7 @@ export default function Edit({ attributes, setAttributes }) {
 						onChange={(val) => {
 							setAttributes({ id: val, no: '' }); // 入力時にnoをクリア
 						}}
+						placeholder="book:11830886"
 						style={attributes.no ? { backgroundColor: '#f5f5f5', color: '#aaa' } : {}}
 					/>
 					<TextControl
@@ -130,6 +131,7 @@ export default function Edit({ attributes, setAttributes }) {
 						onChange={(val) => {
 							setAttributes({ no: val, id: '' }); // 入力時にidをクリア
 						}}
+						placeholder="4902102072625"
 						style={attributes.id ? { backgroundColor: '#f5f5f5', color: '#aaa' } : {}}
 					/>
 					<FormTokenField
