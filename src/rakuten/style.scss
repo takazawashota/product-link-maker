@@ -5,26 +5,14 @@
  * Replace them with your own styles or remove the file completely.
  */
 
-// .wp-block-create-block-rakuten {
-// 	background-color: #21759b;
-// 	color: #fff;
-// 	padding: 2px;
-// }
-
 .product-item-admin {
 	margin-top: 0.7rem;
 	font-size: 13px;
 }
 
-// .rakuten-item-box::after {
-// 	content: "\e903";
-// 	font-family: icomoon;
-// }
-
 .product-item-box {
 	display: flex;
 	padding: 3rem 2.5rem;
-	// border: 3px solid #dfdfdf;
 	position: relative;
 	background: #fff;
 	box-shadow: 0 0 10px #eee;
@@ -76,7 +64,7 @@
 .product-item-buttons {
 	display: flex;
 	flex-wrap: wrap;
-	gap: 0.8rem;
+	gap: 1rem;
 }
 
 .product-item-buttons a {

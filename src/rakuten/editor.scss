@@ -4,10 +4,6 @@
  * Replace them with your own styles or remove the file completely.
  */
 
-// .wp-block-create-block-rakuten {
-// 	border: 1px dotted #f00;
-// }
-
 .product-item-box {
 	padding: 30px 25px;
 }
@@ -40,6 +36,10 @@
 .product-item-description {
 	font-size: 14px;
 	margin-bottom: 19px;
+}
+
+.product-item-buttons {
+	gap: 10px;
 }
 
 .product-item-buttons a {

@@ -38,6 +38,10 @@
   margin-bottom: 19px;
 }
 
+.product-item-buttons {
+  gap: 10px;
+}
+
 .product-item-buttons a {
   font-size: 16px;
 }

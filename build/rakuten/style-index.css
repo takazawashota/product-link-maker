@@ -65,7 +65,7 @@
 .product-item-buttons {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.8rem;
+  gap: 1rem;
 }
 
 .product-item-buttons a {
