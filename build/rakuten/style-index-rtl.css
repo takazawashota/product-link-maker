@@ -1,1 +1,104 @@
-.product-item-admin{font-size:13px;margin-top:.7rem}.product-item-box{background:#fff;border-radius:5px;box-shadow:0 0 10px #eee;display:flex;padding:3rem 2.5rem;position:relative}.product-item-title{font-size:1.9rem;line-height:1.4;margin-bottom:1.3rem}.product-item-thumb{min-width:16%;width:auto}.product-item-content{padding-right:2.4rem;width:auto}.rakuten-item-snippet{font-size:1.6rem;margin-bottom:1.4rem}.product-item-maker{margin-bottom:.5rem}.product-item-price{font-size:1.6rem;font-weight:700;margin-bottom:.5rem}.product-item-price .item-price{color:#e60012;font-size:1.8rem;margin-left:.5rem}.product-item-description{font-size:1.4rem;margin-bottom:1.9rem}.product-item-buttons{display:flex}.product-item-buttons a{background:#222;border-radius:3px;color:#fff;display:flex;font-size:1.6rem;font-weight:700;margin-left:.7rem;padding:6px 12px;text-decoration:none}.product-item-buttons a img[decoding=async]{display:none}.product-item-buttons .shoplinkamazon a{background:#f79901}.product-item-buttons .shoplinkrakuten a{background:#bf0000}.product-item-buttons .shoplinkyahoo a{background:#e60033}.product-item-buttons .shoplinkmercari a{background:#4dc9ff}.product-item-buttons .shoplinkdmm a{background:#00bcd4}
+/*!***********************************************************************************************************************************************************************************************************************************************!*\
+  !*** css ./node_modules/css-loader/dist/cjs.js??ruleSet[1].rules[4].use[1]!./node_modules/postcss-loader/dist/cjs.js??ruleSet[1].rules[4].use[2]!./node_modules/sass-loader/dist/cjs.js??ruleSet[1].rules[4].use[3]!./src/rakuten/style.scss ***!
+  \***********************************************************************************************************************************************************************************************************************************************/
+/**
+ * The following styles get applied both on the front of your site
+ * and in the editor.
+ *
+ * Replace them with your own styles or remove the file completely.
+ */
+.product-item-admin {
+  margin-top: 0.7rem;
+  font-size: 13px;
+}
+
+.product-item-box {
+  display: flex;
+  padding: 3rem 2.5rem;
+  position: relative;
+  background: #fff;
+  box-shadow: 0 0 10px #eee;
+  border-radius: 5px;
+}
+
+.product-item-title {
+  font-size: 1.9rem;
+  line-height: 1.4;
+  margin-bottom: 1.3rem;
+}
+
+.product-item-thumb {
+  width: auto;
+  min-width: 16%;
+}
+
+.product-item-content {
+  width: auto;
+  padding-right: 2.4rem;
+}
+
+.rakuten-item-snippet {
+  font-size: 1.6rem;
+  margin-bottom: 1.4rem;
+}
+
+.product-item-maker {
+  margin-bottom: 0.5rem;
+}
+
+.product-item-price {
+  font-size: 1.6rem;
+  font-weight: bold;
+  margin-bottom: 0.5rem;
+}
+.product-item-price .item-price {
+  font-size: 1.8rem;
+  color: #e60012;
+  margin-left: 0.5rem;
+}
+
+.product-item-description {
+  font-size: 1.4rem;
+  margin-bottom: 1.9rem;
+}
+
+.product-item-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.8rem;
+}
+
+.product-item-buttons a {
+  display: flex;
+  padding: 6px 12px;
+  text-decoration: none;
+  font-size: 1.6rem;
+  font-weight: bold;
+  color: #fff;
+  background: #222;
+  border-radius: 3px;
+}
+
+.product-item-buttons a img[decoding=async] {
+  display: none;
+}
+
+.product-item-buttons .shoplinkamazon a {
+  background: #f79901;
+}
+
+.product-item-buttons .shoplinkrakuten a {
+  background: #bf0000;
+}
+
+.product-item-buttons .shoplinkyahoo a {
+  background: #e60033;
+}
+
+.product-item-buttons .shoplinkmercari a {
+  background: #4dc9ff;
+}
+
+.product-item-buttons .shoplinkdmm a {
+  background: #00bcd4;
+}

@@ -1,1 +1,1206 @@
-(()=>{"use strict";var e,o={441:(e,o,t)=>{const n=window.wp.blocks,r=window.wp.i18n,l=window.wp.blockEditor,a=window.wp.components,i=window.wp.element,s=window.wp.apiFetch;var c=t.n(s);const d=window.ReactJSXRuntime,u=JSON.parse('{"UU":"create-block/rakuten"}');(0,n.registerBlockType)(u.UU,{edit:function({attributes:e,setAttributes:o}){const[t,n]=(0,i.useState)(null),[s,u]=(0,i.useState)(!1),[m,p]=(0,i.useState)(null),h=(0,i.useRef)(null),x=(0,i.useCallback)((async()=>{if(!e.id&&!e.no&&!e.kw)return n(null),void o((e=>({...e,imageUrl:""})));u(!0),p(null);try{const t=await c()({path:`/myplugin/v1/rakuten/?id=${encodeURIComponent(e.id||"")}&kw=${encodeURIComponent(e.kw||"")}&no=${encodeURIComponent(e.no||"")}`});if(t?.Items?.[0]?.Item){const e=t.Items[0].Item;n(e);const r=e.mediumImageUrls?.[0]?.imageUrl||"";o((e=>({...e,imageUrl:r}))),p(null)}else t?.error?(n(null),o((e=>({...e,imageUrl:""}))),p("APIエラー: "+(t.error_description||"リクエスト制限に達しました。しばらく待ってから再度お試しください。"))):(n(null),o((e=>({...e,imageUrl:""}))),p("データが取得できませんでした"))}catch(e){console.error("Rakuten API fetch error:",e),n(null),o((e=>({...e,imageUrl:""}))),p("APIエラーが発生しました。しばらく待ってから再度お試しください。")}finally{u(!1)}}),[e.id,e.no,e.kw,o]),g=(0,i.useCallback)((async()=>{if(window.confirm("本当にキャッシュを削除してもいいですか？"))try{await c()({path:"/myplugin/v1/rakuten-cache/",method:"POST",data:{id:e.id,kw:e.kw,no:e.no}}),x()}catch(e){console.error("Cache clear error:",e)}}),[e.id,e.kw,e.no,x]);(0,i.useEffect)((()=>(h.current&&clearTimeout(h.current),e.id||e.no||e.kw?h.current=setTimeout((()=>{x()}),1e3):n(null),()=>{h.current&&clearTimeout(h.current)})),[e.id,e.no,e.kw]);const[f,k]=(0,i.useState)(0),b=e.imageUrl||(t&&t.mediumImageUrls&&t.mediumImageUrls[0]?t.mediumImageUrls[0].imageUrl:"");(0,i.useEffect)((()=>{k((e=>e+1))}),[b]);const j=e.title||(t?t.itemName:""),w=t&&(t.affiliateUrl||t.itemUrl)||"#";return(0,d.jsxs)(d.Fragment,{children:[(0,d.jsxs)(l.InspectorControls,{children:[(0,d.jsxs)(a.PanelBody,{title:(0,r.__)("商品情報設定","rakuten"),initialOpen:!0,children:[(0,d.jsx)(a.TextControl,{label:(0,r.__)("アイテムコード（ID）","rakuten"),help:e.no?(0,r.__)("商品番号が入力されている場合は入力できません","rakuten"):"",value:e.id,disabled:!!e.no,onChange:e=>{o({id:e,no:""})},placeholder:"book:11830886",style:e.no?{backgroundColor:"#f5f5f5",color:"#aaa"}:{}}),(0,d.jsx)(a.TextControl,{label:(0,r.__)("商品番号","rakuten"),help:e.id?(0,r.__)("アイテムコード（ID）が入力されている場合は入力できません","rakuten"):"",value:e.no,disabled:!!e.id,onChange:e=>{o({no:e,id:""})},placeholder:"4902102072625",style:e.id?{backgroundColor:"#f5f5f5",color:"#aaa"}:{}}),(0,d.jsx)(a.FormTokenField,{label:(0,r.__)("キーワード指定","rakuten"),value:e.kw?e.kw.split(",").filter(Boolean):[],onChange:e=>o({kw:e.join(",")}),placeholder:(0,r.__)("キーワードを入力してEnter","rakuten")}),(0,d.jsx)(a.TextControl,{label:(0,r.__)("ショップコード","rakuten"),value:e.shop,onChange:e=>o({shop:e})}),(0,d.jsx)(a.FormTokenField,{label:(0,r.__)("サーチ","rakuten"),value:e.search?e.search.split(",").filter(Boolean):[],onChange:e=>o({search:e.join(",")}),placeholder:(0,r.__)("サーチを入力してEnter","rakuten")}),(0,d.jsx)(a.TextareaControl,{label:(0,r.__)("タイトル","rakuten"),value:e.title,onChange:e=>o({title:e})}),(0,d.jsx)(a.ToggleControl,{label:(0,r.__)("店名表示","rakuten"),checked:!1!==e.showShop,onChange:e=>o({showShop:e})}),(0,d.jsx)(a.ToggleControl,{label:(0,r.__)("価格表示","rakuten"),checked:e.price,onChange:e=>o({price:e})}),(0,d.jsx)(a.TextareaControl,{label:(0,r.__)("説明文","rakuten"),value:e.desc,onChange:e=>o({desc:e})}),(0,d.jsx)(a.__experimentalHeading,{children:"画像アップロード"}),(0,d.jsx)(l.MediaUploadCheck,{children:(0,d.jsxs)("div",{style:{marginBottom:"0"},children:[(""!==e.imageUrl?e.imageUrl:t?.mediumImageUrls?.[0]?.imageUrl)&&(0,d.jsx)("div",{style:{marginBottom:"10px",display:"flex",justifyContent:"center",backgroundColor:"#eee"},children:(0,d.jsx)("img",{src:""!==e.imageUrl?e.imageUrl:t?.mediumImageUrls?.[0]?.imageUrl,alt:"",style:{display:"block"}})}),(0,d.jsx)(l.MediaUpload,{onSelect:e=>o({imageUrl:e.url||""}),allowedTypes:["image"],render:({open:t})=>(0,d.jsxs)(a.Flex,{children:[(0,d.jsx)(a.Button,{onClick:t,variant:"secondary",children:"画像を選択"}),e.imageUrl&&(0,d.jsx)(a.Button,{style:{marginTop:4},onClick:()=>o({imageUrl:""}),isDestructive:!0,children:(0,r.__)("画像をリセット","rakuten")})]})})]})}),(0,d.jsx)("div",{style:{margin:"24px 0 0 0"}}),(0,d.jsx)(a.__experimentalHeading,{children:"ボタン表示設定"}),(0,d.jsx)(a.ToggleControl,{label:(0,r.__)("Amazonボタンを表示","rakuten"),checked:!1!==e.showAmazon,onChange:e=>o({showAmazon:e})}),(0,d.jsx)(a.ToggleControl,{label:(0,r.__)("楽天ボタンを表示","rakuten"),checked:!1!==e.showRakuten,onChange:e=>o({showRakuten:e})}),(0,d.jsx)(a.ToggleControl,{label:(0,r.__)("Yahoo!ボタンを表示","rakuten"),checked:!1!==e.showYahoo,onChange:e=>o({showYahoo:e})}),(0,d.jsx)(a.ToggleControl,{label:(0,r.__)("メルカリボタンを表示","rakuten"),checked:!1!==e.showMercari,onChange:e=>o({showMercari:e})}),(0,d.jsx)(a.ToggleControl,{label:(0,r.__)("DMMボタンを表示","rakuten"),checked:!1!==e.showDmm,onChange:e=>o({showDmm:e})})]}),(0,d.jsxs)(a.PanelBody,{title:(0,r.__)("カスタムボタン（前）","rakuten"),initialOpen:!1,children:[(0,d.jsx)("p",{style:{fontSize:"13px",color:"#757575",marginTop:0},children:"既存のボタンの前に表示されるカスタムボタンを追加できます"}),(e.customButtonsBefore||[]).map(((t,n)=>(0,d.jsxs)(a.Card,{style:{marginBottom:"16px",border:"1px solid #ddd"},children:[(0,d.jsx)(a.CardHeader,{children:(0,d.jsxs)(a.Flex,{justify:"space-between",align:"center",children:[(0,d.jsxs)("span",{style:{fontWeight:600},children:["ボタン ",n+1]}),(0,d.jsx)(a.Button,{isDestructive:!0,isSmall:!0,onClick:()=>{const t=[...e.customButtonsBefore||[]];t.splice(n,1),o({customButtonsBefore:t})},icon:"trash"})]})}),(0,d.jsxs)(a.CardBody,{children:[(0,d.jsx)(a.TextControl,{label:"ボタンテキスト",value:t.text||"",onChange:t=>{const r=[...e.customButtonsBefore||[]];r[n]={...r[n],text:t},o({customButtonsBefore:r})},placeholder:"例: 公式サイト"}),(0,d.jsx)(a.TextControl,{label:"リンクURL",value:t.url||"",onChange:t=>{const r=[...e.customButtonsBefore||[]];r[n]={...r[n],url:t},o({customButtonsBefore:r})},placeholder:"https://example.com"}),(0,d.jsx)(a.ToggleControl,{label:"別タブで開く",checked:!1!==t.openInNewTab,onChange:t=>{const r=[...e.customButtonsBefore||[]];r[n]={...r[n],openInNewTab:t},o({customButtonsBefore:r})}}),(0,d.jsxs)("div",{style:{marginTop:"12px"},children:[(0,d.jsxs)(a.Button,{variant:"secondary",onClick:()=>{const t=[...e.customButtonsBefore||[]];t[n]={...t[n],showColorPicker:!t[n].showColorPicker},o({customButtonsBefore:t})},style:{width:"100%",marginBottom:"8px"},children:[t.showColorPicker?"色を選択中":"ボタンの色を選択",(0,d.jsx)("span",{style:{marginLeft:"8px",width:"20px",height:"20px",backgroundColor:t.color||"#2196f3",display:"inline-block",borderRadius:"3px",border:"1px solid #ddd",verticalAlign:"middle"}})]}),t.showColorPicker&&(0,d.jsx)(a.ColorPicker,{color:t.color||"#2196f3",onChange:t=>{const r=[...e.customButtonsBefore||[]];r[n]={...r[n],color:t},o({customButtonsBefore:r})},enableAlpha:!0,defaultValue:"#2196f3"})]})]})]},n))),(0,d.jsx)(a.Button,{variant:"secondary",onClick:()=>{const t=[...e.customButtonsBefore||[],{text:"",url:"",openInNewTab:!0,color:"#2196f3"}];o({customButtonsBefore:t})},icon:"plus",style:{width:"100%",justifyContent:"center"},children:"ボタンを追加"})]}),(0,d.jsxs)(a.PanelBody,{title:(0,r.__)("カスタムボタン（後）","rakuten"),initialOpen:!1,children:[(0,d.jsx)("p",{style:{fontSize:"13px",color:"#757575",marginTop:0},children:"既存のボタンの後に表示されるカスタムボタンを追加できます"}),(e.customButtonsAfter||[]).map(((t,n)=>(0,d.jsxs)(a.Card,{style:{marginBottom:"16px",border:"1px solid #ddd"},children:[(0,d.jsx)(a.CardHeader,{children:(0,d.jsxs)(a.Flex,{justify:"space-between",align:"center",children:[(0,d.jsxs)("span",{style:{fontWeight:600},children:["ボタン ",n+1]}),(0,d.jsx)(a.Button,{isDestructive:!0,isSmall:!0,onClick:()=>{const t=[...e.customButtonsAfter||[]];t.splice(n,1),o({customButtonsAfter:t})},icon:"trash"})]})}),(0,d.jsxs)(a.CardBody,{children:[(0,d.jsx)(a.TextControl,{label:"ボタンテキスト",value:t.text||"",onChange:t=>{const r=[...e.customButtonsAfter||[]];r[n]={...r[n],text:t},o({customButtonsAfter:r})},placeholder:"例: 公式サイト"}),(0,d.jsx)(a.TextControl,{label:"リンクURL",value:t.url||"",onChange:t=>{const r=[...e.customButtonsAfter||[]];r[n]={...r[n],url:t},o({customButtonsAfter:r})},placeholder:"https://example.com"}),(0,d.jsx)(a.ToggleControl,{label:"別タブで開く",checked:!1!==t.openInNewTab,onChange:t=>{const r=[...e.customButtonsAfter||[]];r[n]={...r[n],openInNewTab:t},o({customButtonsAfter:r})}}),(0,d.jsxs)("div",{style:{marginTop:"12px"},children:[(0,d.jsxs)(a.Button,{variant:"secondary",onClick:()=>{const t=[...e.customButtonsAfter||[]];t[n]={...t[n],showColorPicker:!t[n].showColorPicker},o({customButtonsAfter:t})},style:{width:"100%",marginBottom:"8px"},children:[t.showColorPicker?"色を選択中":"ボタンの色を選択",(0,d.jsx)("span",{style:{marginLeft:"8px",width:"20px",height:"20px",backgroundColor:t.color||"#2196f3",display:"inline-block",borderRadius:"3px",border:"1px solid #ddd",verticalAlign:"middle"}})]}),t.showColorPicker&&(0,d.jsx)(a.ColorPicker,{color:t.color||"#2196f3",onChange:t=>{const r=[...e.customButtonsAfter||[]];r[n]={...r[n],color:t},o({customButtonsAfter:r})},enableAlpha:!0,defaultValue:"#2196f3"})]})]})]},n))),(0,d.jsx)(a.Button,{variant:"secondary",onClick:()=>{const t=[...e.customButtonsAfter||[],{text:"",url:"",openInNewTab:!0,color:"#2196f3"}];o({customButtonsAfter:t})},icon:"plus",style:{width:"100%",justifyContent:"center"},children:"ボタンを追加"})]}),(0,d.jsx)(a.PanelBody,{title:(0,r.__)("アフィリエイト設定","rakuten"),initialOpen:!1,children:(0,d.jsx)(a.Button,{href:`${window.location.origin}/wp-admin/options-general.php?page=product-link-maker`,target:"_blank",className:"",variant:"primary",icon:"admin-generic",style:{marginTop:"5px",width:"100%",textAlign:"center"},children:(0,r.__)("アフィリエイト設定","rakuten")})})]}),(0,d.jsx)("div",{...(0,l.useBlockProps)(),children:s?(0,d.jsx)("div",{style:{padding:"32px",textAlign:"center",color:"#888",backgroundColor:"#f5f5f5",border:"1px dashed #ccc",borderRadius:"4px"},children:"Loading..."}):m?(0,d.jsx)("div",{style:{padding:"32px",textAlign:"center",color:"#d63638",backgroundColor:"#fff0f0",border:"1px solid #d63638",borderRadius:"4px"},children:m}):e.id||e.no||e.kw?(0,d.jsxs)("div",{className:"rakuten-item-box product-item-box no-icon pis-m",children:[(0,d.jsx)("figure",{className:"rakuten-item-thumb product-item-thumb",children:(0,d.jsx)("a",{rel:"nofollow noopener",href:w,className:"rakuten-item-thumb-link product-item-thumb-link",target:"_blank",title:j,children:b&&(0,d.jsx)("img",{decoding:"async",src:b,alt:j||"商品画像",width:"128",height:"128",className:"rakuten-item-thumb-image product-item-thumb-image"},f)})}),(0,d.jsxs)("div",{className:"rakuten-item-content product-item-content cf",children:[(0,d.jsx)("div",{className:"rakuten-item-title product-item-title",children:(0,d.jsx)("a",{rel:"nofollow noopener",href:w,className:"rakuten-item-title-link product-item-title-link",target:"_blank",title:j,children:j||""})}),(0,d.jsxs)("div",{className:"rakuten-item-snippet product-item-snippet",children:[!1!==e.showShop&&(t?.shopName||e.shop)&&(0,d.jsx)("div",{className:"rakuten-item-maker product-item-maker",children:t?.shopName||e.shop}),e.price&&(0,d.jsxs)("div",{className:"product-item-price",children:[(0,d.jsx)("span",{className:"item-price",children:t?.itemPrice?`￥ ${t.itemPrice}`:"価格情報なし"}),(0,d.jsx)("span",{className:"acquired-date",children:t?.itemPrice?`（${(new Date).toLocaleDateString()} 時点）`:""})]}),e.desc&&(0,d.jsx)("div",{className:"product-item-description",children:e.desc})]}),(0,d.jsx)("div",{className:"amazon-item-buttons product-item-buttons",children:e.kw&&e.kw.split(",").filter(Boolean).length>0&&(()=>{const o=e.kw.split(",").map((e=>e.trim())).filter(Boolean).join(" "),t=window.MyAffiliateSettings||{},n=[];if((e.customButtonsBefore||[]).forEach(((e,o)=>{e.text&&e.url&&n.push((0,d.jsx)("div",{className:"shoplink-custom",children:(0,d.jsx)("a",{rel:"nofollow noopener",href:e.url,target:!1!==e.openInNewTab?"_blank":"_self",style:{backgroundColor:e.color||"#2196f3",color:"#fff",borderRadius:"4px",padding:"6px 16px",display:"inline-block",marginRight:"8px",textDecoration:"none"},children:e.text})},`custom-before-${o}`))})),t.amazon&&!1!==e.showAmazon&&n.push((0,d.jsx)("div",{className:"shoplinkamazon",children:(0,d.jsx)("a",{rel:"nofollow noopener",href:`https://www.amazon.co.jp/gp/search?keywords=${encodeURIComponent(o)}`,target:"_blank",style:{backgroundColor:"#f79901",color:"#fff",borderRadius:"4px",padding:"6px 16px",display:"inline-block",marginRight:"8px",textDecoration:"none"},children:"Amazon"})},"amazon")),t.rakuten&&!1!==e.showRakuten&&n.push((0,d.jsx)("div",{className:"shoplinkrakuten",children:(0,d.jsx)("a",{rel:"nofollow noopener",href:`https://search.rakuten.co.jp/search/mall/${encodeURIComponent(o)}/`,target:"_blank",style:{backgroundColor:"#bf0000",color:"#fff",borderRadius:"4px",padding:"6px 16px",display:"inline-block",marginRight:"8px",textDecoration:"none"},children:"楽天"})},"rakuten")),t.yahoo&&!1!==e.showYahoo&&n.push((0,d.jsx)("div",{className:"shoplinkyahoo",children:(0,d.jsx)("a",{rel:"nofollow noopener",href:`https://search.shopping.yahoo.co.jp/search?p=${encodeURIComponent(o)}`,target:"_blank",style:{backgroundColor:"#e60033",color:"#fff",borderRadius:"4px",padding:"6px 16px",display:"inline-block",marginRight:"8px",textDecoration:"none"},children:"Yahoo!ショッピング"})},"yahoo")),t.mercari&&!1!==e.showMercari&&n.push((0,d.jsx)("div",{className:"shoplinkmercari",children:(0,d.jsx)("a",{rel:"nofollow noopener",href:`https://jp.mercari.com/search?keyword=${encodeURIComponent(o)}`,target:"_blank",style:{backgroundColor:"#4dc9ff",color:"#fff",borderRadius:"4px",padding:"6px 16px",display:"inline-block",marginRight:"8px",textDecoration:"none"},children:"メルカリ"})},"mercari")),t.dmm&&!1!==e.showDmm){const e=`https://www.dmm.com/search/=/searchstr=${encodeURIComponent(o)}/analyze=V1ECCVYAUQQ_/limit=30/sort=rankprofile/?utm_medium=dmm_affiliate&utm_source=dummy&utm_term=dmm.com&utm_campaign=affiliate_link_tool&utm_content=link`;n.push((0,d.jsx)("div",{className:"shoplinkdmm",children:(0,d.jsx)("a",{rel:"nofollow noopener",href:e,target:"_blank",style:{backgroundColor:"#00bcd4",color:"#fff",borderRadius:"4px",padding:"6px 16px",display:"inline-block",marginRight:"6px",textDecoration:"none"},children:"DMM"})},"dmm"))}return(e.customButtonsAfter||[]).forEach(((e,o)=>{e.text&&e.url&&n.push((0,d.jsx)("div",{className:"shoplink-custom",children:(0,d.jsx)("a",{rel:"nofollow noopener",href:e.url,target:!1!==e.openInNewTab?"_blank":"_self",style:{backgroundColor:e.color||"#2196f3",color:"#fff",borderRadius:"4px",padding:"6px 16px",display:"inline-block",marginRight:"8px",textDecoration:"none"},children:e.text})},`custom-after-${o}`))})),n})()}),(0,d.jsxs)("div",{className:"product-item-admin",children:[(0,d.jsx)(a.Button,{variant:"link",onClick:g,style:{color:"#0073aa",textDecoration:"underline",cursor:"pointer",padding:0,marginRight:"10px"},children:"キャッシュ削除"}),(0,d.jsxs)("span",{className:"product-affiliate-rate",children:["料率：",t?.affiliateRate?`${t.affiliateRate}%`:""]})]})]})]}):(0,d.jsx)("div",{style:{padding:"32px",textAlign:"center",color:"#666",backgroundColor:"#f5f5f5",border:"1px dashed #ccc",borderRadius:"4px"},children:"商品情報を設定してください"})})]})}})}},t={};function n(e){var r=t[e];if(void 0!==r)return r.exports;var l=t[e]={exports:{}};return o[e](l,l.exports,n),l.exports}n.m=o,e=[],n.O=(o,t,r,l)=>{if(!t){var a=1/0;for(d=0;d<e.length;d++){for(var[t,r,l]=e[d],i=!0,s=0;s<t.length;s++)(!1&l||a>=l)&&Object.keys(n.O).every((e=>n.O[e](t[s])))?t.splice(s--,1):(i=!1,l<a&&(a=l));if(i){e.splice(d--,1);var c=r();void 0!==c&&(o=c)}}return o}l=l||0;for(var d=e.length;d>0&&e[d-1][2]>l;d--)e[d]=e[d-1];e[d]=[t,r,l]},n.n=e=>{var o=e&&e.__esModule?()=>e.default:()=>e;return n.d(o,{a:o}),o},n.d=(e,o)=>{for(var t in o)n.o(o,t)&&!n.o(e,t)&&Object.defineProperty(e,t,{enumerable:!0,get:o[t]})},n.o=(e,o)=>Object.prototype.hasOwnProperty.call(e,o),(()=>{var e={68:0,708:0};n.O.j=o=>0===e[o];var o=(o,t)=>{var r,l,[a,i,s]=t,c=0;if(a.some((o=>0!==e[o]))){for(r in i)n.o(i,r)&&(n.m[r]=i[r]);if(s)var d=s(n)}for(o&&o(t);c<a.length;c++)l=a[c],n.o(e,l)&&e[l]&&e[l][0](),e[l]=0;return n.O(d)},t=globalThis.webpackChunkproduct_link_maker=globalThis.webpackChunkproduct_link_maker||[];t.forEach(o.bind(null,0)),t.push=o.bind(null,t.push.bind(t))})();var r=n.O(void 0,[708],(()=>n(441)));r=n.O(r)})();
+/******/ (() => { // webpackBootstrap
+/******/ 	"use strict";
+/******/ 	var __webpack_modules__ = ({
+
+/***/ "./src/rakuten/block.json":
+/*!********************************!*\
+  !*** ./src/rakuten/block.json ***!
+  \********************************/
+/***/ ((module) => {
+
+module.exports = /*#__PURE__*/JSON.parse('{"$schema":"https://schemas.wp.org/trunk/block.json","apiVersion":3,"name":"create-block/rakuten","version":"0.1.0","title":"Rakuten","category":"widgets","icon":"smiley","description":"Example block scaffolded with Create Block tool.","example":{},"supports":{"html":false},"textdomain":"rakuten","editorScript":"file:./index.js","editorStyle":"file:./index.css","style":"file:./style-index.css","render":"file:./render.php","viewScript":"file:./view.js","attributes":{"id":{"type":"string","default":""},"no":{"type":"string","default":""},"kw":{"type":"string","default":""},"shop":{"type":"string","default":""},"search":{"type":"string","default":""},"title":{"type":"string","default":""},"price":{"type":"boolean","default":false},"showShop":{"type":"boolean","default":true},"desc":{"type":"string","default":""},"imageUrl":{"type":"string","default":""},"showAmazon":{"type":"boolean","default":true},"showRakuten":{"type":"boolean","default":true},"showYahoo":{"type":"boolean","default":true},"showMercari":{"type":"boolean","default":true},"showDmm":{"type":"boolean","default":true},"customButtonsBefore":{"type":"array","default":[]},"customButtonsAfter":{"type":"array","default":[]}}}');
+
+/***/ }),
+
+/***/ "./src/rakuten/edit.js":
+/*!*****************************!*\
+  !*** ./src/rakuten/edit.js ***!
+  \*****************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (/* binding */ Edit)
+/* harmony export */ });
+/* harmony import */ var _wordpress_i18n__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @wordpress/i18n */ "@wordpress/i18n");
+/* harmony import */ var _wordpress_i18n__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_wordpress_i18n__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _wordpress_block_editor__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @wordpress/block-editor */ "@wordpress/block-editor");
+/* harmony import */ var _wordpress_block_editor__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_wordpress_block_editor__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var _wordpress_components__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @wordpress/components */ "@wordpress/components");
+/* harmony import */ var _wordpress_components__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_wordpress_components__WEBPACK_IMPORTED_MODULE_2__);
+/* harmony import */ var _editor_scss__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./editor.scss */ "./src/rakuten/editor.scss");
+/* harmony import */ var _wordpress_element__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @wordpress/element */ "@wordpress/element");
+/* harmony import */ var _wordpress_element__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(_wordpress_element__WEBPACK_IMPORTED_MODULE_4__);
+/* harmony import */ var _wordpress_api_fetch__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! @wordpress/api-fetch */ "@wordpress/api-fetch");
+/* harmony import */ var _wordpress_api_fetch__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(_wordpress_api_fetch__WEBPACK_IMPORTED_MODULE_5__);
+/* harmony import */ var react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! react/jsx-runtime */ "react/jsx-runtime");
+/* harmony import */ var react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6___default = /*#__PURE__*/__webpack_require__.n(react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__);
+
+
+
+
+// import './style.scss';
+
+
+
+
+function Edit({
+  attributes,
+  setAttributes
+}) {
+  const [item, setItem] = (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_4__.useState)(null);
+  const [isLoading, setIsLoading] = (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_4__.useState)(false);
+  const [error, setError] = (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_4__.useState)(null);
+  const fetchTimeoutRef = (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_4__.useRef)(null);
+  const fetchData = (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_4__.useCallback)(async () => {
+    if (!attributes.id && !attributes.no && !attributes.kw) {
+      setItem(null);
+      setAttributes(prev => ({
+        ...prev,
+        imageUrl: ''
+      }));
+      return;
+    }
+    setIsLoading(true);
+    setError(null);
+    try {
+      // キャッシュ削除は行わず、常にキャッシュを利用する
+      const data = await _wordpress_api_fetch__WEBPACK_IMPORTED_MODULE_5___default()({
+        path: `/myplugin/v1/rakuten/?id=${encodeURIComponent(attributes.id || '')}&kw=${encodeURIComponent(attributes.kw || '')}&no=${encodeURIComponent(attributes.no || '')}`
+      });
+      if (data?.Items?.[0]?.Item) {
+        const newItem = data.Items[0].Item;
+        setItem(newItem);
+        const apiImage = newItem.mediumImageUrls?.[0]?.imageUrl || '';
+        setAttributes(prev => ({
+          ...prev,
+          imageUrl: apiImage
+        }));
+        setError(null);
+      } else if (data?.error) {
+        setItem(null);
+        setAttributes(prev => ({
+          ...prev,
+          imageUrl: ''
+        }));
+        setError('APIエラー: ' + (data.error_description || 'リクエスト制限に達しました。しばらく待ってから再度お試しください。'));
+      } else {
+        setItem(null);
+        setAttributes(prev => ({
+          ...prev,
+          imageUrl: ''
+        }));
+        setError('データが取得できませんでした');
+      }
+    } catch (error) {
+      console.error('Rakuten API fetch error:', error);
+      setItem(null);
+      setAttributes(prev => ({
+        ...prev,
+        imageUrl: ''
+      }));
+      setError('APIエラーが発生しました。しばらく待ってから再度お試しください。');
+    } finally {
+      setIsLoading(false);
+    }
+  }, [attributes.id, attributes.no, attributes.kw, setAttributes]);
+
+  // キャッシュを削除して再取得する関数
+  const handleClearCache = (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_4__.useCallback)(async () => {
+    if (!window.confirm('本当にキャッシュを削除してもいいですか？')) {
+      return;
+    }
+    try {
+      await _wordpress_api_fetch__WEBPACK_IMPORTED_MODULE_5___default()({
+        path: '/myplugin/v1/rakuten-cache/',
+        method: 'POST',
+        data: {
+          id: attributes.id,
+          kw: attributes.kw,
+          no: attributes.no
+        }
+      });
+      // キャッシュ削除後、再取得
+      fetchData();
+    } catch (error) {
+      console.error('Cache clear error:', error);
+    }
+  }, [attributes.id, attributes.kw, attributes.no, fetchData]);
+
+  // attributesがあれば必ずfetchDataを呼ぶ（デバウンス付き）
+  (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_4__.useEffect)(() => {
+    // 前回のタイマーをクリア
+    if (fetchTimeoutRef.current) {
+      clearTimeout(fetchTimeoutRef.current);
+    }
+    if (attributes.id || attributes.no || attributes.kw) {
+      // 1秒のデバウンスを追加
+      fetchTimeoutRef.current = setTimeout(() => {
+        fetchData();
+      }, 1000);
+    } else {
+      setItem(null);
+    }
+
+    // クリーンアップ
+    return () => {
+      if (fetchTimeoutRef.current) {
+        clearTimeout(fetchTimeoutRef.current);
+      }
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [attributes.id, attributes.no, attributes.kw]);
+
+  // 画像・リンク・タイトル等をAPIデータ優先で差し替え
+  const [imageKey, setImageKey] = (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_4__.useState)(0);
+  const imageUrl = attributes.imageUrl || (item && item.mediumImageUrls && item.mediumImageUrls[0] ? item.mediumImageUrls[0].imageUrl : '');
+  (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_4__.useEffect)(() => {
+    setImageKey(k => k + 1);
+  }, [imageUrl]);
+  const itemTitle = attributes.title || (item ? item.itemName : '');
+  const itemLink = item ? item.affiliateUrl || item.itemUrl || '#' : '#';
+  return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsxs)(react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.Fragment, {
+    children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsxs)(_wordpress_block_editor__WEBPACK_IMPORTED_MODULE_1__.InspectorControls, {
+      children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsxs)(_wordpress_components__WEBPACK_IMPORTED_MODULE_2__.PanelBody, {
+        title: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_0__.__)('商品情報設定', 'rakuten'),
+        initialOpen: true,
+        children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)(_wordpress_components__WEBPACK_IMPORTED_MODULE_2__.TextControl, {
+          label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_0__.__)('アイテムコード（ID）', 'rakuten'),
+          help: attributes.no ? (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_0__.__)('商品番号が入力されている場合は入力できません', 'rakuten') : '',
+          value: attributes.id,
+          disabled: !!attributes.no,
+          onChange: val => {
+            setAttributes({
+              id: val,
+              no: ''
+            }); // 入力時にnoをクリア
+          },
+          placeholder: "book:11830886",
+          style: attributes.no ? {
+            backgroundColor: '#f5f5f5',
+            color: '#aaa'
+          } : {}
+        }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)(_wordpress_components__WEBPACK_IMPORTED_MODULE_2__.TextControl, {
+          label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_0__.__)('商品番号', 'rakuten'),
+          help: attributes.id ? (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_0__.__)('アイテムコード（ID）が入力されている場合は入力できません', 'rakuten') : '',
+          value: attributes.no,
+          disabled: !!attributes.id,
+          onChange: val => {
+            setAttributes({
+              no: val,
+              id: ''
+            }); // 入力時にidをクリア
+          },
+          placeholder: "4902102072625",
+          style: attributes.id ? {
+            backgroundColor: '#f5f5f5',
+            color: '#aaa'
+          } : {}
+        }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)(_wordpress_components__WEBPACK_IMPORTED_MODULE_2__.FormTokenField, {
+          label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_0__.__)('キーワード指定', 'rakuten'),
+          value: attributes.kw ? attributes.kw.split(',').filter(Boolean) : [],
+          onChange: tokens => setAttributes({
+            kw: tokens.join(',')
+          }),
+          placeholder: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_0__.__)('キーワードを入力してEnter', 'rakuten')
+        }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)(_wordpress_components__WEBPACK_IMPORTED_MODULE_2__.TextControl, {
+          label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_0__.__)('ショップコード', 'rakuten'),
+          value: attributes.shop,
+          onChange: val => setAttributes({
+            shop: val
+          })
+        }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)(_wordpress_components__WEBPACK_IMPORTED_MODULE_2__.FormTokenField, {
+          label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_0__.__)('サーチ', 'rakuten'),
+          value: attributes.search ? attributes.search.split(',').filter(Boolean) : [],
+          onChange: tokens => setAttributes({
+            search: tokens.join(',')
+          }),
+          placeholder: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_0__.__)('サーチを入力してEnter', 'rakuten')
+        }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)(_wordpress_components__WEBPACK_IMPORTED_MODULE_2__.TextareaControl, {
+          label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_0__.__)('タイトル', 'rakuten'),
+          value: attributes.title,
+          onChange: val => setAttributes({
+            title: val
+          })
+        }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)(_wordpress_components__WEBPACK_IMPORTED_MODULE_2__.ToggleControl, {
+          label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_0__.__)('店名表示', 'rakuten'),
+          checked: attributes.showShop !== false,
+          onChange: val => setAttributes({
+            showShop: val
+          })
+        }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)(_wordpress_components__WEBPACK_IMPORTED_MODULE_2__.ToggleControl, {
+          label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_0__.__)('価格表示', 'rakuten'),
+          checked: attributes.price,
+          onChange: val => setAttributes({
+            price: val
+          })
+        }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)(_wordpress_components__WEBPACK_IMPORTED_MODULE_2__.TextareaControl, {
+          label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_0__.__)('説明文', 'rakuten'),
+          value: attributes.desc,
+          onChange: val => setAttributes({
+            desc: val
+          })
+        }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)(_wordpress_components__WEBPACK_IMPORTED_MODULE_2__.__experimentalHeading, {
+          children: "\u753B\u50CF\u30A2\u30C3\u30D7\u30ED\u30FC\u30C9"
+        }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)(_wordpress_block_editor__WEBPACK_IMPORTED_MODULE_1__.MediaUploadCheck, {
+          children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsxs)("div", {
+            style: {
+              marginBottom: '0'
+            },
+            children: [(attributes.imageUrl !== '' ? attributes.imageUrl : item?.mediumImageUrls?.[0]?.imageUrl) && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)("div", {
+              style: {
+                marginBottom: '10px',
+                display: 'flex',
+                justifyContent: 'center',
+                backgroundColor: '#eee'
+              },
+              children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)("img", {
+                src: attributes.imageUrl !== '' ? attributes.imageUrl : item?.mediumImageUrls?.[0]?.imageUrl,
+                alt: "",
+                style: {
+                  display: 'block'
+                }
+              })
+            }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)(_wordpress_block_editor__WEBPACK_IMPORTED_MODULE_1__.MediaUpload, {
+              onSelect: media => setAttributes({
+                imageUrl: media.url || ''
+              }),
+              allowedTypes: ['image'],
+              render: ({
+                open
+              }) => /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsxs)(_wordpress_components__WEBPACK_IMPORTED_MODULE_2__.Flex, {
+                children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)(_wordpress_components__WEBPACK_IMPORTED_MODULE_2__.Button, {
+                  onClick: open,
+                  variant: "secondary",
+                  children: "\u753B\u50CF\u3092\u9078\u629E"
+                }), attributes.imageUrl && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)(_wordpress_components__WEBPACK_IMPORTED_MODULE_2__.Button, {
+                  style: {
+                    marginTop: 4
+                  },
+                  onClick: () => setAttributes({
+                    imageUrl: ''
+                  }),
+                  isDestructive: true,
+                  children: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_0__.__)('画像をリセット', 'rakuten')
+                })]
+              })
+            })]
+          })
+        }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)("div", {
+          style: {
+            margin: '24px 0 0 0'
+          }
+        }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)(_wordpress_components__WEBPACK_IMPORTED_MODULE_2__.__experimentalHeading, {
+          children: "\u30DC\u30BF\u30F3\u8868\u793A\u8A2D\u5B9A"
+        }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)(_wordpress_components__WEBPACK_IMPORTED_MODULE_2__.ToggleControl, {
+          label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_0__.__)('Amazonボタンを表示', 'rakuten'),
+          checked: attributes.showAmazon !== false,
+          onChange: val => setAttributes({
+            showAmazon: val
+          })
+        }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)(_wordpress_components__WEBPACK_IMPORTED_MODULE_2__.ToggleControl, {
+          label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_0__.__)('楽天ボタンを表示', 'rakuten'),
+          checked: attributes.showRakuten !== false,
+          onChange: val => setAttributes({
+            showRakuten: val
+          })
+        }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)(_wordpress_components__WEBPACK_IMPORTED_MODULE_2__.ToggleControl, {
+          label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_0__.__)('Yahoo!ボタンを表示', 'rakuten'),
+          checked: attributes.showYahoo !== false,
+          onChange: val => setAttributes({
+            showYahoo: val
+          })
+        }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)(_wordpress_components__WEBPACK_IMPORTED_MODULE_2__.ToggleControl, {
+          label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_0__.__)('メルカリボタンを表示', 'rakuten'),
+          checked: attributes.showMercari !== false,
+          onChange: val => setAttributes({
+            showMercari: val
+          })
+        }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)(_wordpress_components__WEBPACK_IMPORTED_MODULE_2__.ToggleControl, {
+          label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_0__.__)('DMMボタンを表示', 'rakuten'),
+          checked: attributes.showDmm !== false,
+          onChange: val => setAttributes({
+            showDmm: val
+          })
+        })]
+      }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsxs)(_wordpress_components__WEBPACK_IMPORTED_MODULE_2__.PanelBody, {
+        title: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_0__.__)('カスタムボタン（前）', 'rakuten'),
+        initialOpen: false,
+        children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)("p", {
+          style: {
+            fontSize: '13px',
+            color: '#757575',
+            marginTop: 0
+          },
+          children: "\u65E2\u5B58\u306E\u30DC\u30BF\u30F3\u306E\u524D\u306B\u8868\u793A\u3055\u308C\u308B\u30AB\u30B9\u30BF\u30E0\u30DC\u30BF\u30F3\u3092\u8FFD\u52A0\u3067\u304D\u307E\u3059"
+        }), (attributes.customButtonsBefore || []).map((btn, index) => /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsxs)(_wordpress_components__WEBPACK_IMPORTED_MODULE_2__.Card, {
+          style: {
+            marginBottom: '16px',
+            border: '1px solid #ddd'
+          },
+          children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)(_wordpress_components__WEBPACK_IMPORTED_MODULE_2__.CardHeader, {
+            children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsxs)(_wordpress_components__WEBPACK_IMPORTED_MODULE_2__.Flex, {
+              justify: "space-between",
+              align: "center",
+              children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsxs)("span", {
+                style: {
+                  fontWeight: 600
+                },
+                children: ["\u30DC\u30BF\u30F3 ", index + 1]
+              }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)(_wordpress_components__WEBPACK_IMPORTED_MODULE_2__.Button, {
+                isDestructive: true,
+                isSmall: true,
+                onClick: () => {
+                  const newButtons = [...(attributes.customButtonsBefore || [])];
+                  newButtons.splice(index, 1);
+                  setAttributes({
+                    customButtonsBefore: newButtons
+                  });
+                },
+                icon: "trash"
+              })]
+            })
+          }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsxs)(_wordpress_components__WEBPACK_IMPORTED_MODULE_2__.CardBody, {
+            children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)(_wordpress_components__WEBPACK_IMPORTED_MODULE_2__.TextControl, {
+              label: "\u30DC\u30BF\u30F3\u30C6\u30AD\u30B9\u30C8",
+              value: btn.text || '',
+              onChange: val => {
+                const newButtons = [...(attributes.customButtonsBefore || [])];
+                newButtons[index] = {
+                  ...newButtons[index],
+                  text: val
+                };
+                setAttributes({
+                  customButtonsBefore: newButtons
+                });
+              },
+              placeholder: "\u4F8B: \u516C\u5F0F\u30B5\u30A4\u30C8"
+            }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)(_wordpress_components__WEBPACK_IMPORTED_MODULE_2__.TextControl, {
+              label: "\u30EA\u30F3\u30AFURL",
+              value: btn.url || '',
+              onChange: val => {
+                const newButtons = [...(attributes.customButtonsBefore || [])];
+                newButtons[index] = {
+                  ...newButtons[index],
+                  url: val
+                };
+                setAttributes({
+                  customButtonsBefore: newButtons
+                });
+              },
+              placeholder: "https://example.com"
+            }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)(_wordpress_components__WEBPACK_IMPORTED_MODULE_2__.ToggleControl, {
+              label: "\u5225\u30BF\u30D6\u3067\u958B\u304F",
+              checked: btn.openInNewTab !== false,
+              onChange: val => {
+                const newButtons = [...(attributes.customButtonsBefore || [])];
+                newButtons[index] = {
+                  ...newButtons[index],
+                  openInNewTab: val
+                };
+                setAttributes({
+                  customButtonsBefore: newButtons
+                });
+              }
+            }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsxs)("div", {
+              style: {
+                marginTop: '12px'
+              },
+              children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsxs)(_wordpress_components__WEBPACK_IMPORTED_MODULE_2__.Button, {
+                variant: "secondary",
+                onClick: () => {
+                  const newButtons = [...(attributes.customButtonsBefore || [])];
+                  newButtons[index] = {
+                    ...newButtons[index],
+                    showColorPicker: !newButtons[index].showColorPicker
+                  };
+                  setAttributes({
+                    customButtonsBefore: newButtons
+                  });
+                },
+                style: {
+                  width: '100%',
+                  marginBottom: '8px'
+                },
+                children: [btn.showColorPicker ? '色を選択中' : 'ボタンの色を選択', /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)("span", {
+                  style: {
+                    marginLeft: '8px',
+                    width: '20px',
+                    height: '20px',
+                    backgroundColor: btn.color || '#2196f3',
+                    display: 'inline-block',
+                    borderRadius: '3px',
+                    border: '1px solid #ddd',
+                    verticalAlign: 'middle'
+                  }
+                })]
+              }), btn.showColorPicker && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)(_wordpress_components__WEBPACK_IMPORTED_MODULE_2__.ColorPicker, {
+                color: btn.color || '#2196f3',
+                onChange: val => {
+                  const newButtons = [...(attributes.customButtonsBefore || [])];
+                  newButtons[index] = {
+                    ...newButtons[index],
+                    color: val
+                  };
+                  setAttributes({
+                    customButtonsBefore: newButtons
+                  });
+                },
+                enableAlpha: true,
+                defaultValue: "#2196f3"
+              })]
+            })]
+          })]
+        }, index)), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)(_wordpress_components__WEBPACK_IMPORTED_MODULE_2__.Button, {
+          variant: "secondary",
+          onClick: () => {
+            const newButtons = [...(attributes.customButtonsBefore || []), {
+              text: '',
+              url: '',
+              openInNewTab: true,
+              color: '#2196f3'
+            }];
+            setAttributes({
+              customButtonsBefore: newButtons
+            });
+          },
+          icon: "plus",
+          style: {
+            width: '100%',
+            justifyContent: 'center'
+          },
+          children: "\u30DC\u30BF\u30F3\u3092\u8FFD\u52A0"
+        })]
+      }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsxs)(_wordpress_components__WEBPACK_IMPORTED_MODULE_2__.PanelBody, {
+        title: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_0__.__)('カスタムボタン（後）', 'rakuten'),
+        initialOpen: false,
+        children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)("p", {
+          style: {
+            fontSize: '13px',
+            color: '#757575',
+            marginTop: 0
+          },
+          children: "\u65E2\u5B58\u306E\u30DC\u30BF\u30F3\u306E\u5F8C\u306B\u8868\u793A\u3055\u308C\u308B\u30AB\u30B9\u30BF\u30E0\u30DC\u30BF\u30F3\u3092\u8FFD\u52A0\u3067\u304D\u307E\u3059"
+        }), (attributes.customButtonsAfter || []).map((btn, index) => /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsxs)(_wordpress_components__WEBPACK_IMPORTED_MODULE_2__.Card, {
+          style: {
+            marginBottom: '16px',
+            border: '1px solid #ddd'
+          },
+          children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)(_wordpress_components__WEBPACK_IMPORTED_MODULE_2__.CardHeader, {
+            children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsxs)(_wordpress_components__WEBPACK_IMPORTED_MODULE_2__.Flex, {
+              justify: "space-between",
+              align: "center",
+              children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsxs)("span", {
+                style: {
+                  fontWeight: 600
+                },
+                children: ["\u30DC\u30BF\u30F3 ", index + 1]
+              }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)(_wordpress_components__WEBPACK_IMPORTED_MODULE_2__.Button, {
+                isDestructive: true,
+                isSmall: true,
+                onClick: () => {
+                  const newButtons = [...(attributes.customButtonsAfter || [])];
+                  newButtons.splice(index, 1);
+                  setAttributes({
+                    customButtonsAfter: newButtons
+                  });
+                },
+                icon: "trash"
+              })]
+            })
+          }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsxs)(_wordpress_components__WEBPACK_IMPORTED_MODULE_2__.CardBody, {
+            children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)(_wordpress_components__WEBPACK_IMPORTED_MODULE_2__.TextControl, {
+              label: "\u30DC\u30BF\u30F3\u30C6\u30AD\u30B9\u30C8",
+              value: btn.text || '',
+              onChange: val => {
+                const newButtons = [...(attributes.customButtonsAfter || [])];
+                newButtons[index] = {
+                  ...newButtons[index],
+                  text: val
+                };
+                setAttributes({
+                  customButtonsAfter: newButtons
+                });
+              },
+              placeholder: "\u4F8B: \u516C\u5F0F\u30B5\u30A4\u30C8"
+            }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)(_wordpress_components__WEBPACK_IMPORTED_MODULE_2__.TextControl, {
+              label: "\u30EA\u30F3\u30AFURL",
+              value: btn.url || '',
+              onChange: val => {
+                const newButtons = [...(attributes.customButtonsAfter || [])];
+                newButtons[index] = {
+                  ...newButtons[index],
+                  url: val
+                };
+                setAttributes({
+                  customButtonsAfter: newButtons
+                });
+              },
+              placeholder: "https://example.com"
+            }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)(_wordpress_components__WEBPACK_IMPORTED_MODULE_2__.ToggleControl, {
+              label: "\u5225\u30BF\u30D6\u3067\u958B\u304F",
+              checked: btn.openInNewTab !== false,
+              onChange: val => {
+                const newButtons = [...(attributes.customButtonsAfter || [])];
+                newButtons[index] = {
+                  ...newButtons[index],
+                  openInNewTab: val
+                };
+                setAttributes({
+                  customButtonsAfter: newButtons
+                });
+              }
+            }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsxs)("div", {
+              style: {
+                marginTop: '12px'
+              },
+              children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsxs)(_wordpress_components__WEBPACK_IMPORTED_MODULE_2__.Button, {
+                variant: "secondary",
+                onClick: () => {
+                  const newButtons = [...(attributes.customButtonsAfter || [])];
+                  newButtons[index] = {
+                    ...newButtons[index],
+                    showColorPicker: !newButtons[index].showColorPicker
+                  };
+                  setAttributes({
+                    customButtonsAfter: newButtons
+                  });
+                },
+                style: {
+                  width: '100%',
+                  marginBottom: '8px'
+                },
+                children: [btn.showColorPicker ? '色を選択中' : 'ボタンの色を選択', /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)("span", {
+                  style: {
+                    marginLeft: '8px',
+                    width: '20px',
+                    height: '20px',
+                    backgroundColor: btn.color || '#2196f3',
+                    display: 'inline-block',
+                    borderRadius: '3px',
+                    border: '1px solid #ddd',
+                    verticalAlign: 'middle'
+                  }
+                })]
+              }), btn.showColorPicker && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)(_wordpress_components__WEBPACK_IMPORTED_MODULE_2__.ColorPicker, {
+                color: btn.color || '#2196f3',
+                onChange: val => {
+                  const newButtons = [...(attributes.customButtonsAfter || [])];
+                  newButtons[index] = {
+                    ...newButtons[index],
+                    color: val
+                  };
+                  setAttributes({
+                    customButtonsAfter: newButtons
+                  });
+                },
+                enableAlpha: true,
+                defaultValue: "#2196f3"
+              })]
+            })]
+          })]
+        }, index)), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)(_wordpress_components__WEBPACK_IMPORTED_MODULE_2__.Button, {
+          variant: "secondary",
+          onClick: () => {
+            const newButtons = [...(attributes.customButtonsAfter || []), {
+              text: '',
+              url: '',
+              openInNewTab: true,
+              color: '#2196f3'
+            }];
+            setAttributes({
+              customButtonsAfter: newButtons
+            });
+          },
+          icon: "plus",
+          style: {
+            width: '100%',
+            justifyContent: 'center'
+          },
+          children: "\u30DC\u30BF\u30F3\u3092\u8FFD\u52A0"
+        })]
+      }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)(_wordpress_components__WEBPACK_IMPORTED_MODULE_2__.PanelBody, {
+        title: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_0__.__)('アフィリエイト設定', 'rakuten'),
+        initialOpen: false,
+        children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)(_wordpress_components__WEBPACK_IMPORTED_MODULE_2__.Button, {
+          href: `${window.location.origin}/wp-admin/options-general.php?page=product-link-maker`,
+          target: "_blank",
+          className: "",
+          variant: "primary",
+          icon: "admin-generic",
+          style: {
+            marginTop: '5px',
+            width: '100%',
+            textAlign: 'center'
+          },
+          children: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_0__.__)('アフィリエイト設定', 'rakuten')
+        })
+      })]
+    }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)("div", {
+      ...(0,_wordpress_block_editor__WEBPACK_IMPORTED_MODULE_1__.useBlockProps)(),
+      children: isLoading ? /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)("div", {
+        style: {
+          padding: '32px',
+          textAlign: 'center',
+          color: '#888',
+          backgroundColor: '#f5f5f5',
+          border: '1px dashed #ccc',
+          borderRadius: '4px'
+        },
+        children: "Loading..."
+      }) : error ? /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)("div", {
+        style: {
+          padding: '32px',
+          textAlign: 'center',
+          color: '#d63638',
+          backgroundColor: '#fff0f0',
+          border: '1px solid #d63638',
+          borderRadius: '4px'
+        },
+        children: error
+      }) : !attributes.id && !attributes.no && !attributes.kw ? /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)("div", {
+        style: {
+          padding: '32px',
+          textAlign: 'center',
+          color: '#666',
+          backgroundColor: '#f5f5f5',
+          border: '1px dashed #ccc',
+          borderRadius: '4px'
+        },
+        children: "\u5546\u54C1\u60C5\u5831\u3092\u8A2D\u5B9A\u3057\u3066\u304F\u3060\u3055\u3044"
+      }) : /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsxs)("div", {
+        className: "rakuten-item-box product-item-box no-icon pis-m",
+        children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)("figure", {
+          className: "rakuten-item-thumb product-item-thumb",
+          children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)("a", {
+            rel: "nofollow noopener",
+            href: itemLink,
+            className: "rakuten-item-thumb-link product-item-thumb-link",
+            target: "_blank",
+            title: itemTitle,
+            children: imageUrl && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)("img", {
+              decoding: "async",
+              src: imageUrl,
+              alt: itemTitle || '商品画像',
+              width: "128",
+              height: "128",
+              className: "rakuten-item-thumb-image product-item-thumb-image"
+            }, imageKey)
+          })
+        }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsxs)("div", {
+          className: "rakuten-item-content product-item-content cf",
+          children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)("div", {
+            className: "rakuten-item-title product-item-title",
+            children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)("a", {
+              rel: "nofollow noopener",
+              href: itemLink,
+              className: "rakuten-item-title-link product-item-title-link",
+              target: "_blank",
+              title: itemTitle,
+              children: itemTitle ? itemTitle : ''
+            })
+          }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsxs)("div", {
+            className: "rakuten-item-snippet product-item-snippet",
+            children: [attributes.showShop !== false && (item?.shopName || attributes.shop) && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)("div", {
+              className: "rakuten-item-maker product-item-maker",
+              children: item?.shopName || attributes.shop
+            }), attributes.price && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsxs)("div", {
+              className: "product-item-price",
+              children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)("span", {
+                className: "item-price",
+                children: item?.itemPrice ? `￥ ${item.itemPrice}` : '価格情報なし'
+              }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)("span", {
+                className: "acquired-date",
+                children: item?.itemPrice ? `（${new Date().toLocaleDateString()} 時点）` : ''
+              })]
+            }), attributes.desc && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)("div", {
+              className: "product-item-description",
+              children: attributes.desc
+            })]
+          }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)("div", {
+            className: "amazon-item-buttons product-item-buttons",
+            children: attributes.kw && attributes.kw.split(',').filter(Boolean).length > 0 && (() => {
+              const kwArray = attributes.kw.split(',').map(s => s.trim()).filter(Boolean);
+              const kwForUrl = kwArray.join(' ');
+              const settings = window.MyAffiliateSettings || {};
+              const buttons = [];
+
+              // カスタムボタン（前）
+              (attributes.customButtonsBefore || []).forEach((btn, idx) => {
+                if (btn.text && btn.url) {
+                  buttons.push(/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)("div", {
+                    className: "shoplink-custom",
+                    children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)("a", {
+                      rel: "nofollow noopener",
+                      href: btn.url,
+                      target: btn.openInNewTab !== false ? "_blank" : "_self",
+                      style: {
+                        backgroundColor: btn.color || '#2196f3',
+                        color: '#fff',
+                        borderRadius: '4px',
+                        padding: '6px 16px',
+                        display: 'inline-block',
+                        textDecoration: 'none'
+                      },
+                      children: btn.text
+                    })
+                  }, `custom-before-${idx}`));
+                }
+              });
+              if (settings.amazon && attributes.showAmazon !== false) {
+                buttons.push(/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)("div", {
+                  className: "shoplinkamazon",
+                  children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)("a", {
+                    rel: "nofollow noopener",
+                    href: `https://www.amazon.co.jp/gp/search?keywords=${encodeURIComponent(kwForUrl)}`,
+                    target: "_blank",
+                    style: {
+                      backgroundColor: '#f79901',
+                      color: '#fff',
+                      borderRadius: '4px',
+                      padding: '6px 16px',
+                      display: 'inline-block',
+                      textDecoration: 'none'
+                    },
+                    children: "Amazon"
+                  })
+                }, "amazon"));
+              }
+              if (settings.rakuten && attributes.showRakuten !== false) {
+                buttons.push(/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)("div", {
+                  className: "shoplinkrakuten",
+                  children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)("a", {
+                    rel: "nofollow noopener",
+                    href: `https://search.rakuten.co.jp/search/mall/${encodeURIComponent(kwForUrl)}/`,
+                    target: "_blank",
+                    style: {
+                      backgroundColor: '#bf0000',
+                      color: '#fff',
+                      borderRadius: '4px',
+                      padding: '6px 16px',
+                      display: 'inline-block',
+                      textDecoration: 'none'
+                    },
+                    children: "\u697D\u5929"
+                  })
+                }, "rakuten"));
+              }
+              if (settings.yahoo && attributes.showYahoo !== false) {
+                buttons.push(/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)("div", {
+                  className: "shoplinkyahoo",
+                  children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)("a", {
+                    rel: "nofollow noopener",
+                    href: `https://search.shopping.yahoo.co.jp/search?p=${encodeURIComponent(kwForUrl)}`,
+                    target: "_blank",
+                    style: {
+                      backgroundColor: '#e60033',
+                      color: '#fff',
+                      borderRadius: '4px',
+                      padding: '6px 16px',
+                      display: 'inline-block',
+                      textDecoration: 'none'
+                    },
+                    children: "Yahoo!\u30B7\u30E7\u30C3\u30D4\u30F3\u30B0"
+                  })
+                }, "yahoo"));
+              }
+              if (settings.mercari && attributes.showMercari !== false) {
+                buttons.push(/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)("div", {
+                  className: "shoplinkmercari",
+                  children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)("a", {
+                    rel: "nofollow noopener",
+                    href: `https://jp.mercari.com/search?keyword=${encodeURIComponent(kwForUrl)}`,
+                    target: "_blank",
+                    style: {
+                      backgroundColor: '#4dc9ff',
+                      color: '#fff',
+                      borderRadius: '4px',
+                      padding: '6px 16px',
+                      display: 'inline-block',
+                      textDecoration: 'none'
+                    },
+                    children: "\u30E1\u30EB\u30AB\u30EA"
+                  })
+                }, "mercari"));
+              }
+              if (settings.dmm && attributes.showDmm !== false) {
+                const dmmUrl = `https://www.dmm.com/search/=/searchstr=${encodeURIComponent(kwForUrl)}/analyze=V1ECCVYAUQQ_/limit=30/sort=rankprofile/?utm_medium=dmm_affiliate&utm_source=dummy&utm_term=dmm.com&utm_campaign=affiliate_link_tool&utm_content=link`;
+                buttons.push(/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)("div", {
+                  className: "shoplinkdmm",
+                  children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)("a", {
+                    rel: "nofollow noopener",
+                    href: dmmUrl,
+                    target: "_blank",
+                    style: {
+                      backgroundColor: '#00bcd4',
+                      color: '#fff',
+                      borderRadius: '4px',
+                      padding: '6px 16px',
+                      display: 'inline-block',
+                      textDecoration: 'none'
+                    },
+                    children: "DMM"
+                  })
+                }, "dmm"));
+              }
+
+              // カスタムボタン（後）
+              (attributes.customButtonsAfter || []).forEach((btn, idx) => {
+                if (btn.text && btn.url) {
+                  buttons.push(/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)("div", {
+                    className: "shoplink-custom",
+                    children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)("a", {
+                      rel: "nofollow noopener",
+                      href: btn.url,
+                      target: btn.openInNewTab !== false ? "_blank" : "_self",
+                      style: {
+                        backgroundColor: btn.color || '#2196f3',
+                        color: '#fff',
+                        borderRadius: '4px',
+                        padding: '6px 16px',
+                        display: 'inline-block',
+                        marginRight: '8px',
+                        textDecoration: 'none'
+                      },
+                      children: btn.text
+                    })
+                  }, `custom-after-${idx}`));
+                }
+              });
+              return buttons;
+            })()
+          }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsxs)("div", {
+            className: "product-item-admin",
+            children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)(_wordpress_components__WEBPACK_IMPORTED_MODULE_2__.Button, {
+              variant: "link",
+              onClick: handleClearCache,
+              style: {
+                color: '#0073aa',
+                textDecoration: 'underline',
+                cursor: 'pointer',
+                padding: 0,
+                marginRight: '10px'
+              },
+              children: "\u30AD\u30E3\u30C3\u30B7\u30E5\u524A\u9664"
+            }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsxs)("span", {
+              className: "product-affiliate-rate",
+              children: ["\u6599\u7387\uFF1A", item?.affiliateRate ? `${item.affiliateRate}%` : '']
+            })]
+          })]
+        })]
+      })
+    })]
+  });
+}
+
+/***/ }),
+
+/***/ "./src/rakuten/editor.scss":
+/*!*********************************!*\
+  !*** ./src/rakuten/editor.scss ***!
+  \*********************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+// extracted by mini-css-extract-plugin
+
+
+/***/ }),
+
+/***/ "./src/rakuten/index.js":
+/*!******************************!*\
+  !*** ./src/rakuten/index.js ***!
+  \******************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _wordpress_blocks__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @wordpress/blocks */ "@wordpress/blocks");
+/* harmony import */ var _wordpress_blocks__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_wordpress_blocks__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _style_scss__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./style.scss */ "./src/rakuten/style.scss");
+/* harmony import */ var _edit__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./edit */ "./src/rakuten/edit.js");
+/* harmony import */ var _block_json__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./block.json */ "./src/rakuten/block.json");
+/**
+ * Registers a new block provided a unique name and an object defining its behavior.
+ *
+ * @see https://developer.wordpress.org/block-editor/reference-guides/block-api/block-registration/
+ */
+
+
+/**
+ * Lets webpack process CSS, SASS or SCSS files referenced in JavaScript files.
+ * All files containing `style` keyword are bundled together. The code used
+ * gets applied both to the front of your site and to the editor.
+ *
+ * @see https://www.npmjs.com/package/@wordpress/scripts#using-css
+ */
+
+
+/**
+ * Internal dependencies
+ */
+
+
+
+/**
+ * Every block starts by registering a new block type definition.
+ *
+ * @see https://developer.wordpress.org/block-editor/reference-guides/block-api/block-registration/
+ */
+(0,_wordpress_blocks__WEBPACK_IMPORTED_MODULE_0__.registerBlockType)(_block_json__WEBPACK_IMPORTED_MODULE_3__.name, {
+  /**
+   * @see ./edit.js
+   */
+  edit: _edit__WEBPACK_IMPORTED_MODULE_2__["default"]
+});
+
+/***/ }),
+
+/***/ "./src/rakuten/style.scss":
+/*!********************************!*\
+  !*** ./src/rakuten/style.scss ***!
+  \********************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+// extracted by mini-css-extract-plugin
+
+
+/***/ }),
+
+/***/ "@wordpress/api-fetch":
+/*!**********************************!*\
+  !*** external ["wp","apiFetch"] ***!
+  \**********************************/
+/***/ ((module) => {
+
+module.exports = window["wp"]["apiFetch"];
+
+/***/ }),
+
+/***/ "@wordpress/block-editor":
+/*!*************************************!*\
+  !*** external ["wp","blockEditor"] ***!
+  \*************************************/
+/***/ ((module) => {
+
+module.exports = window["wp"]["blockEditor"];
+
+/***/ }),
+
+/***/ "@wordpress/blocks":
+/*!********************************!*\
+  !*** external ["wp","blocks"] ***!
+  \********************************/
+/***/ ((module) => {
+
+module.exports = window["wp"]["blocks"];
+
+/***/ }),
+
+/***/ "@wordpress/components":
+/*!************************************!*\
+  !*** external ["wp","components"] ***!
+  \************************************/
+/***/ ((module) => {
+
+module.exports = window["wp"]["components"];
+
+/***/ }),
+
+/***/ "@wordpress/element":
+/*!*********************************!*\
+  !*** external ["wp","element"] ***!
+  \*********************************/
+/***/ ((module) => {
+
+module.exports = window["wp"]["element"];
+
+/***/ }),
+
+/***/ "@wordpress/i18n":
+/*!******************************!*\
+  !*** external ["wp","i18n"] ***!
+  \******************************/
+/***/ ((module) => {
+
+module.exports = window["wp"]["i18n"];
+
+/***/ }),
+
+/***/ "react/jsx-runtime":
+/*!**********************************!*\
+  !*** external "ReactJSXRuntime" ***!
+  \**********************************/
+/***/ ((module) => {
+
+module.exports = window["ReactJSXRuntime"];
+
+/***/ })
+
+/******/ 	});
+/************************************************************************/
+/******/ 	// The module cache
+/******/ 	var __webpack_module_cache__ = {};
+/******/ 	
+/******/ 	// The require function
+/******/ 	function __webpack_require__(moduleId) {
+/******/ 		// Check if module is in cache
+/******/ 		var cachedModule = __webpack_module_cache__[moduleId];
+/******/ 		if (cachedModule !== undefined) {
+/******/ 			return cachedModule.exports;
+/******/ 		}
+/******/ 		// Create a new module (and put it into the cache)
+/******/ 		var module = __webpack_module_cache__[moduleId] = {
+/******/ 			// no module.id needed
+/******/ 			// no module.loaded needed
+/******/ 			exports: {}
+/******/ 		};
+/******/ 	
+/******/ 		// Execute the module function
+/******/ 		__webpack_modules__[moduleId](module, module.exports, __webpack_require__);
+/******/ 	
+/******/ 		// Return the exports of the module
+/******/ 		return module.exports;
+/******/ 	}
+/******/ 	
+/******/ 	// expose the modules object (__webpack_modules__)
+/******/ 	__webpack_require__.m = __webpack_modules__;
+/******/ 	
+/************************************************************************/
+/******/ 	/* webpack/runtime/chunk loaded */
+/******/ 	(() => {
+/******/ 		var deferred = [];
+/******/ 		__webpack_require__.O = (result, chunkIds, fn, priority) => {
+/******/ 			if(chunkIds) {
+/******/ 				priority = priority || 0;
+/******/ 				for(var i = deferred.length; i > 0 && deferred[i - 1][2] > priority; i--) deferred[i] = deferred[i - 1];
+/******/ 				deferred[i] = [chunkIds, fn, priority];
+/******/ 				return;
+/******/ 			}
+/******/ 			var notFulfilled = Infinity;
+/******/ 			for (var i = 0; i < deferred.length; i++) {
+/******/ 				var [chunkIds, fn, priority] = deferred[i];
+/******/ 				var fulfilled = true;
+/******/ 				for (var j = 0; j < chunkIds.length; j++) {
+/******/ 					if ((priority & 1 === 0 || notFulfilled >= priority) && Object.keys(__webpack_require__.O).every((key) => (__webpack_require__.O[key](chunkIds[j])))) {
+/******/ 						chunkIds.splice(j--, 1);
+/******/ 					} else {
+/******/ 						fulfilled = false;
+/******/ 						if(priority < notFulfilled) notFulfilled = priority;
+/******/ 					}
+/******/ 				}
+/******/ 				if(fulfilled) {
+/******/ 					deferred.splice(i--, 1)
+/******/ 					var r = fn();
+/******/ 					if (r !== undefined) result = r;
+/******/ 				}
+/******/ 			}
+/******/ 			return result;
+/******/ 		};
+/******/ 	})();
+/******/ 	
+/******/ 	/* webpack/runtime/compat get default export */
+/******/ 	(() => {
+/******/ 		// getDefaultExport function for compatibility with non-harmony modules
+/******/ 		__webpack_require__.n = (module) => {
+/******/ 			var getter = module && module.__esModule ?
+/******/ 				() => (module['default']) :
+/******/ 				() => (module);
+/******/ 			__webpack_require__.d(getter, { a: getter });
+/******/ 			return getter;
+/******/ 		};
+/******/ 	})();
+/******/ 	
+/******/ 	/* webpack/runtime/define property getters */
+/******/ 	(() => {
+/******/ 		// define getter functions for harmony exports
+/******/ 		__webpack_require__.d = (exports, definition) => {
+/******/ 			for(var key in definition) {
+/******/ 				if(__webpack_require__.o(definition, key) && !__webpack_require__.o(exports, key)) {
+/******/ 					Object.defineProperty(exports, key, { enumerable: true, get: definition[key] });
+/******/ 				}
+/******/ 			}
+/******/ 		};
+/******/ 	})();
+/******/ 	
+/******/ 	/* webpack/runtime/hasOwnProperty shorthand */
+/******/ 	(() => {
+/******/ 		__webpack_require__.o = (obj, prop) => (Object.prototype.hasOwnProperty.call(obj, prop))
+/******/ 	})();
+/******/ 	
+/******/ 	/* webpack/runtime/make namespace object */
+/******/ 	(() => {
+/******/ 		// define __esModule on exports
+/******/ 		__webpack_require__.r = (exports) => {
+/******/ 			if(typeof Symbol !== 'undefined' && Symbol.toStringTag) {
+/******/ 				Object.defineProperty(exports, Symbol.toStringTag, { value: 'Module' });
+/******/ 			}
+/******/ 			Object.defineProperty(exports, '__esModule', { value: true });
+/******/ 		};
+/******/ 	})();
+/******/ 	
+/******/ 	/* webpack/runtime/jsonp chunk loading */
+/******/ 	(() => {
+/******/ 		// no baseURI
+/******/ 		
+/******/ 		// object to store loaded and loading chunks
+/******/ 		// undefined = chunk not loaded, null = chunk preloaded/prefetched
+/******/ 		// [resolve, reject, Promise] = chunk loading, 0 = chunk loaded
+/******/ 		var installedChunks = {
+/******/ 			"rakuten/index": 0,
+/******/ 			"rakuten/style-index": 0
+/******/ 		};
+/******/ 		
+/******/ 		// no chunk on demand loading
+/******/ 		
+/******/ 		// no prefetching
+/******/ 		
+/******/ 		// no preloaded
+/******/ 		
+/******/ 		// no HMR
+/******/ 		
+/******/ 		// no HMR manifest
+/******/ 		
+/******/ 		__webpack_require__.O.j = (chunkId) => (installedChunks[chunkId] === 0);
+/******/ 		
+/******/ 		// install a JSONP callback for chunk loading
+/******/ 		var webpackJsonpCallback = (parentChunkLoadingFunction, data) => {
+/******/ 			var [chunkIds, moreModules, runtime] = data;
+/******/ 			// add "moreModules" to the modules object,
+/******/ 			// then flag all "chunkIds" as loaded and fire callback
+/******/ 			var moduleId, chunkId, i = 0;
+/******/ 			if(chunkIds.some((id) => (installedChunks[id] !== 0))) {
+/******/ 				for(moduleId in moreModules) {
+/******/ 					if(__webpack_require__.o(moreModules, moduleId)) {
+/******/ 						__webpack_require__.m[moduleId] = moreModules[moduleId];
+/******/ 					}
+/******/ 				}
+/******/ 				if(runtime) var result = runtime(__webpack_require__);
+/******/ 			}
+/******/ 			if(parentChunkLoadingFunction) parentChunkLoadingFunction(data);
+/******/ 			for(;i < chunkIds.length; i++) {
+/******/ 				chunkId = chunkIds[i];
+/******/ 				if(__webpack_require__.o(installedChunks, chunkId) && installedChunks[chunkId]) {
+/******/ 					installedChunks[chunkId][0]();
+/******/ 				}
+/******/ 				installedChunks[chunkId] = 0;
+/******/ 			}
+/******/ 			return __webpack_require__.O(result);
+/******/ 		}
+/******/ 		
+/******/ 		var chunkLoadingGlobal = globalThis["webpackChunkproduct_link_maker"] = globalThis["webpackChunkproduct_link_maker"] || [];
+/******/ 		chunkLoadingGlobal.forEach(webpackJsonpCallback.bind(null, 0));
+/******/ 		chunkLoadingGlobal.push = webpackJsonpCallback.bind(null, chunkLoadingGlobal.push.bind(chunkLoadingGlobal));
+/******/ 	})();
+/******/ 	
+/************************************************************************/
+/******/ 	
+/******/ 	// startup
+/******/ 	// Load entry module and return exports
+/******/ 	// This entry module depends on other loaded chunks and execution need to be delayed
+/******/ 	var __webpack_exports__ = __webpack_require__.O(undefined, ["rakuten/style-index"], () => (__webpack_require__("./src/rakuten/index.js")))
+/******/ 	__webpack_exports__ = __webpack_require__.O(__webpack_exports__);
+/******/ 	
+/******/ })()
+;
+//# sourceMappingURL=index.js.map

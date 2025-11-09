@@ -75,6 +75,8 @@
 
 .product-item-buttons {
 	display: flex;
+	flex-wrap: wrap;
+	gap: 0.8rem;
 }
 
 .product-item-buttons a {
@@ -85,7 +87,6 @@
 	font-weight: bold;
 	color: #fff;
 	background: #222;
-	margin-right: 0.7rem;
 	border-radius: 3px;
 }
 
