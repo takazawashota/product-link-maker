@@ -335,8 +335,86 @@ function affiliate_settings_options_page() {
                 </table>
             </div>
 
+            <!-- キャッシュ設定 -->
+            <div class="plm-card">
+                <h2>
+                    <span class="dashicons dashicons-database" style="color: #9b59b6;"></span>
+                    キャッシュ設定
+                </h2>
+                <table class="form-table">
+                    <tr>
+                        <th scope="row">成功時のキャッシュ時間</th>
+                        <td>
+                            <input type="number" name="affiliate_settings[cache_success_hours]" 
+                                   value="<?= esc_attr($options['cache_success_hours'] ?? '24') ?>" 
+                                   min="1" max="168"
+                                   class="small-text" /> 時間
+                            <p class="description">API取得成功時のキャッシュ保存時間（1〜168時間）デフォルト: 24時間</p>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th scope="row">レート制限エラー時のキャッシュ時間</th>
+                        <td>
+                            <input type="number" name="affiliate_settings[cache_ratelimit_minutes]" 
+                                   value="<?= esc_attr($options['cache_ratelimit_minutes'] ?? '60') ?>" 
+                                   min="5" max="1440"
+                                   class="small-text" /> 分
+                            <p class="description">レート制限エラー時のキャッシュ保存時間（5〜1440分）デフォルト: 60分</p>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th scope="row">その他エラー時のキャッシュ時間</th>
+                        <td>
+                            <input type="number" name="affiliate_settings[cache_error_minutes]" 
+                                   value="<?= esc_attr($options['cache_error_minutes'] ?? '5') ?>" 
+                                   min="1" max="60"
+                                   class="small-text" /> 分
+                            <p class="description">その他エラー時のキャッシュ保存時間（1〜60分）デフォルト: 5分</p>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th scope="row">キャッシュ削除</th>
+                        <td>
+                            <button type="button" id="plm-clear-cache" class="button button-secondary">
+                                すべてのキャッシュを削除
+                            </button>
+                            <p class="description">楽天API取得データのキャッシュをすべて削除します。</p>
+                            <div id="plm-cache-message" style="margin-top: 10px;"></div>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+
             <?php submit_button('設定を保存', 'primary large'); ?>
         </form>
+
+        <script>
+        jQuery(document).ready(function($) {
+            $('#plm-clear-cache').on('click', function() {
+                var button = $(this);
+                var messageDiv = $('#plm-cache-message');
+                
+                button.prop('disabled', true).text('削除中...');
+                messageDiv.html('');
+                
+                $.ajax({
+                    url: '<?php echo rest_url('product-link-maker/v1/clear-cache'); ?>',
+                    method: 'POST',
+                    beforeSend: function(xhr) {
+                        xhr.setRequestHeader('X-WP-Nonce', '<?php echo wp_create_nonce('wp_rest'); ?>');
+                    },
+                    success: function(response) {
+                        messageDiv.html('<div class="notice notice-success inline"><p>' + response.message + '</p></div>');
+                        button.prop('disabled', false).text('すべてのキャッシュを削除');
+                    },
+                    error: function() {
+                        messageDiv.html('<div class="notice notice-error inline"><p>キャッシュの削除に失敗しました。</p></div>');
+                        button.prop('disabled', false).text('すべてのキャッシュを削除');
+                    }
+                });
+            });
+        });
+        </script>
     </div>
     <?php
 }
@@ -408,6 +486,12 @@ function get_rakuten_item_json($rakuten_application_id, $rakuten_affiliate_id, $
 
 // キャッシュ付き楽天API取得関数を追加
 function get_rakuten_item_json_with_cache($rakuten_application_id, $rakuten_affiliate_id, $item_id = null, $keyword = null, $no = null) {
+    // キャッシュ設定を取得
+    $affiliate_settings = get_option('affiliate_settings', []);
+    $cache_success_hours = isset($affiliate_settings['cache_success_hours']) ? intval($affiliate_settings['cache_success_hours']) : 24;
+    $cache_ratelimit_minutes = isset($affiliate_settings['cache_ratelimit_minutes']) ? intval($affiliate_settings['cache_ratelimit_minutes']) : 60;
+    $cache_error_minutes = isset($affiliate_settings['cache_error_minutes']) ? intval($affiliate_settings['cache_error_minutes']) : 5;
+    
     // 商品番号(no)があればキーワードとして優先
     $cache_key = 'rakuten_item_' . md5($rakuten_application_id . $rakuten_affiliate_id . $item_id . $keyword . $no);
     $cached = get_transient($cache_key);
@@ -423,15 +507,15 @@ function get_rakuten_item_json_with_cache($rakuten_application_id, $rakuten_affi
     if (isset($response_data['error'])) {
         // エラーの種類によってキャッシュ期間を変える
         if ($response_data['error'] === 'rate_limit') {
-            // レート制限エラーの場合は1時間キャッシュ
-            set_transient($cache_key, $json, 60 * 60);
+            // レート制限エラーの場合（設定値を使用）
+            set_transient($cache_key, $json, $cache_ratelimit_minutes * 60);
         } else {
-            // その他のエラーは5分キャッシュ
-            set_transient($cache_key, $json, 5 * 60);
+            // その他のエラー（設定値を使用）
+            set_transient($cache_key, $json, $cache_error_minutes * 60);
         }
     } else {
-        // 成功した場合は24時間キャッシュ
-        set_transient($cache_key, $json, 24 * 60 * 60);
+        // 成功した場合（設定値を使用）
+        set_transient($cache_key, $json, $cache_success_hours * 60 * 60);
     }
     
     return $json;
@@ -489,5 +573,30 @@ add_action('rest_api_init', function () {
             return rest_ensure_response(['deleted' => true]);
         },
         'permission_callback' => '__return_true',
+    ]);
+
+    // 全キャッシュ削除用エンドポイント
+    register_rest_route('product-link-maker/v1', '/clear-cache/', [
+        'methods'  => 'POST',
+        'callback' => function ($request) {
+            global $wpdb;
+            
+            // rakuten_item_ で始まるすべてのtransientを削除
+            $wpdb->query(
+                $wpdb->prepare(
+                    "DELETE FROM {$wpdb->options} WHERE option_name LIKE %s OR option_name LIKE %s",
+                    $wpdb->esc_like('_transient_rakuten_item_') . '%',
+                    $wpdb->esc_like('_transient_timeout_rakuten_item_') . '%'
+                )
+            );
+            
+            return rest_ensure_response([
+                'success' => true,
+                'message' => 'すべてのキャッシュを削除しました。'
+            ]);
+        },
+        'permission_callback' => function() {
+            return current_user_can('manage_options');
+        },
     ]);
 });
