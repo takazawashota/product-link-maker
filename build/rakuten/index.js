@@ -439,7 +439,7 @@ function Edit({
                       borderRadius: '4px',
                       padding: '6px 16px',
                       display: 'inline-block',
-                      marginRight: '6px',
+                      marginRight: '8px',
                       textDecoration: 'none'
                     },
                     children: "Amazon"
@@ -459,7 +459,7 @@ function Edit({
                       borderRadius: '4px',
                       padding: '6px 16px',
                       display: 'inline-block',
-                      marginRight: '6px',
+                      marginRight: '8px',
                       textDecoration: 'none'
                     },
                     children: "\u697D\u5929"
@@ -479,7 +479,7 @@ function Edit({
                       borderRadius: '4px',
                       padding: '6px 16px',
                       display: 'inline-block',
-                      marginRight: '6px',
+                      marginRight: '8px',
                       textDecoration: 'none'
                     },
                     children: "Yahoo!\u30B7\u30E7\u30C3\u30D4\u30F3\u30B0"
@@ -499,7 +499,7 @@ function Edit({
                       borderRadius: '4px',
                       padding: '6px 16px',
                       display: 'inline-block',
-                      marginRight: '6px',
+                      marginRight: '8px',
                       textDecoration: 'none'
                     },
                     children: "\u30E1\u30EB\u30AB\u30EA"
@@ -507,11 +507,12 @@ function Edit({
                 }, "mercari"));
               }
               if (settings.dmm && attributes.showDmm !== false) {
+                const dmmUrl = `https://al.dmm.com/?lurl=${encodeURIComponent('https://www.dmm.com/search/=/searchstr=' + kwForUrl + '/analyze=V1ECCVYAUQQ_/limit=30/sort=rankprofile/')}&af_id=dummy&ch=link_tool&ch_id=link`;
                 buttons.push(/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)("div", {
                   className: "shoplinkdmm",
                   children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)("a", {
                     rel: "nofollow noopener",
-                    href: `https://www.dmm.com/search/=/searchstr=${encodeURIComponent(kwForUrl)}/`,
+                    href: dmmUrl,
                     target: "_blank",
                     style: {
                       backgroundColor: '#00bcd4',

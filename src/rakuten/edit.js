@@ -321,35 +321,36 @@ export default function Edit({ attributes, setAttributes }) {
 									if (settings.amazon && attributes.showAmazon !== false) {
 										buttons.push(
 											<div className="shoplinkamazon" key="amazon">
-												<a rel="nofollow noopener" href={`https://www.amazon.co.jp/gp/search?keywords=${encodeURIComponent(kwForUrl)}`} target="_blank" style={{ backgroundColor: '#f79901', color: '#fff', borderRadius: '4px', padding: '6px 16px', display: 'inline-block', marginRight: '6px', textDecoration: 'none' }}>Amazon</a>
+												<a rel="nofollow noopener" href={`https://www.amazon.co.jp/gp/search?keywords=${encodeURIComponent(kwForUrl)}`} target="_blank" style={{ backgroundColor: '#f79901', color: '#fff', borderRadius: '4px', padding: '6px 16px', display: 'inline-block', marginRight: '8px', textDecoration: 'none' }}>Amazon</a>
 											</div>
 										);
 									}
 									if (settings.rakuten && attributes.showRakuten !== false) {
 										buttons.push(
 											<div className="shoplinkrakuten" key="rakuten">
-												<a rel="nofollow noopener" href={`https://search.rakuten.co.jp/search/mall/${encodeURIComponent(kwForUrl)}/`} target="_blank" style={{ backgroundColor: '#bf0000', color: '#fff', borderRadius: '4px', padding: '6px 16px', display: 'inline-block', marginRight: '6px', textDecoration: 'none' }}>楽天</a>
+												<a rel="nofollow noopener" href={`https://search.rakuten.co.jp/search/mall/${encodeURIComponent(kwForUrl)}/`} target="_blank" style={{ backgroundColor: '#bf0000', color: '#fff', borderRadius: '4px', padding: '6px 16px', display: 'inline-block', marginRight: '8px', textDecoration: 'none' }}>楽天</a>
 											</div>
 										);
 									}
 									if (settings.yahoo && attributes.showYahoo !== false) {
 										buttons.push(
 											<div className="shoplinkyahoo" key="yahoo">
-												<a rel="nofollow noopener" href={`https://search.shopping.yahoo.co.jp/search?p=${encodeURIComponent(kwForUrl)}`} target="_blank" style={{ backgroundColor: '#e60033', color: '#fff', borderRadius: '4px', padding: '6px 16px', display: 'inline-block', marginRight: '6px', textDecoration: 'none' }}>Yahoo!ショッピング</a>
+												<a rel="nofollow noopener" href={`https://search.shopping.yahoo.co.jp/search?p=${encodeURIComponent(kwForUrl)}`} target="_blank" style={{ backgroundColor: '#e60033', color: '#fff', borderRadius: '4px', padding: '6px 16px', display: 'inline-block', marginRight: '8px', textDecoration: 'none' }}>Yahoo!ショッピング</a>
 											</div>
 										);
 									}
 									if (settings.mercari && attributes.showMercari !== false) {
 										buttons.push(
 											<div className="shoplinkmercari" key="mercari">
-												<a rel="nofollow noopener" href={`https://jp.mercari.com/search?keyword=${encodeURIComponent(kwForUrl)}`} target="_blank" style={{ backgroundColor: '#4dc9ff', color: '#fff', borderRadius: '4px', padding: '6px 16px', display: 'inline-block', marginRight: '6px', textDecoration: 'none' }}>メルカリ</a>
+												<a rel="nofollow noopener" href={`https://jp.mercari.com/search?keyword=${encodeURIComponent(kwForUrl)}`} target="_blank" style={{ backgroundColor: '#4dc9ff', color: '#fff', borderRadius: '4px', padding: '6px 16px', display: 'inline-block', marginRight: '8px', textDecoration: 'none' }}>メルカリ</a>
 											</div>
 										);
 									}
 									if (settings.dmm && attributes.showDmm !== false) {
+										const dmmUrl = `https://al.dmm.com/?lurl=${encodeURIComponent('https://www.dmm.com/search/=/searchstr=' + kwForUrl + '/analyze=V1ECCVYAUQQ_/limit=30/sort=rankprofile/')}&af_id=dummy&ch=link_tool&ch_id=link`;
 										buttons.push(
 											<div className="shoplinkdmm" key="dmm">
-												<a rel="nofollow noopener" href={`https://www.dmm.com/search/=/searchstr=${encodeURIComponent(kwForUrl)}/`} target="_blank" style={{ backgroundColor: '#00bcd4', color: '#fff', borderRadius: '4px', padding: '6px 16px', display: 'inline-block', marginRight: '6px', textDecoration: 'none' }}>DMM</a>
+												<a rel="nofollow noopener" href={dmmUrl} target="_blank" style={{ backgroundColor: '#00bcd4', color: '#fff', borderRadius: '4px', padding: '6px 16px', display: 'inline-block', marginRight: '6px', textDecoration: 'none' }}>DMM</a>
 											</div>
 										);
 									}
