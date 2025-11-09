@@ -1,0 +1,96 @@
+/*!***********************************************************************************************************************************************************************************************************************************************!*\
+  !*** css ./node_modules/css-loader/dist/cjs.js??ruleSet[1].rules[4].use[1]!./node_modules/postcss-loader/dist/cjs.js??ruleSet[1].rules[4].use[2]!./node_modules/sass-loader/dist/cjs.js??ruleSet[1].rules[4].use[3]!./src/rakuten/style.scss ***!
+  \***********************************************************************************************************************************************************************************************************************************************/
+/**
+ * The following styles get applied both on the front of your site
+ * and in the editor.
+ *
+ * Replace them with your own styles or remove the file completely.
+ */
+.product-item-box {
+  display: flex;
+  padding: 2.2rem 2.5rem;
+  border: 3px solid #dfdfdf;
+  position: relative;
+}
+
+.product-item-title {
+  font-size: 2rem;
+  line-height: 1.4;
+  margin-bottom: 1.3rem;
+}
+
+.product-item-thumb {
+  width: auto;
+  min-width: 16%;
+}
+
+.product-item-content {
+  width: auto;
+  padding-right: 2.4rem;
+}
+
+.rakuten-item-snippet {
+  font-size: 1.6rem;
+  margin-bottom: 1.4rem;
+}
+
+.product-item-maker {
+  margin-bottom: 0.5rem;
+}
+
+.product-item-price {
+  font-size: 1.6rem;
+  font-weight: bold;
+  margin-bottom: 0.5rem;
+}
+.product-item-price .item-price {
+  font-size: 1.8rem;
+  color: #e60012;
+  margin-left: 0.5rem;
+}
+
+.product-item-description {
+  font-size: 1.4rem;
+  margin-bottom: 1.9rem;
+}
+
+.product-item-buttons {
+  display: flex;
+}
+
+.product-item-buttons a {
+  display: flex;
+  padding: 6px 12px;
+  text-decoration: none;
+  font-size: 1.6rem;
+  font-weight: bold;
+  color: #fff;
+  background: #222;
+  margin-left: 1rem;
+  border-radius: 3px;
+}
+
+.product-item-buttons a img[decoding=async] {
+  display: none;
+}
+
+.product-item-buttons .shoplinkamazon a {
+  background: #f79901;
+}
+
+.product-item-buttons .shoplinkrakuten a {
+  background: #bf0000;
+}
+
+.product-item-buttons .shoplinkyahoo a {
+  background: #e60033;
+}
+
+.product-item-buttons .shoplinkmercari a {
+  background: #4dc9ff;
+}
+
+.product-item-buttons .shoplinkdmm a {
+  background: #00bcd4;
+}

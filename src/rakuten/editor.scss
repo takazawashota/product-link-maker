@@ -1,0 +1,48 @@
+/**
+ * The following styles get applied inside the editor only.
+ *
+ * Replace them with your own styles or remove the file completely.
+ */
+
+// .wp-block-create-block-rakuten {
+// 	border: 1px dotted #f00;
+// }
+
+.product-item-box {
+	padding: 22px 25px;
+}
+
+.product-item-title {
+	font-size: 20px;
+	margin-bottom: 13px;
+}
+
+.product-item-content {
+	padding-left: 24px;
+}
+
+.rakuten-item-snippet {
+	font-size: 16px;
+	margin-bottom: 13px;
+}
+
+.product-item-price {
+	font-size: 16px;
+	margin-bottom: 5px;
+
+	.item-price {
+		font-size: 18px;
+		margin-right: 5px;
+	}
+}
+
+
+.product-item-description {
+	font-size: 14px;
+	margin-bottom: 19px;
+}
+
+.product-item-buttons a {
+	font-size: 16px;
+	margin-right: 10px;
+}
