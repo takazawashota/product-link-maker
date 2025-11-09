@@ -25,7 +25,7 @@ export default function Edit({ attributes, setAttributes }) {
 		try {
 			// キャッシュ削除は行わず、常にキャッシュを利用する
 			const data = await apiFetch({
-				path: `/myplugin/v1/rakuten/?id=${encodeURIComponent(attributes.id || '')}&kw=${encodeURIComponent(attributes.kw || '')}&no=${encodeURIComponent(attributes.no || '')}`
+				path: `/product-link-maker/v1/rakuten/?id=${encodeURIComponent(attributes.id || '')}&kw=${encodeURIComponent(attributes.kw || '')}&no=${encodeURIComponent(attributes.no || '')}`
 			});
 			if (data?.Items?.[0]?.Item) {
 				const newItem = data.Items[0].Item;
@@ -59,7 +59,7 @@ export default function Edit({ attributes, setAttributes }) {
 		}
 		try {
 			await apiFetch({
-				path: '/myplugin/v1/rakuten-cache/',
+				path: '/product-link-maker/v1/rakuten-cache/',
 				method: 'POST',
 				data: {
 					id: attributes.id,
@@ -111,10 +111,10 @@ export default function Edit({ attributes, setAttributes }) {
 	return (
 		<>
 			<InspectorControls>
-				<PanelBody title={__('商品情報設定', 'rakuten')} initialOpen={true}>
+				<PanelBody title={__('商品情報設定', 'product-link-maker')} initialOpen={true}>
 					<TextControl
-						label={__('アイテムコード（ID）', 'rakuten')}
-						help={attributes.no ? __('商品番号が入力されている場合は入力できません', 'rakuten') : ''}
+						label={__('アイテムコード（ID）', 'product-link-maker')}
+						help={attributes.no ? __('商品番号が入力されている場合は入力できません', 'product-link-maker') : ''}
 						value={attributes.id}
 						disabled={!!attributes.no}
 						onChange={(val) => {
@@ -124,8 +124,8 @@ export default function Edit({ attributes, setAttributes }) {
 						style={attributes.no ? { backgroundColor: '#f5f5f5', color: '#aaa' } : {}}
 					/>
 					<TextControl
-						label={__('商品番号', 'rakuten')}
-						help={attributes.id ? __('アイテムコード（ID）が入力されている場合は入力できません', 'rakuten') : ''}
+						label={__('商品番号', 'product-link-maker')}
+						help={attributes.id ? __('アイテムコード（ID）が入力されている場合は入力できません', 'product-link-maker') : ''}
 						value={attributes.no}
 						disabled={!!attributes.id}
 						onChange={(val) => {
@@ -135,39 +135,39 @@ export default function Edit({ attributes, setAttributes }) {
 						style={attributes.id ? { backgroundColor: '#f5f5f5', color: '#aaa' } : {}}
 					/>
 					<FormTokenField
-						label={__('キーワード指定', 'rakuten')}
+						label={__('キーワード指定', 'product-link-maker')}
 						value={attributes.kw ? attributes.kw.split(',').filter(Boolean) : []}
 						onChange={(tokens) => setAttributes({ kw: tokens.join(',') })}
-						placeholder={__('キーワードを入力してEnter', 'rakuten')}
+						placeholder={__('キーワードを入力してEnter', 'product-link-maker')}
 					/>
 					<TextControl
-						label={__('ショップコード', 'rakuten')}
+						label={__('ショップコード', 'product-link-maker')}
 						value={attributes.shop}
 						onChange={(val) => setAttributes({ shop: val })}
 					/>
 					<FormTokenField
-						label={__('サーチ', 'rakuten')}
+						label={__('サーチ', 'product-link-maker')}
 						value={attributes.search ? attributes.search.split(',').filter(Boolean) : []}
 						onChange={(tokens) => setAttributes({ search: tokens.join(',') })}
-						placeholder={__('サーチを入力してEnter', 'rakuten')}
+						placeholder={__('サーチを入力してEnter', 'product-link-maker')}
 					/>
 					<TextareaControl
-						label={__('タイトル', 'rakuten')}
+						label={__('タイトル', 'product-link-maker')}
 						value={attributes.title}
 						onChange={(val) => setAttributes({ title: val })}
 					/>
 					<ToggleControl
-						label={__('店名表示', 'rakuten')}
+						label={__('店名表示', 'product-link-maker')}
 						checked={attributes.showShop !== false}
 						onChange={(val) => setAttributes({ showShop: val })}
 					/>
 					<ToggleControl
-						label={__('価格表示', 'rakuten')}
+						label={__('価格表示', 'product-link-maker')}
 						checked={attributes.price}
 						onChange={(val) => setAttributes({ price: val })}
 					/>
 					<TextareaControl
-						label={__('説明文', 'rakuten')}
+						label={__('説明文', 'product-link-maker')}
 						value={attributes.desc}
 						onChange={(val) => setAttributes({ desc: val })}
 					/>
@@ -197,7 +197,7 @@ export default function Edit({ attributes, setAttributes }) {
 												onClick={() => setAttributes({ imageUrl: '' })}
 												isDestructive
 											>
-												{__('画像をリセット', 'rakuten')}
+												{__('画像をリセット', 'product-link-maker')}
 											</Button>
 										)}
 									</Flex>
@@ -209,33 +209,33 @@ export default function Edit({ attributes, setAttributes }) {
 					<div style={{ margin: '24px 0 0 0' }} />
 					<Heading>ボタン表示設定</Heading>
 					<ToggleControl
-						label={__('Amazonボタンを表示', 'rakuten')}
+						label={__('Amazonボタンを表示', 'product-link-maker')}
 						checked={attributes.showAmazon !== false}
 						onChange={val => setAttributes({ showAmazon: val })}
 					/>
 					<ToggleControl
-						label={__('楽天ボタンを表示', 'rakuten')}
+						label={__('楽天ボタンを表示', 'product-link-maker')}
 						checked={attributes.showRakuten !== false}
 						onChange={val => setAttributes({ showRakuten: val })}
 					/>
 					<ToggleControl
-						label={__('Yahoo!ボタンを表示', 'rakuten')}
+						label={__('Yahoo!ボタンを表示', 'product-link-maker')}
 						checked={attributes.showYahoo !== false}
 						onChange={val => setAttributes({ showYahoo: val })}
 					/>
 					<ToggleControl
-						label={__('メルカリボタンを表示', 'rakuten')}
+						label={__('メルカリボタンを表示', 'product-link-maker')}
 						checked={attributes.showMercari !== false}
 						onChange={val => setAttributes({ showMercari: val })}
 					/>
 					<ToggleControl
-						label={__('DMMボタンを表示', 'rakuten')}
+						label={__('DMMボタンを表示', 'product-link-maker')}
 						checked={attributes.showDmm !== false}
 						onChange={val => setAttributes({ showDmm: val })}
 					/>
 
 				</PanelBody>
-				<PanelBody title={__('カスタムボタン（前）', 'rakuten')} initialOpen={false}>
+				<PanelBody title={__('カスタムボタン（前）', 'product-link-maker')} initialOpen={false}>
 					<p style={{ fontSize: '13px', color: '#757575', marginTop: 0 }}>
 						既存のボタンの前に表示されるカスタムボタンを追加できます
 					</p>
@@ -344,7 +344,7 @@ export default function Edit({ attributes, setAttributes }) {
 						ボタンを追加
 					</Button>
 				</PanelBody>
-				<PanelBody title={__('カスタムボタン（後）', 'rakuten')} initialOpen={false}>
+				<PanelBody title={__('カスタムボタン（後）', 'product-link-maker')} initialOpen={false}>
 					<p style={{ fontSize: '13px', color: '#757575', marginTop: 0 }}>
 						既存のボタンの後に表示されるカスタムボタンを追加できます
 					</p>
@@ -453,7 +453,7 @@ export default function Edit({ attributes, setAttributes }) {
 						ボタンを追加
 					</Button>
 				</PanelBody>
-				<PanelBody title={__('アフィリエイト設定', 'rakuten')} initialOpen={false}>
+				<PanelBody title={__('アフィリエイト設定', 'product-link-maker')} initialOpen={false}>
 					<Button
 						href={`${window.location.origin}/wp-admin/options-general.php?page=product-link-maker`}
 						target="_blank"
@@ -462,7 +462,7 @@ export default function Edit({ attributes, setAttributes }) {
 						icon="admin-generic"
 						style={{ marginTop: '5px', width: '100%', textAlign: 'center' }}
 					>
-						{__('アフィリエイト設定', 'rakuten')}
+						{__('アフィリエイト設定', 'product-link-maker')}
 					</Button>
 				</PanelBody>
 			</InspectorControls>
@@ -616,7 +616,6 @@ export default function Edit({ attributes, setAttributes }) {
 															borderRadius: '4px',
 															padding: '6px 16px',
 															display: 'inline-block',
-															marginRight: '8px',
 															textDecoration: 'none'
 														}}
 													>
@@ -625,9 +624,7 @@ export default function Edit({ attributes, setAttributes }) {
 												</div>
 											);
 										}
-									});
-
-									return buttons;
+									}); return buttons;
 								})()}
 							</div>
 							<div className="product-item-admin">

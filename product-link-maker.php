@@ -420,7 +420,7 @@ function get_rakuten_item_json_with_cache($rakuten_application_id, $rakuten_affi
 
 // REST APIエンドポイントを登録
 add_action('rest_api_init', function () {
-    register_rest_route('myplugin/v1', '/rakuten/', [
+    register_rest_route('product-link-maker/v1', '/rakuten/', [
         'methods'  => 'GET',
         'callback' => function ($request) {
             // 必要なパラメータを取得
@@ -455,7 +455,7 @@ add_action('rest_api_init', function () {
 
 // キャッシュ削除用REST APIエンドポイント
 add_action('rest_api_init', function () {
-    register_rest_route('myplugin/v1', '/rakuten-cache/', [
+    register_rest_route('product-link-maker/v1', '/rakuten-cache/', [
         'methods'  => 'POST',
         'callback' => function ($request) {
             $id = $request->get_param('id');
