@@ -155,6 +155,11 @@ export default function Edit({ attributes, setAttributes }) {
 						onChange={(val) => setAttributes({ title: val })}
 					/>
 					<ToggleControl
+						label={__('店名表示', 'rakuten')}
+						checked={attributes.showShop !== false}
+						onChange={(val) => setAttributes({ showShop: val })}
+					/>
+					<ToggleControl
 						label={__('価格表示', 'rakuten')}
 						checked={attributes.price}
 						onChange={(val) => setAttributes({ price: val })}
@@ -230,7 +235,7 @@ export default function Edit({ attributes, setAttributes }) {
 				</PanelBody>
 				<PanelBody title={__('アフィリエイト設定', 'rakuten')} initialOpen={false}>
 					<Button
-						href={`${window.location.origin}/wp-admin/admin.php?page=affiliate-settings`}
+						href={`${window.location.origin}/wp-admin/options-general.php?page=product-link-maker`}
 						target="_blank"
 						className=""
 						variant="primary"
@@ -288,7 +293,7 @@ export default function Edit({ attributes, setAttributes }) {
 								</a>
 							</div>
 							<div className="rakuten-item-snippet product-item-snippet">
-								{(item?.shopName || attributes.shop) && (
+								{attributes.showShop !== false && (item?.shopName || attributes.shop) && (
 									<div className="rakuten-item-maker product-item-maker">
 										{item?.shopName || attributes.shop}
 									</div>

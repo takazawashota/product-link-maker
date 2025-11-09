@@ -46,6 +46,10 @@
       "type": "boolean",
       "default": false
     },
+    "showShop": {
+      "type": "boolean",
+      "default": true
+    },
     "desc": {
       "type": "string",
       "default": ""

@@ -68,12 +68,12 @@ add_action( 'init', 'create_block_rakuten_block_init' );
 add_action('admin_menu', 'affiliate_settings_add_admin_menu');
 add_action('admin_init', 'affiliate_settings_init');
 function affiliate_settings_add_admin_menu() {
-    add_menu_page(
-        'アフィリエイト設定',
-        'アフィリエイト設定',
-        'manage_options',
-        'affiliate-settings',
-        'affiliate_settings_options_page'
+    add_options_page(
+        'Product Link Maker',      // ページタイトル
+        'Product Link Maker',      // メニュータイトル
+        'manage_options',          // 必要な権限
+        'product-link-maker',      // メニューのスラッグ
+        'affiliate_settings_options_page'  // 表示する関数
     );
 }
 function affiliate_settings_init() {
@@ -83,67 +83,237 @@ function affiliate_settings_options_page() {
     $options = get_option('affiliate_settings');
     ?>
     <div class="wrap">
-        <h1>アフィリエイト設定</h1>
+        <h1>
+            Product Link Maker
+        </h1>
+        <p class="description" style="margin-bottom: 20px;">各アフィリエイトサービスのIDを設定してください。設定したサービスのボタンが商品リンクに表示されます。</p>
+        
         <form method="post" action="options.php">
             <?php settings_fields('affiliateSettings'); ?>
 
-            <h2>Amazon</h2>
-            <table class="form-table">
-                <tr>
-                    <th scope="row">アクセスキーID</th>
-                    <td><input type="text" name="affiliate_settings[amazon_access_key]" value="<?= esc_attr($options['amazon_access_key'] ?? '') ?>" class="regular-text" /></td>
-                </tr>
-                <tr>
-                    <th scope="row">シークレットキー</th>
-                    <td><input type="text" name="affiliate_settings[amazon_secret_key]" value="<?= esc_attr($options['amazon_secret_key'] ?? '') ?>" class="regular-text" /></td>
-                </tr>
-                <tr>
-                    <th scope="row">トラッキングID</th>
-                    <td><input type="text" name="affiliate_settings[amazon_tracking_id]" value="<?= esc_attr($options['amazon_tracking_id'] ?? '') ?>" class="regular-text" /></td>
-                </tr>
-            </table>
+            <style>
+                .plm-card {
+                    background: #fff;
+                    border: 1px solid #ddd;
+                    border-radius: 8px;
+                    padding: 20px 24px;
+                    margin-bottom: 20px;
+                    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+                }
+                .plm-card h2 {
+                    margin-top: 0;
+                    padding-bottom: 12px;
+                    border-bottom: 2px solid #f0f0f0;
+                    font-size: 18px;
+                    display: flex;
+                    align-items: center;
+                    gap: 8px;
+                }
+                .plm-card h2 .dashicons {
+                    font-size: 24px;
+                    width: 24px;
+                    height: 24px;
+                }
+                .plm-card .form-table th {
+                    padding: 12px 10px 12px 0;
+                    font-weight: 600;
+                }
+                .plm-card .form-table td {
+                    padding: 12px 0;
+                }
+                .plm-card .form-table input[type="text"] {
+                    width: 100%;
+                    max-width: 500px;
+                }
+                .plm-card p.description {
+                    margin: 8px 0 0 0;
+                    font-size: 13px;
+                    color: #666;
+                }
+                .plm-status-badge {
+                    display: inline-block;
+                    padding: 2px 8px;
+                    border-radius: 3px;
+                    font-size: 11px;
+                    font-weight: 600;
+                    margin-left: 8px;
+                }
+                .plm-status-active {
+                    background: #d4edda;
+                    color: #155724;
+                }
+                .plm-status-inactive {
+                    background: #f8d7da;
+                    color: #721c24;
+                }
+            </style>
 
-            <h2>楽天</h2>
-            <table class="form-table">
-                <tr>
-                    <th scope="row">楽天アプリケーションID</th>
-                    <td><input type="text" name="affiliate_settings[rakuten_app_id]" value="<?= esc_attr($options['rakuten_app_id'] ?? '') ?>" class="regular-text" /></td>
-                </tr>
-                <tr>
-                    <th scope="row">楽天アフィリエイトID</th>
-                    <td><input type="text" name="affiliate_settings[rakuten_affiliate_id]" value="<?= esc_attr($options['rakuten_affiliate_id'] ?? '') ?>" class="regular-text" /></td>
-                </tr>
-            </table>
+            <!-- Amazon -->
+            <div class="plm-card">
+                <h2>
+                    <span class="dashicons dashicons-cart" style="color: #ff9900;"></span>
+                    Amazon
+                    <?php if (!empty($options['amazon_tracking_id'])): ?>
+                        <span class="plm-status-badge plm-status-active">設定済み</span>
+                    <?php else: ?>
+                        <span class="plm-status-badge plm-status-inactive">未設定</span>
+                    <?php endif; ?>
+                </h2>
+                <table class="form-table">
+                    <tr>
+                        <th scope="row">トラッキングID</th>
+                        <td>
+                            <input type="text" name="affiliate_settings[amazon_tracking_id]" 
+                                   value="<?= esc_attr($options['amazon_tracking_id'] ?? '') ?>" 
+                                   class="regular-text" 
+                                   placeholder="例: yourname-22" />
+                            <p class="description">Amazon アソシエイトのトラッキングIDを入力してください。</p>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th scope="row">アクセスキーID</th>
+                        <td>
+                            <input type="text" name="affiliate_settings[amazon_access_key]" 
+                                   value="<?= esc_attr($options['amazon_access_key'] ?? '') ?>" 
+                                   class="regular-text" 
+                                   placeholder="（オプション）" />
+                            <p class="description">Product Advertising API用（オプション）</p>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th scope="row">シークレットキー</th>
+                        <td>
+                            <input type="password" name="affiliate_settings[amazon_secret_key]" 
+                                   value="<?= esc_attr($options['amazon_secret_key'] ?? '') ?>" 
+                                   class="regular-text" 
+                                   placeholder="（オプション）" />
+                            <p class="description">Product Advertising API用（オプション）</p>
+                        </td>
+                    </tr>
+                </table>
+            </div>
 
-            <h2>Yahoo!ショッピング</h2>
-            <table class="form-table">
-                <tr>
-                    <th scope="row">バリューコマースSID</th>
-                    <td><input type="text" name="affiliate_settings[yahoo_sid]" value="<?= esc_attr($options['yahoo_sid'] ?? '') ?>" class="regular-text" /></td>
-                </tr>
-                <tr>
-                    <th scope="row">バリューコマースPID</th>
-                    <td><input type="text" name="affiliate_settings[yahoo_pid]" value="<?= esc_attr($options['yahoo_pid'] ?? '') ?>" class="regular-text" /></td>
-                </tr>
-            </table>
+            <!-- 楽天 -->
+            <div class="plm-card">
+                <h2>
+                    <span class="dashicons dashicons-store" style="color: #bf0000;"></span>
+                    楽天
+                    <?php if (!empty($options['rakuten_affiliate_id'])): ?>
+                        <span class="plm-status-badge plm-status-active">設定済み</span>
+                    <?php else: ?>
+                        <span class="plm-status-badge plm-status-inactive">未設定</span>
+                    <?php endif; ?>
+                </h2>
+                <table class="form-table">
+                    <tr>
+                        <th scope="row">楽天アプリケーションID</th>
+                        <td>
+                            <input type="text" name="affiliate_settings[rakuten_app_id]" 
+                                   value="<?= esc_attr($options['rakuten_app_id'] ?? '') ?>" 
+                                   class="regular-text" 
+                                   placeholder="例: 1234567890123456789" />
+                            <p class="description">楽天ウェブサービスで取得したアプリケーションIDを入力してください。</p>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th scope="row">楽天アフィリエイトID</th>
+                        <td>
+                            <input type="text" name="affiliate_settings[rakuten_affiliate_id]" 
+                                   value="<?= esc_attr($options['rakuten_affiliate_id'] ?? '') ?>" 
+                                   class="regular-text" 
+                                   placeholder="例: 12345678.90123456.12345678.90123456" />
+                            <p class="description">楽天アフィリエイトIDを入力してください。</p>
+                        </td>
+                    </tr>
+                </table>
+            </div>
 
-            <h2>メルカリ</h2>
-            <table class="form-table">
-                <tr>
-                    <th scope="row">メルカリアンバサダーID</th>
-                    <td><input type="text" name="affiliate_settings[mercari_id]" value="<?= esc_attr($options['mercari_id'] ?? '') ?>" class="regular-text" /></td>
-                </tr>
-            </table>
+            <!-- Yahoo!ショッピング -->
+            <div class="plm-card">
+                <h2>
+                    <span class="dashicons dashicons-tag" style="color: #ff0033;"></span>
+                    Yahoo!ショッピング
+                    <?php if (!empty($options['yahoo_sid']) && !empty($options['yahoo_pid'])): ?>
+                        <span class="plm-status-badge plm-status-active">設定済み</span>
+                    <?php else: ?>
+                        <span class="plm-status-badge plm-status-inactive">未設定</span>
+                    <?php endif; ?>
+                </h2>
+                <table class="form-table">
+                    <tr>
+                        <th scope="row">バリューコマースSID</th>
+                        <td>
+                            <input type="text" name="affiliate_settings[yahoo_sid]" 
+                                   value="<?= esc_attr($options['yahoo_sid'] ?? '') ?>" 
+                                   class="regular-text" 
+                                   placeholder="例: 1234567" />
+                            <p class="description">バリューコマースのSID（サイトID）を入力してください。</p>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th scope="row">バリューコマースPID</th>
+                        <td>
+                            <input type="text" name="affiliate_settings[yahoo_pid]" 
+                                   value="<?= esc_attr($options['yahoo_pid'] ?? '') ?>" 
+                                   class="regular-text" 
+                                   placeholder="例: 890123456" />
+                            <p class="description">バリューコマースのPID（プロモーションID）を入力してください。</p>
+                        </td>
+                    </tr>
+                </table>
+            </div>
 
-            <h2>DMM</h2>
-            <table class="form-table">
-                <tr>
-                    <th scope="row">DMMアフィリエイトID</th>
-                    <td><input type="text" name="affiliate_settings[dmm_id]" value="<?= esc_attr($options['dmm_id'] ?? '') ?>" class="regular-text" /></td>
-                </tr>
-            </table>
+            <!-- メルカリ -->
+            <div class="plm-card">
+                <h2>
+                    <span class="dashicons dashicons-smartphone" style="color: #4dc9ff;"></span>
+                    メルカリ
+                    <?php if (!empty($options['mercari_id'])): ?>
+                        <span class="plm-status-badge plm-status-active">設定済み</span>
+                    <?php else: ?>
+                        <span class="plm-status-badge plm-status-inactive">未設定</span>
+                    <?php endif; ?>
+                </h2>
+                <table class="form-table">
+                    <tr>
+                        <th scope="row">メルカリアンバサダーID</th>
+                        <td>
+                            <input type="text" name="affiliate_settings[mercari_id]" 
+                                   value="<?= esc_attr($options['mercari_id'] ?? '') ?>" 
+                                   class="regular-text" 
+                                   placeholder="例: your_ambassador_id" />
+                            <p class="description">メルカリアンバサダープログラムのIDを入力してください。</p>
+                        </td>
+                    </tr>
+                </table>
+            </div>
 
-            <?php submit_button('保存'); ?>
+            <!-- DMM -->
+            <div class="plm-card">
+                <h2>
+                    <span class="dashicons dashicons-video-alt3" style="color: #00bcd4;"></span>
+                    DMM
+                    <?php if (!empty($options['dmm_id'])): ?>
+                        <span class="plm-status-badge plm-status-active">設定済み</span>
+                    <?php else: ?>
+                        <span class="plm-status-badge plm-status-inactive">未設定</span>
+                    <?php endif; ?>
+                </h2>
+                <table class="form-table">
+                    <tr>
+                        <th scope="row">DMMアフィリエイトID</th>
+                        <td>
+                            <input type="text" name="affiliate_settings[dmm_id]" 
+                                   value="<?= esc_attr($options['dmm_id'] ?? '') ?>" 
+                                   class="regular-text" 
+                                   placeholder="例: yourname-001" />
+                            <p class="description">DMMアフィリエイトIDを入力してください。</p>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+
+            <?php submit_button('設定を保存', 'primary large'); ?>
         </form>
     </div>
     <?php

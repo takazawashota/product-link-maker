@@ -51,6 +51,10 @@ return array(
 				'type' => 'boolean',
 				'default' => false
 			),
+			'showShop' => array(
+				'type' => 'boolean',
+				'default' => true
+			),
 			'desc' => array(
 				'type' => 'string',
 				'default' => ''

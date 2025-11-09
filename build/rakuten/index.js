@@ -8,7 +8,7 @@
   \********************************/
 /***/ ((module) => {
 
-module.exports = /*#__PURE__*/JSON.parse('{"$schema":"https://schemas.wp.org/trunk/block.json","apiVersion":3,"name":"create-block/rakuten","version":"0.1.0","title":"Rakuten","category":"widgets","icon":"smiley","description":"Example block scaffolded with Create Block tool.","example":{},"supports":{"html":false},"textdomain":"rakuten","editorScript":"file:./index.js","editorStyle":"file:./index.css","style":"file:./style-index.css","render":"file:./render.php","viewScript":"file:./view.js","attributes":{"id":{"type":"string","default":""},"no":{"type":"string","default":""},"kw":{"type":"string","default":""},"shop":{"type":"string","default":""},"search":{"type":"string","default":""},"title":{"type":"string","default":""},"price":{"type":"boolean","default":false},"desc":{"type":"string","default":""},"imageUrl":{"type":"string","default":""},"showAmazon":{"type":"boolean","default":true},"showRakuten":{"type":"boolean","default":true},"showYahoo":{"type":"boolean","default":true},"showMercari":{"type":"boolean","default":true},"showDmm":{"type":"boolean","default":true}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"$schema":"https://schemas.wp.org/trunk/block.json","apiVersion":3,"name":"create-block/rakuten","version":"0.1.0","title":"Rakuten","category":"widgets","icon":"smiley","description":"Example block scaffolded with Create Block tool.","example":{},"supports":{"html":false},"textdomain":"rakuten","editorScript":"file:./index.js","editorStyle":"file:./index.css","style":"file:./style-index.css","render":"file:./render.php","viewScript":"file:./view.js","attributes":{"id":{"type":"string","default":""},"no":{"type":"string","default":""},"kw":{"type":"string","default":""},"shop":{"type":"string","default":""},"search":{"type":"string","default":""},"title":{"type":"string","default":""},"price":{"type":"boolean","default":false},"showShop":{"type":"boolean","default":true},"desc":{"type":"string","default":""},"imageUrl":{"type":"string","default":""},"showAmazon":{"type":"boolean","default":true},"showRakuten":{"type":"boolean","default":true},"showYahoo":{"type":"boolean","default":true},"showMercari":{"type":"boolean","default":true},"showDmm":{"type":"boolean","default":true}}}');
 
 /***/ }),
 
@@ -221,6 +221,12 @@ function Edit({
             title: val
           })
         }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)(_wordpress_components__WEBPACK_IMPORTED_MODULE_2__.ToggleControl, {
+          label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_0__.__)('店名表示', 'rakuten'),
+          checked: attributes.showShop !== false,
+          onChange: val => setAttributes({
+            showShop: val
+          })
+        }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)(_wordpress_components__WEBPACK_IMPORTED_MODULE_2__.ToggleControl, {
           label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_0__.__)('価格表示', 'rakuten'),
           checked: attributes.price,
           onChange: val => setAttributes({
@@ -319,7 +325,7 @@ function Edit({
         title: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_0__.__)('アフィリエイト設定', 'rakuten'),
         initialOpen: false,
         children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)(_wordpress_components__WEBPACK_IMPORTED_MODULE_2__.Button, {
-          href: `${window.location.origin}/wp-admin/admin.php?page=affiliate-settings`,
+          href: `${window.location.origin}/wp-admin/options-general.php?page=product-link-maker`,
           target: "_blank",
           className: "",
           variant: "primary",
@@ -397,7 +403,7 @@ function Edit({
             })
           }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsxs)("div", {
             className: "rakuten-item-snippet product-item-snippet",
-            children: [(item?.shopName || attributes.shop) && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)("div", {
+            children: [attributes.showShop !== false && (item?.shopName || attributes.shop) && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)("div", {
               className: "rakuten-item-maker product-item-maker",
               children: item?.shopName || attributes.shop
             }), attributes.price && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsxs)("div", {

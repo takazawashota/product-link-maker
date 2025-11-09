@@ -12,6 +12,7 @@ $shop  = isset( $attributes['shop'] ) ? esc_html( $attributes['shop'] ) : '';
 $search = isset( $attributes['search'] ) ? esc_html( $attributes['search'] ) : '';
 $title = isset( $attributes['title'] ) ? esc_html( $attributes['title'] ) : '';
 $price = !empty( $attributes['price'] );
+$showShop = isset( $attributes['showShop'] ) ? $attributes['showShop'] : true;
 $desc  = isset( $attributes['desc'] ) ? esc_html( $attributes['desc'] ) : '';
 $imageUrl = isset( $attributes['imageUrl'] ) ? esc_html( $attributes['imageUrl'] ) : '';
 
@@ -99,7 +100,7 @@ endif;
 				</a>
 			</div>
 			<div class="rakuten-item-snippet product-item-snippet">
-				<?php if ( $shop || !empty($shopName) ) : ?>
+				<?php if ( $showShop && ($shop || !empty($shopName)) ) : ?>
 					<div class="rakuten-item-maker product-item-maker"><?php echo esc_html($shop ?: $shopName); ?></div>
 				<?php endif; ?>
 				<?php if ( $price ) : ?>
