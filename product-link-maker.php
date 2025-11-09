@@ -423,7 +423,7 @@ function affiliate_settings_options_page() {
 // エディター用のスクリプトを登録
 function myplugin_enqueue_editor_assets() {
     wp_enqueue_script(
-        'my-custom-block-js',
+        'product-link-maker-editor',
         plugins_url('build/index.js', __FILE__),
         ['wp-blocks', 'wp-element', 'wp-editor', 'wp-components', 'wp-data'],
         filemtime(plugin_dir_path(__FILE__) . 'build/index.js')
@@ -431,7 +431,7 @@ function myplugin_enqueue_editor_assets() {
 
     // 設定をJSに渡す
     $affiliate_settings = get_option('affiliate_settings', []);
-    wp_localize_script('my-custom-block-js', 'MyAffiliateSettings', [
+    wp_localize_script('product-link-maker-editor', 'ProductLinkMakerSettings', [
         'amazon'  => !empty($affiliate_settings['amazon_tracking_id']),
         'rakuten' => !empty($affiliate_settings['rakuten_affiliate_id']),
         'yahoo'   => !empty($affiliate_settings['yahoo_sid']) && !empty($affiliate_settings['yahoo_pid']),

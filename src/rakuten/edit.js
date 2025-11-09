@@ -536,7 +536,7 @@ export default function Edit({ attributes, setAttributes }) {
 								{attributes.kw && attributes.kw.split(',').filter(Boolean).length > 0 && (() => {
 									const kwArray = attributes.kw.split(',').map(s => s.trim()).filter(Boolean);
 									const kwForUrl = kwArray.join(' ');
-									const settings = window.MyAffiliateSettings || {};
+									const settings = window.ProductLinkMakerSettings || {};
 									const buttons = [];
 
 									// カスタムボタン（前）
