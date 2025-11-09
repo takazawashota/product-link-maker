@@ -101,3 +101,36 @@
 .product-item-buttons .shoplinkdmm a {
 	background: #00bcd4;
 }
+
+// レスポンシブ対応
+@media (max-width: 768px) {
+	.product-item-box {
+		flex-direction: column;
+		padding: 2rem 1.5rem;
+	}
+
+	.product-item-thumb {
+		width: 100%;
+		min-width: 100%;
+		margin-bottom: 1.5rem;
+		text-align: center;
+	}
+
+	.product-item-content {
+		width: 100%;
+		padding-left: 0;
+	}
+
+	.product-item-title {
+		font-size: 1.7rem;
+	}
+
+	.product-item-buttons {
+		gap: 0.7rem;
+	}
+
+	.product-item-buttons a {
+		font-size: 1.4rem;
+		padding: 5px 10px;
+	}
+}

@@ -45,3 +45,36 @@
 .product-item-buttons a {
 	font-size: 16px;
 }
+
+// レスポンシブ対応（エディター内）
+@media (max-width: 768px) {
+	.product-item-box {
+		flex-direction: column;
+		padding: 20px 15px;
+	}
+
+	.product-item-thumb {
+		width: 100%;
+		min-width: 100%;
+		margin-bottom: 15px;
+		text-align: center;
+	}
+
+	.product-item-content {
+		width: 100%;
+		padding-left: 0;
+	}
+
+	.product-item-title {
+		font-size: 17px;
+	}
+
+	.product-item-buttons {
+		gap: 7px;
+	}
+
+	.product-item-buttons a {
+		font-size: 14px;
+		padding: 5px 10px;
+	}
+}
