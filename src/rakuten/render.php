@@ -141,11 +141,11 @@ endif;
 						<a rel="nofollow noopener" href="https://jp.mercari.com/search?afid=<?php echo esc_attr($mercari_ambassador_id); ?>&keyword=<?php echo urlencode($kw_for_url); ?>" target="_blank">メルカリ</a>
 					</div>
 				<?php endif; ?>
-				<?php if ($showDmm && !empty($dmm_affiliate_id)) : ?>
-					<div class="shoplinkdmm">
-						<a rel="nofollow noopener" href="https://al.dmm.com/?lurl=<?php echo urlencode('https://www.dmm.com/search/=/searchstr=' . $kw_for_url . '/analyze=V1ECCVYAUQQ_/limit=30/sort=rankprofile/'); ?>&af_id=<?php echo esc_attr($dmm_affiliate_id); ?>&ch=link_tool&ch_id=link" target="_blank">DMM</a>
-					</div>
-				<?php endif; ?>
+			<?php if ($showDmm && !empty($dmm_affiliate_id)) : ?>
+				<div class="shoplinkdmm">
+					<a rel="nofollow noopener" href="https://www.dmm.com/search/=/searchstr=<?php echo urlencode($kw_for_url); ?>/analyze=V1ECCVYAUQQ_/limit=30/sort=rankprofile/?utm_medium=dmm_affiliate&utm_source=<?php echo esc_attr($dmm_affiliate_id); ?>&utm_term=dmm.com&utm_campaign=affiliate_link_tool&utm_content=link" target="_blank">DMM</a>
+				</div>
+			<?php endif; ?>
 			<?php endif; ?>
 			</div>
 		</div>

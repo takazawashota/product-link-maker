@@ -347,7 +347,7 @@ export default function Edit({ attributes, setAttributes }) {
 										);
 									}
 									if (settings.dmm && attributes.showDmm !== false) {
-										const dmmUrl = `https://al.dmm.com/?lurl=${encodeURIComponent('https://www.dmm.com/search/=/searchstr=' + kwForUrl + '/analyze=V1ECCVYAUQQ_/limit=30/sort=rankprofile/')}&af_id=dummy&ch=link_tool&ch_id=link`;
+										const dmmUrl = `https://www.dmm.com/search/=/searchstr=${encodeURIComponent(kwForUrl)}/analyze=V1ECCVYAUQQ_/limit=30/sort=rankprofile/?utm_medium=dmm_affiliate&utm_source=dummy&utm_term=dmm.com&utm_campaign=affiliate_link_tool&utm_content=link`;
 										buttons.push(
 											<div className="shoplinkdmm" key="dmm">
 												<a rel="nofollow noopener" href={dmmUrl} target="_blank" style={{ backgroundColor: '#00bcd4', color: '#fff', borderRadius: '4px', padding: '6px 16px', display: 'inline-block', marginRight: '6px', textDecoration: 'none' }}>DMM</a>
