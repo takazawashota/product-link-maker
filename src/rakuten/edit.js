@@ -243,9 +243,13 @@ export default function Edit({ attributes, setAttributes }) {
 			</InspectorControls>
 			<div {...useBlockProps()}>
 				{isLoading ? (
-					<div style={{ padding: '32px', textAlign: 'center', color: '#888' }}>Loading...</div>
+					<div style={{ padding: '32px', textAlign: 'center', color: '#888', backgroundColor: '#f5f5f5', border: '1px dashed #ccc', borderRadius: '4px' }}>
+						Loading...
+					</div>
 				) : error ? (
-					<div style={{ padding: '32px', textAlign: 'center', color: 'red' }}>{error}</div>
+					<div style={{ padding: '32px', textAlign: 'center', color: '#d63638', backgroundColor: '#fff0f0', border: '1px solid #d63638', borderRadius: '4px' }}>
+						{error}
+					</div>
 				) : !attributes.id && !attributes.no && !attributes.kw ? (
 					<div style={{ padding: '32px', textAlign: 'center', color: '#666', backgroundColor: '#f5f5f5', border: '1px dashed #ccc', borderRadius: '4px' }}>
 						商品情報を設定してください

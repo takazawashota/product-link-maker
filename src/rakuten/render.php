@@ -147,9 +147,6 @@ endif;
 				<?php endif; ?>
 			<?php endif; ?>
 			</div>
-			<div class="product-item-admin">
-				<span class="product-affiliate-rate">料率：<?php echo isset($affiliateRate) && $affiliateRate !== '' ? esc_html($affiliateRate) . '%' : ''; ?></span>
-			</div>
 		</div>
 	</div>
 </div>

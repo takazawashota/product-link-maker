@@ -11,9 +11,10 @@
 // 	padding: 2px;
 // }
 
-// .product-item-admin {
-// 	display: none;
-// }
+.product-item-admin {
+	margin-top: 0.7rem;
+	font-size: 13px;
+}
 
 // .rakuten-item-box::after {
 // 	content: "\e903";
@@ -22,13 +23,16 @@
 
 .product-item-box {
 	display: flex;
-	padding: 2.2rem 2.5rem;
-	border: 3px solid #dfdfdf;
+	padding: 3rem 2.5rem;
+	// border: 3px solid #dfdfdf;
 	position: relative;
+	background: #fff;
+	box-shadow: 0 0 10px #eee;
+	border-radius: 5px;
 }
 
 .product-item-title {
-	font-size: 2rem;
+	font-size: 1.7rem;
 	line-height: 1.4;
 	margin-bottom: 1.3rem;
 }
