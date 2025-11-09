@@ -60,7 +60,29 @@ function create_block_rakuten_block_init() {
 }
 add_action( 'init', 'create_block_rakuten_block_init' );
 
-
+// カスタムブロックカテゴリーを追加
+function product_link_maker_block_categories( $categories ) {
+	// ウィジェットカテゴリーの位置を探す
+	$widget_index = 0;
+	foreach ( $categories as $index => $category ) {
+		if ( isset( $category['slug'] ) && $category['slug'] === 'widgets' ) {
+			$widget_index = $index;
+			break;
+		}
+	}
+	
+	// ウィジェットの直前に挿入
+	$custom_category = [
+		'slug'  => 'product-link-maker',
+		'title' => 'Product Link Maker',
+		'icon'  => 'cart',
+	];
+	
+	array_splice( $categories, $widget_index, 0, [ $custom_category ] );
+	
+	return $categories;
+}
+add_filter( 'block_categories_all', 'product_link_maker_block_categories' );
 
 // 以下独自のコード
 

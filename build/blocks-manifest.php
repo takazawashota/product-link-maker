@@ -6,10 +6,10 @@ return array(
 		'apiVersion' => 3,
 		'name' => 'create-block/rakuten',
 		'version' => '0.1.0',
-		'title' => 'Rakuten',
-		'category' => 'widgets',
-		'icon' => 'smiley',
-		'description' => 'Example block scaffolded with Create Block tool.',
+		'title' => '楽天商品リンク',
+		'category' => 'product-link-maker',
+		'icon' => 'cart',
+		'description' => '楽天市場の商品情報を取得して、アフィリエイトリンク付きの商品カードを表示するブロックです。',
 		'example' => array(
 			
 		),
