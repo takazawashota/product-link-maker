@@ -14,9 +14,12 @@
 	display: flex;
 	padding: 30px 25px;
 	position: relative;
-	background: #fff;
-	box-shadow: 0 0 10px #eee;
-	border-radius: 5px;
+	border: 1px solid #e1e8ed;
+	border-radius: 8px;
+	overflow: hidden;
+	transition: box-shadow 0.3s ease;
+	background-color: #fff;
+	max-width: 100%;
 }
 
 .product-item-title {
