@@ -39,7 +39,7 @@ $dmm_affiliate_id = $affiliate_settings['dmm_id'] ?? '';
 
 $item_id = $id; // 商品ID
 $keyword = $no ?: $kw; // 商品番号があれば優先してキーワードに
-$json = get_rakuten_item_json_with_cache($rakuten_application_id, $rakuten_affiliate_id, $item_id, $keyword, $no);
+$json = plm_get_rakuten_item_cached($rakuten_application_id, $rakuten_affiliate_id, $item_id, $keyword, $no);
 // echo $json;
 $data = json_decode($json, true);
 
