@@ -82,10 +82,6 @@
   margin-bottom: 8px;
   color: #6b7280;
 }
-.plm-product-maker::before {
-  content: "🏷 ";
-  margin-left: 4px;
-}
 
 .plm-product-price {
   display: flex;

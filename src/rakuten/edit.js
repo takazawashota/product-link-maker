@@ -268,9 +268,8 @@ function renderAllButtons(attributes) {
 		buttons.push(renderShopButton('mercari', `https://jp.mercari.com/search?keyword=${encodeURIComponent(kwForUrl)}`, BUTTON_STYLES.mercari));
 	}
 	if (settings.dmm && attributes.showDmm !== false) {
-		// DMMは半角スペース区切りでキーワードを渡す
-		const dmmSearchStr = kwArray.map(kw => encodeURIComponent(kw)).join(' ');
-		const dmmUrl = `https://www.dmm.com/search/=/searchstr=${dmmSearchStr}/analyze=V1ECCVYAUQQ_/limit=30/sort=rankprofile/?utm_medium=dmm_affiliate&utm_source=dummy&utm_term=dmm.com&utm_campaign=affiliate_link_tool&utm_content=link`;
+		// DMM: キーワード設定を使用
+		const dmmUrl = `https://al.dmm.com/?lurl=https%3A%2F%2Fwww.dmm.com%2Fsearch%2F%3D%2Fsearchstr%3D${encodeURIComponent(kwForUrl)}%2Fanalyze%3DV1ECCVYAUQQ_%2Flimit%3D30%2Fsort%3Drankprofile%2F&af_id=dummy&ch=link_tool&ch_id=link`;
 		buttons.push(renderShopButton('dmm', dmmUrl, BUTTON_STYLES.dmm));
 	}
 

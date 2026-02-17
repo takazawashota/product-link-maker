@@ -170,12 +170,11 @@ endif;
 					</div>
 				<?php endif; ?>
 			<?php if ( $showDmm && ! empty( $dmm_affiliate_id ) ) : 
-				// DMMは半角スペース区切りでキーワードを渡す（+記号にならないよう個別にエンコード）
-				$dmm_keywords = array_filter( array_map( 'trim', explode( ',', $kw ) ) );
-				$dmm_search_str = implode( ' ', array_map( 'rawurlencode', $dmm_keywords ) );
+				// DMM: キーワード設定を使用
+				$dmm_url = 'https://al.dmm.com/?lurl=https%3A%2F%2Fwww.dmm.com%2Fsearch%2F%3D%2Fsearchstr%3D' . rawurlencode( $kw_for_url ) . '%2Fanalyze%3DV1ECCVYAUQQ_%2Flimit%3D30%2Fsort%3Drankprofile%2F&af_id=' . trim( $dmm_affiliate_id ) . '&ch=link_tool&ch_id=link';
 			?>
 				<div class="plm-shop-dmm">
-					<a rel="nofollow noopener" href="https://www.dmm.com/search/=/searchstr=<?php echo $dmm_search_str; ?>/analyze=V1ECCVYAUQQ_/limit=30/sort=rankprofile/?utm_medium=dmm_affiliate&utm_source=<?php echo esc_attr( $dmm_affiliate_id ); ?>&utm_term=dmm.com&utm_campaign=affiliate_link_tool&utm_content=link" target="_blank">DMM</a>
+					<a rel="nofollow noopener" href="<?php echo esc_url( $dmm_url ); ?>" target="_blank">DMM</a>
 				</div>
 			<?php endif; ?>
 			<?php
