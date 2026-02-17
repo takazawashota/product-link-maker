@@ -329,7 +329,7 @@ function ProductPreview({ attributes, item, imageUrl, imageKey, itemTitle, itemL
 					{attributes.price && (
 						<div className="plm-product-price">
 							<span className="plm-price-value">
-								{item?.itemPrice ? `￥ ${item.itemPrice}` : '価格情報なし'}
+								{item?.itemPrice ? `￥ ${Number(item.itemPrice).toLocaleString('ja-JP')}` : '価格情報なし'}
 							</span>
 							<span className="acquired-date">
 								{item?.itemPrice ? `（${new Date().toLocaleDateString()} 時点）` : ''}

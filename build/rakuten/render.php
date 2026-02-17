@@ -129,7 +129,7 @@ endif;
 				<?php endif; ?>
 				<?php if ( $price ) : ?>
 					<div class="plm-product-price">
-						<span class="plm-price-value">¥ <?php echo esc_html($itemPrice ?? '価格情報なし'); ?></span>
+					<span class="plm-price-value">¥ <?php echo esc_html($itemPrice ? number_format($itemPrice) : '価格情報なし'); ?></span>
 						<span class="acquired-date">（<?php echo date('Y/m/d H:i'); ?>時点）</span>
 					</div>
 				<?php endif; ?>
