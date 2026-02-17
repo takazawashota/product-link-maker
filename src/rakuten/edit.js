@@ -20,10 +20,17 @@ const DEBOUNCE_DELAY = 1000;
 const COMMON_STYLES = {
 	buttonBase: {
 		color: '#fff',
-		borderRadius: '4px',
-		padding: '6px 16px',
-		display: 'inline-block',
-		textDecoration: 'none'
+		borderRadius: '3px',
+		padding: '8px 16px',
+		display: 'inline-flex',
+		alignItems: 'center',
+		justifyContent: 'center',
+		textDecoration: 'none',
+		fontSize: '15px',
+		fontWeight: '600',
+		whiteSpace: 'nowrap',
+		minWidth: '85px',
+		boxShadow: '0 1px 3px rgba(0, 0, 0, 0.1)'
 	},
 	statusBox: {
 		padding: '32px',
@@ -153,9 +160,9 @@ function CustomButtonEditor({ buttons, onChange, label }) {
  * ショップボタンのスタイル定義
  */
 const BUTTON_STYLES = {
-	amazon: { backgroundColor: '#f79901', text: 'Amazon' },
+	amazon: { backgroundColor: '#ff9900', text: 'Amazon' },
 	rakuten: { backgroundColor: '#bf0000', text: '楽天' },
-	yahoo: { backgroundColor: '#e60033', text: 'Yahoo!ショッピング' },
+	yahoo: { backgroundColor: '#ff0033', text: 'Yahoo!ショッピング' },
 	mercari: { backgroundColor: '#4dc9ff', text: 'メルカリ' },
 	dmm: { backgroundColor: '#00bcd4', text: 'DMM' }
 };
@@ -279,7 +286,7 @@ function renderAllButtons(attributes) {
 /**
  * プレビューコンポーネント
  */
-function ProductPreview({ attributes, item, imageUrl, imageKey, itemTitle, itemLink, handleClearCache }) {
+function ProductPreview({ attributes, item, imageUrl, imageKey, itemTitle, itemLink }) {
 	return (
 		<div className="plm-product-box">
 			<figure className="plm-product-thumb">
@@ -336,16 +343,6 @@ function ProductPreview({ attributes, item, imageUrl, imageKey, itemTitle, itemL
 				<div className="plm-product-buttons">
 					{attributes.kw && attributes.kw.split(',').filter(Boolean).length > 0 && renderAllButtons(attributes)}
 				</div>
-				<div className="product-item-admin">
-					<Button
-						variant="link"
-						onClick={handleClearCache}
-						style={{ color: '#0073aa', textDecoration: 'underline', cursor: 'pointer', padding: 0, marginRight: '10px' }}
-					>
-						キャッシュ削除
-					</Button>
-					<span className="product-affiliate-rate">料率：{item?.affiliateRate ? `${item.affiliateRate}%` : ''}</span>
-				</div>
 			</div>
 		</div>
 	);
@@ -355,6 +352,7 @@ export default function Edit({ attributes, setAttributes }) {
 	const [item, setItem] = useState(null);
 	const [isLoading, setIsLoading] = useState(false);
 	const [error, setError] = useState(null);
+	const [isClearingCache, setIsClearingCache] = useState(false);
 	const fetchTimeoutRef = useRef(null);
 
 	const fetchData = useCallback(async () => {
@@ -397,9 +395,10 @@ export default function Edit({ attributes, setAttributes }) {
 
 	// キャッシュを削除して再取得する関数
 	const handleClearCache = useCallback(async () => {
-		if (!window.confirm('本当にキャッシュを削除してもいいですか？')) {
+		if (!window.confirm('キャッシュを削除して最新データを取得しますか？')) {
 			return;
 		}
+		setIsClearingCache(true);
 		try {
 			await apiFetch({
 				path: '/product-link-maker/v1/rakuten-cache/',
@@ -411,9 +410,12 @@ export default function Edit({ attributes, setAttributes }) {
 				},
 			});
 			// キャッシュ削除後、再取得
-			fetchData();
+			await fetchData();
 		} catch (error) {
 			console.error('Cache clear error:', error);
+			alert('キャッシュ削除中にエラーが発生しました。');
+		} finally {
+			setIsClearingCache(false);
 		}
 	}, [attributes.id, attributes.kw, attributes.no, fetchData]);
 
@@ -613,15 +615,34 @@ export default function Edit({ attributes, setAttributes }) {
 				) : !attributes.id && !attributes.no && !attributes.kw ? (
 					<StatusMessage type="empty" message="商品情報を設定してください" />
 				) : (
-					<ProductPreview
-						attributes={attributes}
-						item={item}
-						imageUrl={imageUrl}
-						imageKey={imageKey}
-						itemTitle={itemTitle}
-						itemLink={itemLink}
-						handleClearCache={handleClearCache}
-					/>
+					<>
+						<ProductPreview
+							attributes={attributes}
+							item={item}
+							imageUrl={imageUrl}
+							imageKey={imageKey}
+							itemTitle={itemTitle}
+							itemLink={itemLink}
+						/>
+						{item && (
+							<div className="plm-admin-info">
+								<Button
+									variant="secondary"
+									onClick={handleClearCache}
+									disabled={isClearingCache}
+									isBusy={isClearingCache}
+									size="small"
+								>
+									{isClearingCache ? '削除中...' : 'キャッシュ更新'}
+								</Button>
+								{item?.affiliateRate && (
+									<span>
+										料率: {item.affiliateRate}%
+									</span>
+								)}
+							</div>
+						)}
+					</>
 				)}
 			</div>
 		</>
