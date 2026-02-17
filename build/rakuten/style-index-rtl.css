@@ -1,1 +1,236 @@
-.product-item-admin{font-size:13px;margin-top:16px}.product-item-box{background-color:#fff;border:1px solid #e1e8ed;border-radius:8px;display:flex;max-width:100%;overflow:hidden;padding:30px 25px;position:relative;transition:box-shadow .3s ease}.product-item-title{font-size:19px;line-height:1.4;margin-bottom:13px}.product-item-thumb{min-width:16%;width:auto}.product-item-content{padding-right:24px;width:auto}.rakuten-item-snippet{font-size:16px;margin-bottom:13px}.product-item-maker{margin-bottom:5px}.product-item-price{font-size:16px;font-weight:700;margin-bottom:5px}.product-item-price .item-price{color:#e60012;font-size:18px;margin-left:5px}.product-item-description{font-size:14px;margin-bottom:19px}.product-item-buttons{display:flex;flex-wrap:wrap;gap:10px}.product-item-buttons a{background:#222;border-radius:3px;color:#fff;display:flex;font-size:16px;font-weight:700;padding:6px 12px;text-decoration:none}.product-item-buttons a img[decoding=async]{display:none}.product-item-buttons .shoplinkamazon a{background:#f79901}.product-item-buttons .shoplinkrakuten a{background:#bf0000}.product-item-buttons .shoplinkyahoo a{background:#e60033}.product-item-buttons .shoplinkmercari a{background:#4dc9ff}.product-item-buttons .shoplinkdmm a{background:#00bcd4}@media(max-width:768px){.product-item-box{flex-direction:column;padding:20px 15px}.product-item-thumb{margin-bottom:15px;min-width:100%;text-align:center;width:100%}.product-item-content{padding-right:0;width:100%}.product-item-title{font-size:17px}.product-item-buttons{gap:7px}.product-item-buttons a{font-size:14px;padding:5px 10px}}
+/*!***********************************************************************************************************************************************************************************************************************************************!*\
+  !*** css ./node_modules/css-loader/dist/cjs.js??ruleSet[1].rules[4].use[1]!./node_modules/postcss-loader/dist/cjs.js??ruleSet[1].rules[4].use[2]!./node_modules/sass-loader/dist/cjs.js??ruleSet[1].rules[4].use[3]!./src/rakuten/style.scss ***!
+  \***********************************************************************************************************************************************************************************************************************************************/
+@charset "UTF-8";
+/**
+ * Product Link Maker - Rakuten Block Styles
+ * エディタとフロントエンド共通のスタイル
+ */
+.plm-admin-info {
+  margin-top: 16px;
+  font-size: 13px;
+  color: #666;
+}
+
+.plm-product-box {
+  display: flex;
+  align-items: flex-start;
+  gap: 24px;
+  padding: 24px;
+  position: relative;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  overflow: hidden;
+  transition: all 0.3s ease;
+  background-color: #fff;
+  width: 100%;
+  max-width: 100%;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+.plm-product-box:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  border-color: #d1d5db;
+}
+
+.plm-product-thumb {
+  flex-shrink: 0;
+  width: 160px;
+  max-width: 160px;
+}
+.plm-product-thumb img {
+  width: 100%;
+  height: auto;
+  display: block;
+  border-radius: 8px;
+  -o-object-fit: cover;
+     object-fit: cover;
+}
+
+.plm-product-content {
+  flex: 1;
+  min-width: 0;
+}
+
+.plm-product-title {
+  font-size: 18px;
+  font-weight: 700;
+  line-height: 1.5;
+  margin-bottom: 12px;
+  color: #111827;
+  word-wrap: break-word;
+}
+
+.plm-product-snippet {
+  font-size: 15px;
+  line-height: 1.6;
+  margin-bottom: 12px;
+  color: #4b5563;
+}
+
+.plm-product-maker {
+  font-size: 13px;
+  margin-bottom: 8px;
+  color: #6b7280;
+}
+.plm-product-maker::before {
+  content: "🏷 ";
+  margin-left: 4px;
+}
+
+.plm-product-price {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  font-size: 16px;
+  font-weight: 600;
+  margin-bottom: 16px;
+  color: #374151;
+}
+.plm-product-price .plm-price-value {
+  font-size: 24px;
+  font-weight: 700;
+  color: #dc2626;
+  letter-spacing: -0.5px;
+}
+
+.plm-product-description {
+  font-size: 14px;
+  line-height: 1.7;
+  margin-bottom: 20px;
+  color: #6b7280;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.plm-product-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: auto;
+}
+
+.plm-product-buttons a {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px 20px;
+  text-decoration: none;
+  font-size: 15px;
+  font-weight: 600;
+  color: #fff;
+  background: #374151;
+  border-radius: 6px;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+  min-width: 120px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+.plm-product-buttons a:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+  opacity: 0.9;
+}
+.plm-product-buttons a:active {
+  transform: translateY(0);
+}
+
+.plm-product-buttons a img[decoding=async] {
+  display: none;
+}
+
+.plm-product-buttons .plm-shop-amazon a {
+  background: linear-gradient(-135deg, #ff9900 0%, #ff7700 100%);
+}
+.plm-product-buttons .plm-shop-amazon a:hover {
+  background: linear-gradient(-135deg, #ff7700 0%, #ff5500 100%);
+}
+
+.plm-product-buttons .plm-shop-rakuten a {
+  background: linear-gradient(-135deg, #bf0000 0%, #9a0000 100%);
+}
+.plm-product-buttons .plm-shop-rakuten a:hover {
+  background: linear-gradient(-135deg, #9a0000 0%, #7a0000 100%);
+}
+
+.plm-product-buttons .plm-shop-yahoo a {
+  background: linear-gradient(-135deg, #ff0033 0%, #cc0029 100%);
+}
+.plm-product-buttons .plm-shop-yahoo a:hover {
+  background: linear-gradient(-135deg, #cc0029 0%, #aa0021 100%);
+}
+
+.plm-product-buttons .plm-shop-mercari a {
+  background: linear-gradient(-135deg, #4dc9ff 0%, #2aa5d9 100%);
+}
+.plm-product-buttons .plm-shop-mercari a:hover {
+  background: linear-gradient(-135deg, #2aa5d9 0%, #1a8ab8 100%);
+}
+
+.plm-product-buttons .plm-shop-dmm a {
+  background: linear-gradient(-135deg, #00bcd4 0%, #00acc1 100%);
+}
+.plm-product-buttons .plm-shop-dmm a:hover {
+  background: linear-gradient(-135deg, #00acc1 0%, #0097a7 100%);
+}
+
+@media (max-width: 768px) {
+  .plm-product-box {
+    flex-direction: column;
+    gap: 20px;
+    padding: 20px;
+  }
+  .plm-product-thumb {
+    width: 100%;
+    max-width: 100%;
+    text-align: center;
+  }
+  .plm-product-thumb img {
+    max-width: 240px;
+    margin: 0 auto;
+  }
+  .plm-product-title {
+    font-size: 17px;
+    margin-bottom: 10px;
+  }
+  .plm-product-snippet {
+    font-size: 14px;
+  }
+  .plm-product-price {
+    margin-bottom: 14px;
+  }
+  .plm-product-price .plm-price-value {
+    font-size: 22px;
+  }
+  .plm-product-description {
+    font-size: 13px;
+    margin-bottom: 16px;
+  }
+  .plm-product-buttons {
+    gap: 10px;
+    justify-content: stretch;
+  }
+  .plm-product-buttons a {
+    flex: 1;
+    min-width: auto;
+    padding: 10px 16px;
+    font-size: 14px;
+  }
+}
+@media (max-width: 480px) {
+  .plm-product-box {
+    padding: 16px;
+    gap: 16px;
+    border-radius: 8px;
+  }
+  .plm-product-title {
+    font-size: 16px;
+  }
+  .plm-product-buttons {
+    flex-direction: column;
+  }
+  .plm-product-buttons a {
+    width: 100%;
+  }
+}

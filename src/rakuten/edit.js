@@ -8,6 +8,349 @@ import './editor.scss';
 import { useEffect, useState, useRef, useCallback } from '@wordpress/element';
 import apiFetch from '@wordpress/api-fetch';
 
+/**
+ * 定数定義
+ */
+const DEFAULT_BUTTON_COLOR = '#2196f3';
+const DEBOUNCE_DELAY = 1000;
+
+/**
+ * 共通スタイル定義
+ */
+const COMMON_STYLES = {
+	buttonBase: {
+		color: '#fff',
+		borderRadius: '4px',
+		padding: '6px 16px',
+		display: 'inline-block',
+		textDecoration: 'none'
+	},
+	statusBox: {
+		padding: '32px',
+		textAlign: 'center',
+		borderRadius: '4px'
+	}
+};
+
+/**
+ * カスタムボタンコンポーネント（再利用可能）
+ */
+function CustomButtonEditor({ buttons, onChange, label }) {
+	return (
+		<>
+			<p style={{ fontSize: '13px', color: '#757575', marginTop: 0 }}>
+				{label}
+			</p>
+			{buttons.map((btn, index) => (
+				<Card key={index} style={{ marginBottom: '16px', border: '1px solid #ddd' }}>
+					<CardHeader>
+						<Flex justify="space-between" align="center">
+							<span style={{ fontWeight: 600 }}>ボタン {index + 1}</span>
+							<Button
+								isDestructive
+								isSmall
+								onClick={() => {
+									const newButtons = [...buttons];
+									newButtons.splice(index, 1);
+									onChange(newButtons);
+								}}
+								icon="trash"
+							/>
+						</Flex>
+					</CardHeader>
+					<CardBody>
+						<TextControl
+							label="ボタンテキスト"
+							value={btn.text || ''}
+							onChange={(val) => {
+								const newButtons = [...buttons];
+								newButtons[index] = { ...newButtons[index], text: val };
+								onChange(newButtons);
+							}}
+							placeholder="例: 公式サイト"
+						/>
+						<TextControl
+							label="リンクURL"
+							value={btn.url || ''}
+							onChange={(val) => {
+								const newButtons = [...buttons];
+								newButtons[index] = { ...newButtons[index], url: val };
+								onChange(newButtons);
+							}}
+							placeholder="https://example.com"
+						/>
+						<ToggleControl
+							label="別タブで開く"
+							checked={btn.openInNewTab !== false}
+							onChange={(val) => {
+								const newButtons = [...buttons];
+								newButtons[index] = { ...newButtons[index], openInNewTab: val };
+								onChange(newButtons);
+							}}
+						/>
+						<div style={{ marginTop: '12px' }}>
+							<Button
+								variant="secondary"
+								onClick={() => {
+									const newButtons = [...buttons];
+									newButtons[index] = {
+										...newButtons[index],
+										showColorPicker: !newButtons[index].showColorPicker
+									};
+									onChange(newButtons);
+								}}
+								style={{ width: '100%', marginBottom: '8px' }}
+							>
+								{btn.showColorPicker ? '色を選択中' : 'ボタンの色を選択'}
+								<span style={{
+									marginLeft: '8px',
+									width: '20px',
+									height: '20px',
+									backgroundColor: btn.color || DEFAULT_BUTTON_COLOR,
+									display: 'inline-block',
+									borderRadius: '3px',
+									border: '1px solid #ddd',
+									verticalAlign: 'middle'
+								}} />
+							</Button>
+							{btn.showColorPicker && (
+								<ColorPicker
+									color={btn.color || DEFAULT_BUTTON_COLOR}
+									onChange={(val) => {
+										const newButtons = [...buttons];
+										newButtons[index] = { ...newButtons[index], color: val };
+										onChange(newButtons);
+									}}
+									enableAlpha
+									defaultValue={DEFAULT_BUTTON_COLOR}
+								/>
+							)}
+						</div>
+					</CardBody>
+				</Card>
+			))}
+			<Button
+				variant="secondary"
+				onClick={() => {
+					const newButtons = [...buttons, {
+						text: '',
+						url: '',
+						openInNewTab: true,
+						color: DEFAULT_BUTTON_COLOR
+					}];
+					onChange(newButtons);
+				}}
+				icon="plus"
+				style={{ width: '100%', justifyContent: 'center' }}
+			>
+				ボタンを追加
+			</Button>
+		</>
+	);
+}
+
+/**
+ * ショップボタンのスタイル定義
+ */
+const BUTTON_STYLES = {
+	amazon: { backgroundColor: '#f79901', text: 'Amazon' },
+	rakuten: { backgroundColor: '#bf0000', text: '楽天' },
+	yahoo: { backgroundColor: '#e60033', text: 'Yahoo!ショッピング' },
+	mercari: { backgroundColor: '#4dc9ff', text: 'メルカリ' },
+	dmm: { backgroundColor: '#00bcd4', text: 'DMM' }
+};
+
+/**
+ * カスタムボタンレンダリング
+ */
+function renderCustomButton(btn, keyPrefix, idx) {
+	if (!btn.text || !btn.url) return null;
+
+	return (
+		<div className="plm-shop-custom" key={`${keyPrefix}-${idx}`}>
+			<a
+				rel="nofollow noopener"
+				href={btn.url}
+				target={btn.openInNewTab !== false ? "_blank" : "_self"}
+				style={{
+					...COMMON_STYLES.buttonBase,
+					backgroundColor: btn.color || DEFAULT_BUTTON_COLOR
+				}}
+			>
+				{btn.text}
+			</a>
+		</div>
+	);
+}
+
+/**
+ * ショップボタンレンダリング
+ */
+function renderShopButton(shopKey, url, style) {
+	return (
+		<div className={`plm-shop-${shopKey}`} key={shopKey}>
+			<a
+				rel="nofollow noopener"
+				href={url}
+				target="_blank"
+				style={{
+					...COMMON_STYLES.buttonBase,
+					backgroundColor: style.backgroundColor
+				}}
+			>
+				{style.text}
+			</a>
+		</div>
+	);
+}
+
+/**
+ * ステータスメッセージコンポーネント
+ */
+function StatusMessage({ type, message }) {
+	const styles = {
+		loading: {
+			...COMMON_STYLES.statusBox,
+			color: '#888',
+			backgroundColor: '#f5f5f5',
+			border: '1px dashed #ccc'
+		},
+		error: {
+			...COMMON_STYLES.statusBox,
+			color: '#d63638',
+			backgroundColor: '#fff0f0',
+			border: '1px solid #d63638'
+		},
+		empty: {
+			...COMMON_STYLES.statusBox,
+			color: '#666',
+			backgroundColor: '#f5f5f5',
+			border: '1px dashed #ccc'
+		}
+	};
+
+	return <div style={styles[type]}>{message}</div>;
+}
+
+/**
+ * 全ボタンをレンダリングする関数
+ */
+function renderAllButtons(attributes) {
+	const kwArray = attributes.kw.split(',').map(s => s.trim()).filter(Boolean);
+	const kwForUrl = kwArray.join(' ');
+	const settings = window.ProductLinkMakerSettings || {};
+	const buttons = [];
+
+	// カスタムボタン（前）
+	(attributes.customButtonsBefore || []).forEach((btn, idx) => {
+		const customBtn = renderCustomButton(btn, 'custom-before', idx);
+		if (customBtn) buttons.push(customBtn);
+	});
+
+	// ショップボタン
+	if (settings.amazon && attributes.showAmazon !== false) {
+		buttons.push(renderShopButton('amazon', `https://www.amazon.co.jp/gp/search?keywords=${encodeURIComponent(kwForUrl)}`, BUTTON_STYLES.amazon));
+	}
+	if (settings.rakuten && attributes.showRakuten !== false) {
+		buttons.push(renderShopButton('rakuten', `https://search.rakuten.co.jp/search/mall/${encodeURIComponent(kwForUrl)}/`, BUTTON_STYLES.rakuten));
+	}
+	if (settings.yahoo && attributes.showYahoo !== false) {
+		buttons.push(renderShopButton('yahoo', `https://search.shopping.yahoo.co.jp/search?p=${encodeURIComponent(kwForUrl)}`, BUTTON_STYLES.yahoo));
+	}
+	if (settings.mercari && attributes.showMercari !== false) {
+		buttons.push(renderShopButton('mercari', `https://jp.mercari.com/search?keyword=${encodeURIComponent(kwForUrl)}`, BUTTON_STYLES.mercari));
+	}
+	if (settings.dmm && attributes.showDmm !== false) {
+		// DMMは半角スペース区切りでキーワードを渡す
+		const dmmSearchStr = kwArray.map(kw => encodeURIComponent(kw)).join(' ');
+		const dmmUrl = `https://www.dmm.com/search/=/searchstr=${dmmSearchStr}/analyze=V1ECCVYAUQQ_/limit=30/sort=rankprofile/?utm_medium=dmm_affiliate&utm_source=dummy&utm_term=dmm.com&utm_campaign=affiliate_link_tool&utm_content=link`;
+		buttons.push(renderShopButton('dmm', dmmUrl, BUTTON_STYLES.dmm));
+	}
+
+	// カスタムボタン（後）
+	(attributes.customButtonsAfter || []).forEach((btn, idx) => {
+		const customBtn = renderCustomButton(btn, 'custom-after', idx);
+		if (customBtn) buttons.push(customBtn);
+	});
+
+	return buttons;
+}
+
+/**
+ * プレビューコンポーネント
+ */
+function ProductPreview({ attributes, item, imageUrl, imageKey, itemTitle, itemLink, handleClearCache }) {
+	return (
+		<div className="plm-product-box">
+			<figure className="plm-product-thumb">
+				<a rel="nofollow noopener"
+					href={itemLink}
+					className="plm-product-thumb-link"
+					target="_blank"
+					title={itemTitle}
+				>
+					{imageUrl && (
+						<img
+							key={imageKey}
+							decoding="async"
+							src={imageUrl}
+							alt={itemTitle || '商品画像'}
+							width="128"
+							height="128"
+							className="plm-product-thumb-image"
+						/>
+					)}
+				</a>
+			</figure>
+			<div className="plm-product-content">
+				<div className="plm-product-title">
+					<a rel="nofollow noopener"
+						href={itemLink}
+						className="plm-product-title-link"
+						target="_blank"
+						title={itemTitle}
+					>
+						{itemTitle ? itemTitle : ''}
+					</a>
+				</div>
+				<div className="plm-product-snippet">
+					{attributes.showShop !== false && (item?.shopName || attributes.shop) && (
+						<div className="plm-product-maker">
+							{item?.shopName || attributes.shop}
+						</div>
+					)}
+					{attributes.price && (
+						<div className="plm-product-price">
+							<span className="plm-price-value">
+								{item?.itemPrice ? `￥ ${item.itemPrice}` : '価格情報なし'}
+							</span>
+							<span className="acquired-date">
+								{item?.itemPrice ? `（${new Date().toLocaleDateString()} 時点）` : ''}
+							</span>
+						</div>
+					)}
+					{attributes.desc && (
+						<div className="plm-product-description">{attributes.desc}</div>
+					)}
+				</div>
+				<div className="plm-product-buttons">
+					{attributes.kw && attributes.kw.split(',').filter(Boolean).length > 0 && renderAllButtons(attributes)}
+				</div>
+				<div className="product-item-admin">
+					<Button
+						variant="link"
+						onClick={handleClearCache}
+						style={{ color: '#0073aa', textDecoration: 'underline', cursor: 'pointer', padding: 0, marginRight: '10px' }}
+					>
+						キャッシュ削除
+					</Button>
+					<span className="product-affiliate-rate">料率：{item?.affiliateRate ? `${item.affiliateRate}%` : ''}</span>
+				</div>
+			</div>
+		</div>
+	);
+}
+
 export default function Edit({ attributes, setAttributes }) {
 	const [item, setItem] = useState(null);
 	const [isLoading, setIsLoading] = useState(false);
@@ -82,10 +425,10 @@ export default function Edit({ attributes, setAttributes }) {
 		}
 
 		if (attributes.id || attributes.no || attributes.kw) {
-			// 1秒のデバウンスを追加
+			// デバウンスを追加
 			fetchTimeoutRef.current = setTimeout(() => {
 				fetchData();
-			}, 1000);
+			}, DEBOUNCE_DELAY);
 		} else {
 			setItem(null);
 		}
@@ -236,222 +579,18 @@ export default function Edit({ attributes, setAttributes }) {
 
 				</PanelBody>
 				<PanelBody title={__('カスタムボタン（前）', 'product-link-maker')} initialOpen={true}>
-					<p style={{ fontSize: '13px', color: '#757575', marginTop: 0 }}>
-						既存のボタンの前に表示されるカスタムボタンを追加できます
-					</p>
-					{(attributes.customButtonsBefore || []).map((btn, index) => (
-						<Card key={index} style={{ marginBottom: '16px', border: '1px solid #ddd' }}>
-							<CardHeader>
-								<Flex justify="space-between" align="center">
-									<span style={{ fontWeight: 600 }}>ボタン {index + 1}</span>
-									<Button
-										isDestructive
-										isSmall
-										onClick={() => {
-											const newButtons = [...(attributes.customButtonsBefore || [])];
-											newButtons.splice(index, 1);
-											setAttributes({ customButtonsBefore: newButtons });
-										}}
-										icon="trash"
-									/>
-								</Flex>
-							</CardHeader>
-							<CardBody>
-								<TextControl
-									label="ボタンテキスト"
-									value={btn.text || ''}
-									onChange={(val) => {
-										const newButtons = [...(attributes.customButtonsBefore || [])];
-										newButtons[index] = { ...newButtons[index], text: val };
-										setAttributes({ customButtonsBefore: newButtons });
-									}}
-									placeholder="例: 公式サイト"
-								/>
-								<TextControl
-									label="リンクURL"
-									value={btn.url || ''}
-									onChange={(val) => {
-										const newButtons = [...(attributes.customButtonsBefore || [])];
-										newButtons[index] = { ...newButtons[index], url: val };
-										setAttributes({ customButtonsBefore: newButtons });
-									}}
-									placeholder="https://example.com"
-								/>
-								<ToggleControl
-									label="別タブで開く"
-									checked={btn.openInNewTab !== false}
-									onChange={(val) => {
-										const newButtons = [...(attributes.customButtonsBefore || [])];
-										newButtons[index] = { ...newButtons[index], openInNewTab: val };
-										setAttributes({ customButtonsBefore: newButtons });
-									}}
-								/>
-								<div style={{ marginTop: '12px' }}>
-									<Button
-										variant="secondary"
-										onClick={() => {
-											const newButtons = [...(attributes.customButtonsBefore || [])];
-											newButtons[index] = {
-												...newButtons[index],
-												showColorPicker: !newButtons[index].showColorPicker
-											};
-											setAttributes({ customButtonsBefore: newButtons });
-										}}
-										style={{ width: '100%', marginBottom: '8px' }}
-									>
-										{btn.showColorPicker ? '色を選択中' : 'ボタンの色を選択'}
-										<span style={{
-											marginLeft: '8px',
-											width: '20px',
-											height: '20px',
-											backgroundColor: btn.color || '#2196f3',
-											display: 'inline-block',
-											borderRadius: '3px',
-											border: '1px solid #ddd',
-											verticalAlign: 'middle'
-										}} />
-									</Button>
-									{btn.showColorPicker && (
-										<ColorPicker
-											color={btn.color || '#2196f3'}
-											onChange={(val) => {
-												const newButtons = [...(attributes.customButtonsBefore || [])];
-												newButtons[index] = { ...newButtons[index], color: val };
-												setAttributes({ customButtonsBefore: newButtons });
-											}}
-											enableAlpha
-											defaultValue="#2196f3"
-										/>
-									)}
-								</div>
-							</CardBody>
-						</Card>
-					))}
-					<Button
-						variant="secondary"
-						onClick={() => {
-							const newButtons = [...(attributes.customButtonsBefore || []), {
-								text: '',
-								url: '',
-								openInNewTab: true,
-								color: '#2196f3'
-							}];
-							setAttributes({ customButtonsBefore: newButtons });
-						}}
-						icon="plus"
-						style={{ width: '100%', justifyContent: 'center' }}
-					>
-						ボタンを追加
-					</Button>
+					<CustomButtonEditor
+						buttons={attributes.customButtonsBefore || []}
+						onChange={(newButtons) => setAttributes({ customButtonsBefore: newButtons })}
+						label="既存のボタンの前に表示されるカスタムボタンを追加できます"
+					/>
 				</PanelBody>
 				<PanelBody title={__('カスタムボタン（後）', 'product-link-maker')} initialOpen={true}>
-					<p style={{ fontSize: '13px', color: '#757575', marginTop: 0 }}>
-						既存のボタンの後に表示されるカスタムボタンを追加できます
-					</p>
-					{(attributes.customButtonsAfter || []).map((btn, index) => (
-						<Card key={index} style={{ marginBottom: '16px', border: '1px solid #ddd' }}>
-							<CardHeader>
-								<Flex justify="space-between" align="center">
-									<span style={{ fontWeight: 600 }}>ボタン {index + 1}</span>
-									<Button
-										isDestructive
-										isSmall
-										onClick={() => {
-											const newButtons = [...(attributes.customButtonsAfter || [])];
-											newButtons.splice(index, 1);
-											setAttributes({ customButtonsAfter: newButtons });
-										}}
-										icon="trash"
-									/>
-								</Flex>
-							</CardHeader>
-							<CardBody>
-								<TextControl
-									label="ボタンテキスト"
-									value={btn.text || ''}
-									onChange={(val) => {
-										const newButtons = [...(attributes.customButtonsAfter || [])];
-										newButtons[index] = { ...newButtons[index], text: val };
-										setAttributes({ customButtonsAfter: newButtons });
-									}}
-									placeholder="例: 公式サイト"
-								/>
-								<TextControl
-									label="リンクURL"
-									value={btn.url || ''}
-									onChange={(val) => {
-										const newButtons = [...(attributes.customButtonsAfter || [])];
-										newButtons[index] = { ...newButtons[index], url: val };
-										setAttributes({ customButtonsAfter: newButtons });
-									}}
-									placeholder="https://example.com"
-								/>
-								<ToggleControl
-									label="別タブで開く"
-									checked={btn.openInNewTab !== false}
-									onChange={(val) => {
-										const newButtons = [...(attributes.customButtonsAfter || [])];
-										newButtons[index] = { ...newButtons[index], openInNewTab: val };
-										setAttributes({ customButtonsAfter: newButtons });
-									}}
-								/>
-								<div style={{ marginTop: '12px' }}>
-									<Button
-										variant="secondary"
-										onClick={() => {
-											const newButtons = [...(attributes.customButtonsAfter || [])];
-											newButtons[index] = {
-												...newButtons[index],
-												showColorPicker: !newButtons[index].showColorPicker
-											};
-											setAttributes({ customButtonsAfter: newButtons });
-										}}
-										style={{ width: '100%', marginBottom: '8px' }}
-									>
-										{btn.showColorPicker ? '色を選択中' : 'ボタンの色を選択'}
-										<span style={{
-											marginLeft: '8px',
-											width: '20px',
-											height: '20px',
-											backgroundColor: btn.color || '#2196f3',
-											display: 'inline-block',
-											borderRadius: '3px',
-											border: '1px solid #ddd',
-											verticalAlign: 'middle'
-										}} />
-									</Button>
-									{btn.showColorPicker && (
-										<ColorPicker
-											color={btn.color || '#2196f3'}
-											onChange={(val) => {
-												const newButtons = [...(attributes.customButtonsAfter || [])];
-												newButtons[index] = { ...newButtons[index], color: val };
-												setAttributes({ customButtonsAfter: newButtons });
-											}}
-											enableAlpha
-											defaultValue="#2196f3"
-										/>
-									)}
-								</div>
-							</CardBody>
-						</Card>
-					))}
-					<Button
-						variant="secondary"
-						onClick={() => {
-							const newButtons = [...(attributes.customButtonsAfter || []), {
-								text: '',
-								url: '',
-								openInNewTab: true,
-								color: '#2196f3'
-							}];
-							setAttributes({ customButtonsAfter: newButtons });
-						}}
-						icon="plus"
-						style={{ width: '100%', justifyContent: 'center' }}
-					>
-						ボタンを追加
-					</Button>
+					<CustomButtonEditor
+						buttons={attributes.customButtonsAfter || []}
+						onChange={(newButtons) => setAttributes({ customButtonsAfter: newButtons })}
+						label="既存のボタンの後に表示されるカスタムボタンを追加できます"
+					/>
 				</PanelBody>
 				<PanelBody title={__('アフィリエイト設定', 'product-link-maker')} initialOpen={false}>
 					<Button
@@ -468,179 +607,21 @@ export default function Edit({ attributes, setAttributes }) {
 			</InspectorControls>
 			<div {...useBlockProps()}>
 				{isLoading ? (
-					<div style={{ padding: '32px', textAlign: 'center', color: '#888', backgroundColor: '#f5f5f5', border: '1px dashed #ccc', borderRadius: '4px' }}>
-						Loading...
-					</div>
+					<StatusMessage type="loading" message="Loading..." />
 				) : error ? (
-					<div style={{ padding: '32px', textAlign: 'center', color: '#d63638', backgroundColor: '#fff0f0', border: '1px solid #d63638', borderRadius: '4px' }}>
-						{error}
-					</div>
+					<StatusMessage type="error" message={error} />
 				) : !attributes.id && !attributes.no && !attributes.kw ? (
-					<div style={{ padding: '32px', textAlign: 'center', color: '#666', backgroundColor: '#f5f5f5', border: '1px dashed #ccc', borderRadius: '4px' }}>
-						商品情報を設定してください
-					</div>
+					<StatusMessage type="empty" message="商品情報を設定してください" />
 				) : (
-					<div className="rakuten-item-box product-item-box no-icon pis-m">
-						<figure className="rakuten-item-thumb product-item-thumb">
-							<a rel="nofollow noopener"
-								href={itemLink}
-								className="rakuten-item-thumb-link product-item-thumb-link"
-								target="_blank"
-								title={itemTitle}
-							>
-								{imageUrl && (
-									<img
-										key={imageKey}
-										decoding="async"
-										src={imageUrl}
-										alt={itemTitle || '商品画像'}
-										width="128"
-										height="128"
-										className="rakuten-item-thumb-image product-item-thumb-image"
-									/>
-								)}
-							</a>
-						</figure>
-						<div className="rakuten-item-content product-item-content cf">
-							<div className="rakuten-item-title product-item-title">
-								<a rel="nofollow noopener"
-									href={itemLink}
-									className="rakuten-item-title-link product-item-title-link"
-									target="_blank"
-									title={itemTitle}
-								>
-									{itemTitle ? itemTitle : ''}
-								</a>
-							</div>
-							<div className="rakuten-item-snippet product-item-snippet">
-								{attributes.showShop !== false && (item?.shopName || attributes.shop) && (
-									<div className="rakuten-item-maker product-item-maker">
-										{item?.shopName || attributes.shop}
-									</div>
-								)}
-								{attributes.price && (
-									<div className="product-item-price">
-										<span className="item-price">
-											{item?.itemPrice ? `￥ ${item.itemPrice}` : '価格情報なし'}
-										</span>
-										<span className="acquired-date">
-											{item?.itemPrice ? `（${new Date().toLocaleDateString()} 時点）` : ''}
-										</span>
-									</div>
-								)}
-								{attributes.desc && (
-									<div className="product-item-description">{attributes.desc}</div>
-								)}
-							</div>
-							<div className="amazon-item-buttons product-item-buttons">
-								{attributes.kw && attributes.kw.split(',').filter(Boolean).length > 0 && (() => {
-									const kwArray = attributes.kw.split(',').map(s => s.trim()).filter(Boolean);
-									const kwForUrl = kwArray.join(' ');
-									const settings = window.ProductLinkMakerSettings || {};
-									const buttons = [];
-
-									// カスタムボタン（前）
-									(attributes.customButtonsBefore || []).forEach((btn, idx) => {
-										if (btn.text && btn.url) {
-											buttons.push(
-												<div className="shoplink-custom" key={`custom-before-${idx}`}>
-													<a
-														rel="nofollow noopener"
-														href={btn.url}
-														target={btn.openInNewTab !== false ? "_blank" : "_self"}
-														style={{
-															backgroundColor: btn.color || '#2196f3',
-															color: '#fff',
-															borderRadius: '4px',
-															padding: '6px 16px',
-															display: 'inline-block',
-															textDecoration: 'none'
-														}}
-													>
-														{btn.text}
-													</a>
-												</div>
-											);
-										}
-									});
-
-									if (settings.amazon && attributes.showAmazon !== false) {
-										buttons.push(
-											<div className="shoplinkamazon" key="amazon">
-												<a rel="nofollow noopener" href={`https://www.amazon.co.jp/gp/search?keywords=${encodeURIComponent(kwForUrl)}`} target="_blank" style={{ backgroundColor: '#f79901', color: '#fff', borderRadius: '4px', padding: '6px 16px', display: 'inline-block', textDecoration: 'none' }}>Amazon</a>
-											</div>
-										);
-									}
-									if (settings.rakuten && attributes.showRakuten !== false) {
-										buttons.push(
-											<div className="shoplinkrakuten" key="rakuten">
-												<a rel="nofollow noopener" href={`https://search.rakuten.co.jp/search/mall/${encodeURIComponent(kwForUrl)}/`} target="_blank" style={{ backgroundColor: '#bf0000', color: '#fff', borderRadius: '4px', padding: '6px 16px', display: 'inline-block', textDecoration: 'none' }}>楽天</a>
-											</div>
-										);
-									}
-									if (settings.yahoo && attributes.showYahoo !== false) {
-										buttons.push(
-											<div className="shoplinkyahoo" key="yahoo">
-												<a rel="nofollow noopener" href={`https://search.shopping.yahoo.co.jp/search?p=${encodeURIComponent(kwForUrl)}`} target="_blank" style={{ backgroundColor: '#e60033', color: '#fff', borderRadius: '4px', padding: '6px 16px', display: 'inline-block', textDecoration: 'none' }}>Yahoo!ショッピング</a>
-											</div>
-										);
-									}
-									if (settings.mercari && attributes.showMercari !== false) {
-										buttons.push(
-											<div className="shoplinkmercari" key="mercari">
-												<a rel="nofollow noopener" href={`https://jp.mercari.com/search?keyword=${encodeURIComponent(kwForUrl)}`} target="_blank" style={{ backgroundColor: '#4dc9ff', color: '#fff', borderRadius: '4px', padding: '6px 16px', display: 'inline-block', textDecoration: 'none' }}>メルカリ</a>
-											</div>
-										);
-									}
-									if (settings.dmm && attributes.showDmm !== false) {
-										// DMMは半角スペース区切りでキーワードを渡す（各キーワードを個別にエンコード）
-										const dmmSearchStr = kwArray.map(kw => encodeURIComponent(kw)).join(' ');
-										const dmmUrl = `https://www.dmm.com/search/=/searchstr=${dmmSearchStr}/analyze=V1ECCVYAUQQ_/limit=30/sort=rankprofile/?utm_medium=dmm_affiliate&utm_source=dummy&utm_term=dmm.com&utm_campaign=affiliate_link_tool&utm_content=link`;
-										buttons.push(
-											<div className="shoplinkdmm" key="dmm">
-												<a rel="nofollow noopener" href={dmmUrl} target="_blank" style={{ backgroundColor: '#00bcd4', color: '#fff', borderRadius: '4px', padding: '6px 16px', display: 'inline-block', textDecoration: 'none' }}>DMM</a>
-											</div>
-										);
-									}
-
-									// カスタムボタン（後）
-									(attributes.customButtonsAfter || []).forEach((btn, idx) => {
-										if (btn.text && btn.url) {
-											buttons.push(
-												<div className="shoplink-custom" key={`custom-after-${idx}`}>
-													<a
-														rel="nofollow noopener"
-														href={btn.url}
-														target={btn.openInNewTab !== false ? "_blank" : "_self"}
-														style={{
-															backgroundColor: btn.color || '#2196f3',
-															color: '#fff',
-															borderRadius: '4px',
-															padding: '6px 16px',
-															display: 'inline-block',
-															textDecoration: 'none'
-														}}
-													>
-														{btn.text}
-													</a>
-												</div>
-											);
-										}
-									}); return buttons;
-								})()}
-							</div>
-							<div className="product-item-admin">
-								<Button
-									variant="link"
-									onClick={handleClearCache}
-									style={{ color: '#0073aa', textDecoration: 'underline', cursor: 'pointer', padding: 0, marginRight: '10px' }}
-								>
-									キャッシュ削除
-								</Button>
-								<span className="product-affiliate-rate">料率：{item?.affiliateRate ? `${item.affiliateRate}%` : ''}</span>
-							</div>
-						</div>
-					</div>
+					<ProductPreview
+						attributes={attributes}
+						item={item}
+						imageUrl={imageUrl}
+						imageKey={imageKey}
+						itemTitle={itemTitle}
+						itemLink={itemLink}
+						handleClearCache={handleClearCache}
+					/>
 				)}
 			</div>
 		</>

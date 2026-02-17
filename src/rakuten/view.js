@@ -20,6 +20,4 @@
  * @see https://developer.wordpress.org/block-editor/reference-guides/block-api/block-metadata/#view-script
  */
 
-/* eslint-disable no-console */
-console.log( 'Hello World! (from create-block-rakuten block)' );
-/* eslint-enable no-console */
+// フロントエンド用JavaScriptが必要になったらここに記述します
