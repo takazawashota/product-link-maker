@@ -431,9 +431,10 @@ function Edit({
   setAttributes
 }) {
   const [item, setItem] = (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_4__.useState)(null);
-  const [isLoading, setIsLoading] = (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_4__.useState)(false);
+  const [isLoading, setIsLoading] = (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_4__.useState)(true); // 初期状態をtrueに変更
   const [error, setError] = (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_4__.useState)(null);
   const [isClearingCache, setIsClearingCache] = (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_4__.useState)(false);
+  const [hasInitialized, setHasInitialized] = (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_4__.useState)(false); // 初回取得完了フラグ
   const fetchTimeoutRef = (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_4__.useRef)(null);
   const fetchData = (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_4__.useCallback)(async () => {
     if (!attributes.id && !attributes.no && !attributes.kw) {
@@ -442,6 +443,8 @@ function Edit({
         ...prev,
         imageUrl: ''
       }));
+      setIsLoading(false);
+      setHasInitialized(true);
       return;
     }
     setIsLoading(true);
@@ -485,6 +488,7 @@ function Edit({
       setError('APIエラーが発生しました。しばらく待ってから再度お試しください。');
     } finally {
       setIsLoading(false);
+      setHasInitialized(true);
     }
   }, [attributes.id, attributes.no, attributes.kw, setAttributes]);
 
@@ -527,6 +531,8 @@ function Edit({
       }, DEBOUNCE_DELAY);
     } else {
       setItem(null);
+      setIsLoading(false);
+      setHasInitialized(true);
     }
 
     // クリーンアップ
@@ -758,6 +764,9 @@ function Edit({
       }) : !attributes.id && !attributes.no && !attributes.kw ? /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)(StatusMessage, {
         type: "empty",
         message: "\u5546\u54C1\u60C5\u5831\u3092\u8A2D\u5B9A\u3057\u3066\u304F\u3060\u3055\u3044"
+      }) : !hasInitialized || !item && (attributes.id || attributes.no) ? /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)(StatusMessage, {
+        type: "loading",
+        message: "Loading..."
       }) : /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsxs)(react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.Fragment, {
         children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)(ProductPreview, {
           attributes: attributes,

@@ -349,15 +349,18 @@ function ProductPreview({ attributes, item, imageUrl, imageKey, itemTitle, itemL
 
 export default function Edit({ attributes, setAttributes }) {
 	const [item, setItem] = useState(null);
-	const [isLoading, setIsLoading] = useState(false);
+	const [isLoading, setIsLoading] = useState(true); // 初期状態をtrueに変更
 	const [error, setError] = useState(null);
 	const [isClearingCache, setIsClearingCache] = useState(false);
+	const [hasInitialized, setHasInitialized] = useState(false); // 初回取得完了フラグ
 	const fetchTimeoutRef = useRef(null);
 
 	const fetchData = useCallback(async () => {
 		if (!attributes.id && !attributes.no && !attributes.kw) {
 			setItem(null);
 			setAttributes(prev => ({ ...prev, imageUrl: '' }));
+			setIsLoading(false);
+			setHasInitialized(true);
 			return;
 		}
 		setIsLoading(true);
@@ -389,6 +392,7 @@ export default function Edit({ attributes, setAttributes }) {
 			setError('APIエラーが発生しました。しばらく待ってから再度お試しください。');
 		} finally {
 			setIsLoading(false);
+			setHasInitialized(true);
 		}
 	}, [attributes.id, attributes.no, attributes.kw, setAttributes]);
 
@@ -432,6 +436,8 @@ export default function Edit({ attributes, setAttributes }) {
 			}, DEBOUNCE_DELAY);
 		} else {
 			setItem(null);
+			setIsLoading(false);
+			setHasInitialized(true);
 		}
 
 		// クリーンアップ
@@ -613,6 +619,8 @@ export default function Edit({ attributes, setAttributes }) {
 					<StatusMessage type="error" message={error} />
 				) : !attributes.id && !attributes.no && !attributes.kw ? (
 					<StatusMessage type="empty" message="商品情報を設定してください" />
+				) : !hasInitialized || (!item && (attributes.id || attributes.no)) ? (
+					<StatusMessage type="loading" message="Loading..." />
 				) : (
 					<>
 						<ProductPreview

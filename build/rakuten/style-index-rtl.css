@@ -144,38 +144,38 @@
 }
 
 .plm-product-buttons .plm-shop-amazon a {
-  background: linear-gradient(-135deg, #ff9900 0%, #ff7700 100%);
+  background: #ff9900;
 }
 .plm-product-buttons .plm-shop-amazon a:hover {
-  background: linear-gradient(-135deg, #ff7700 0%, #ff5500 100%);
+  background: #ff7700;
 }
 
 .plm-product-buttons .plm-shop-rakuten a {
-  background: linear-gradient(-135deg, #bf0000 0%, #9a0000 100%);
+  background: #bf0000;
 }
 .plm-product-buttons .plm-shop-rakuten a:hover {
-  background: linear-gradient(-135deg, #9a0000 0%, #7a0000 100%);
+  background: #9a0000;
 }
 
 .plm-product-buttons .plm-shop-yahoo a {
-  background: linear-gradient(-135deg, #ff0033 0%, #cc0029 100%);
+  background: #ff0033;
 }
 .plm-product-buttons .plm-shop-yahoo a:hover {
-  background: linear-gradient(-135deg, #cc0029 0%, #aa0021 100%);
+  background: #cc0029;
 }
 
 .plm-product-buttons .plm-shop-mercari a {
-  background: linear-gradient(-135deg, #4dc9ff 0%, #2aa5d9 100%);
+  background: #4dc9ff;
 }
 .plm-product-buttons .plm-shop-mercari a:hover {
-  background: linear-gradient(-135deg, #2aa5d9 0%, #1a8ab8 100%);
+  background: #2aa5d9;
 }
 
 .plm-product-buttons .plm-shop-dmm a {
-  background: linear-gradient(-135deg, #00bcd4 0%, #00acc1 100%);
+  background: #00bcd4;
 }
 .plm-product-buttons .plm-shop-dmm a:hover {
-  background: linear-gradient(-135deg, #00acc1 0%, #0097a7 100%);
+  background: #00acc1;
 }
 
 @media (max-width: 768px) {
