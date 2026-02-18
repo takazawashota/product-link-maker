@@ -1226,23 +1226,30 @@ function plm_rest_clear_all_cache() {
 	global $wpdb;
 
 	$patterns = array(
-		'_transient_rakuten_item_%',
-		'_transient_timeout_rakuten_item_%',
-		'_transient_amazon_item_%',
-		'_transient_timeout_amazon_item_%',
+		$wpdb->esc_like( '_transient_rakuten_item_' ) . '%',
+		$wpdb->esc_like( '_transient_timeout_rakuten_item_' ) . '%',
+		$wpdb->esc_like( '_transient_amazon_item_' ) . '%',
+		$wpdb->esc_like( '_transient_timeout_amazon_item_' ) . '%',
 	);
 
-	$placeholders = implode( ' OR ', array_fill( 0, count( $patterns ), 'option_name LIKE %s' ) );
-	$query        = "DELETE FROM {$wpdb->options} WHERE {$placeholders}";
-
-	$escaped_patterns = array_map( array( $wpdb, 'esc_like' ), $patterns );
-	// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
-	$wpdb->query( $wpdb->prepare( $query, $escaped_patterns ) );
+	$deleted = $wpdb->query(
+		$wpdb->prepare(
+			"DELETE FROM {$wpdb->options} 
+			WHERE option_name LIKE %s 
+			OR option_name LIKE %s 
+			OR option_name LIKE %s 
+			OR option_name LIKE %s",
+			$patterns[0],
+			$patterns[1],
+			$patterns[2],
+			$patterns[3]
+		)
+	);
 
 	return rest_ensure_response(
 		array(
 			'success' => true,
-			'message' => __( 'すべてのキャッシュを削除しました。', 'product-link-maker' ),
+			'message' => sprintf( __( '%d 件のキャッシュを削除しました。', 'product-link-maker' ), $deleted ),
 		)
 	);
 }
