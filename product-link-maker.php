@@ -162,12 +162,36 @@ function plm_sanitize_settings( $settings ) {
  */
 function plm_render_settings_page() {
 	$options = get_option( PLM_OPTION_NAME, array() );
+	
+	// 現在のタブを取得（デフォルトは api-keys）
+	$current_tab = isset( $_GET['tab'] ) ? sanitize_text_field( $_GET['tab'] ) : 'api-keys';
     ?>
     <div class="wrap">
         <h1>
             Product Link Maker
         </h1>
         <p class="description" style="margin-bottom: 20px;">各アフィリエイトサービスのIDを設定してください。設定したサービスのボタンが商品リンクに表示されます。</p>
+        
+        <!-- タブナビゲーション -->
+        <h2 class="nav-tab-wrapper">
+            <a href="?page=product-link-maker&tab=api-keys" class="nav-tab <?php echo $current_tab === 'api-keys' ? 'nav-tab-active' : ''; ?>">
+                APIキー設定
+            </a>
+            <a href="?page=product-link-maker&tab=cache" class="nav-tab <?php echo $current_tab === 'cache' ? 'nav-tab-active' : ''; ?>">
+                キャッシュ設定
+            </a>
+            <a href="?page=product-link-maker&tab=error-logs" class="nav-tab <?php echo $current_tab === 'error-logs' ? 'nav-tab-active' : ''; ?>">
+                エラーログ
+                <?php
+                $error_logs = plm_get_error_logs();
+                if ( ! empty( $error_logs ) ) :
+                ?>
+                    <span class="plm-tab-badge" style="background: #d63638; color: #fff; padding: 2px 8px; border-radius: 10px; font-size: 11px; margin-left: 4px;">
+                        <?= count( $error_logs ) ?>
+                    </span>
+                <?php endif; ?>
+            </a>
+        </h2>
         
         <form method="post" action="options.php">
             <?php settings_fields( 'plm_settings_group' ); ?>
@@ -198,6 +222,9 @@ function plm_render_settings_page() {
                 .plm-card .form-table th {
                     padding: 12px 10px 12px 0;
                     font-weight: 600;
+                }
+                .plm-cache-settings .form-table th {
+                    width: 280px;
                 }
                 .plm-card .form-table td {
                     padding: 12px 0;
@@ -230,7 +257,8 @@ function plm_render_settings_page() {
                 }
             </style>
 
-            <!-- Amazon -->
+            <?php if ( $current_tab === 'api-keys' ) : ?>
+            <!-- APIキー設定タブ -->
             <div class="plm-card">
                 <h2>
                     <span class="dashicons dashicons-cart" style="color: #ff9900;"></span>
@@ -406,8 +434,11 @@ function plm_render_settings_page() {
                 </table>
             </div>
 
+            <?php elseif ( $current_tab === 'cache' ) : ?>
+            <!-- キャッシュ設定タブ -->
+            
             <!-- キャッシュ設定 -->
-            <div class="plm-card">
+            <div class="plm-card plm-cache-settings">
                 <h2>
                     <span class="dashicons dashicons-database" style="color: #9b59b6;"></span>
                     キャッシュ設定
@@ -540,88 +571,12 @@ function plm_render_settings_page() {
                 </table>
             </div>
 
-            <!-- デバッグ情報 -->
-            <div class="plm-card" style="background: #fff3cd; border-color: #ffc107;">
-                <h2>
-                    <span class="dashicons dashicons-admin-tools" style="color: #856404;"></span>
-                    デバッグ情報
-                </h2>
-                <?php
-                global $wpdb;
-                $option_exists = $wpdb->get_var( $wpdb->prepare(
-                    "SELECT option_id FROM {$wpdb->options} WHERE option_name = %s",
-                    'plm_error_logs'
-                ) );
-                $option_value = get_option( 'plm_error_logs', null );
-                $option_autoload = $wpdb->get_var( $wpdb->prepare(
-                    "SELECT autoload FROM {$wpdb->options} WHERE option_name = %s",
-                    'plm_error_logs'
-                ) );
-                ?>
-                <table class="form-table">
-                    <tr>
-                        <th style="width: 250px;">データベースオプション存在</th>
-                        <td>
-                            <?php if ( $option_exists ) : ?>
-                                <strong style="color: #00a32a;">✓ 存在する (ID: <?= esc_html( $option_exists ) ?>)</strong>
-                            <?php else : ?>
-                                <strong style="color: #d63638;">✗ 存在しない</strong>
-                            <?php endif; ?>
-                        </td>
-                    </tr>
-                    <tr>
-                        <th>get_option() 結果</th>
-                        <td>
-                            <?php if ( is_array( $option_value ) ) : ?>
-                                配列 (<?= count( $option_value ) ?>件)
-                            <?php elseif ( is_null( $option_value ) ) : ?>
-                                <strong style="color: #d63638;">NULL</strong>
-                            <?php else : ?>
-                                <?= gettype( $option_value ) ?>
-                            <?php endif; ?>
-                        </td>
-                    </tr>
-                    <tr>
-                        <th>Autoload設定</th>
-                        <td><?= esc_html( $option_autoload ?? 'N/A' ) ?></td>
-                    </tr>
-                    <tr>
-                        <th>WP_DEBUG設定</th>
-                        <td>
-                            <?php if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) : ?>
-                                <strong style="color: #00a32a;">✓ 有効</strong>
-                            <?php else : ?>
-                                <strong style="color: #d63638;">✗ 無効</strong>
-                            <?php endif; ?>
-                        </td>
-                    </tr>
-                    <tr>
-                        <th>WP_DEBUG_LOG設定</th>
-                        <td>
-                            <?php if ( defined( 'WP_DEBUG_LOG' ) && WP_DEBUG_LOG ) : ?>
-                                <strong style="color: #00a32a;">✓ 有効</strong>
-                            <?php else : ?>
-                                <strong style="color: #d63638;">✗ 無効</strong>
-                            <?php endif; ?>
-                        </td>
-                    </tr>
-                    <tr>
-                        <th>ログデータ（最新3件）</th>
-                        <td>
-                            <?php if ( is_array( $option_value ) && ! empty( $option_value ) ) : ?>
-                                <pre style="background: #f5f5f5; padding: 10px; border-radius: 4px; max-height: 300px; overflow: auto; font-size: 11px;"><?= esc_html( print_r( array_slice( $option_value, 0, 3 ), true ) ) ?></pre>
-                            <?php else : ?>
-                                <em style="color: #666;">データなし</em>
-                            <?php endif; ?>
-                        </td>
-                    </tr>
-                </table>
-            </div>
-
+            <?php elseif ( $current_tab === 'error-logs' ) : ?>
+            <!-- エラーログタブ -->
+            
             <!-- エラーログ -->
             <div class="plm-card">
                 <h2>
-                    <span class="dashicons dashicons-warning" style="color: #d63638;"></span>
                     エラーログ
                     <?php
                     $error_logs = plm_get_error_logs();
@@ -638,25 +593,11 @@ function plm_render_settings_page() {
                 <div style="margin-bottom: 12px; display: flex; gap: 8px; flex-wrap: wrap;">
                     <?php if ( ! empty( $error_logs ) ) : ?>
                         <button type="button" id="plm-clear-error-logs" class="button">
-                            <span class="dashicons dashicons-dismiss" style="margin-top: 3px;"></span>
                             エラーログをクリア
                         </button>
                     <?php endif; ?>
-                    <button type="button" id="plm-test-error-log" class="button button-primary">
-                        <span class="dashicons dashicons-welcome-learn-more" style="margin-top: 3px;"></span>
-                        テストログを追加
-                    </button>
-                    <button type="button" id="plm-clear-error-cache" class="button" style="background: #f0ad4e; color: #fff; border-color: #f0ad4e;">
-                        <span class="dashicons dashicons-update" style="margin-top: 3px;"></span>
+                    <button type="button" id="plm-clear-error-cache" class="button">
                         エラーキャッシュをクリア
-                    </button>
-                    <button type="button" id="plm-check-db" class="button">
-                        <span class="dashicons dashicons-database" style="margin-top: 3px;"></span>
-                        データベース直接確認
-                    </button>
-                    <button type="button" id="plm-force-insert" class="button" style="background: #d63638; color: #fff; border-color: #d63638;">
-                        <span class="dashicons dashicons-plus-alt" style="margin-top: 3px;"></span>
-                        強制的に追加
                     </button>
                 </div>
                 <div id="plm-error-log-message" style="margin-top: 10px;"></div>
@@ -720,7 +661,11 @@ function plm_render_settings_page() {
                 <?php endif; ?>
             </div>
 
-            <?php submit_button('設定を保存', 'primary large'); ?>
+            <?php endif; ?>
+
+            <?php if ( $current_tab === 'api-keys' || $current_tab === 'cache' ) : ?>
+                <?php submit_button('設定を保存', 'primary large'); ?>
+            <?php endif; ?>
         </form>
 
         <script>
@@ -787,51 +732,6 @@ function plm_render_settings_page() {
                 });
             });
 
-            // テストログ追加ボタン
-            $('#plm-test-error-log').on('click', function() {
-                console.log('[PLM Test] Button clicked');
-                var button = $(this);
-                var messageDiv = $('#plm-error-log-message');
-                
-                button.prop('disabled', true).text('追加中...');
-                messageDiv.html('');
-                
-                $.ajax({
-                    url: '<?php echo rest_url('product-link-maker/v1/test-error-log'); ?>',
-                    method: 'POST',
-                    beforeSend: function(xhr) {
-                        xhr.setRequestHeader('X-WP-Nonce', '<?php echo wp_create_nonce('wp_rest'); ?>');
-                    },
-                    success: function(response) {
-                        console.log('[PLM Test] Response:', response);
-                        
-                        var messageClass = response.success ? 'notice-success' : 'notice-error';
-                        var debugInfo = '';
-                        if (response.debug) {
-                            debugInfo = '<br><small>Log count: ' + response.log_count + 
-                                       ', Insert result: ' + response.debug.insert_result + '</small>';
-                        }
-                        
-                        messageDiv.html('<div class="notice ' + messageClass + ' inline"><p>' + 
-                                      response.message + debugInfo + '</p></div>');
-                        button.prop('disabled', false).text('テストログを追加');
-                        
-                        // 成功時のみリロード
-                        if (response.success) {
-                            setTimeout(function() {
-                                location.reload();
-                            }, 1500);
-                        }
-                    },
-                    error: function(xhr, status, error) {
-                        console.error('[PLM Test] Error:', status, error);
-                        console.error('[PLM Test] Response:', xhr.responseText);
-                        messageDiv.html('<div class="notice notice-error inline"><p>テストログの追加に失敗しました。コンソールを確認してください。</p></div>');
-                        button.prop('disabled', false).text('テストログを追加');
-                    }
-                });
-            });
-
             // エラーキャッシュクリアボタン
             $('#plm-clear-error-cache').on('click', function() {
                 if (!confirm('エラーに関する全てのキャッシュをクリアしますか？\nこれにより、エラーが再度API経由で確認され、ログに記録されます。')) {
@@ -871,85 +771,6 @@ function plm_render_settings_page() {
                         console.error('[PLM Clear] Error:', status, error);
                         messageDiv.html('<div class="notice notice-error inline"><p>クリアに失敗しました。</p></div>');
                         button.prop('disabled', false).text('エラーキャッシュをクリア');
-                    }
-                });
-            });
-
-            // データベース直接確認ボタン
-            $('#plm-check-db').on('click', function() {
-                console.log('[PLM Check] Button clicked');
-                var button = $(this);
-                var messageDiv = $('#plm-error-log-message');
-                
-                button.prop('disabled', true).text('確認中...');
-                messageDiv.html('');
-                
-                $.ajax({
-                    url: '<?php echo rest_url('product-link-maker/v1/check-db'); ?>',
-                    method: 'POST',
-                    beforeSend: function(xhr) {
-                        xhr.setRequestHeader('X-WP-Nonce', '<?php echo wp_create_nonce('wp_rest'); ?>');
-                    },
-                    success: function(response) {
-                        console.log('[PLM Check] Response:', response);
-                        
-                        var info = '<strong>データベース診断結果:</strong><br>' +
-                                  'DBに存在: ' + (response.db_exists ? '✓ Yes' : '✗ No') + '<br>' +
-                                  'DB値の長さ: ' + response.db_value_length + ' bytes<br>' +
-                                  'DB内のログ数: ' + response.db_unserialized_count + '<br>' +
-                                  'get_option()結果: ' + response.get_option_count + ' logs<br>' +
-                                  '<pre style="margin-top:10px; background:#f5f5f5; padding:10px; max-height:200px; overflow:auto;">' +
-                                  JSON.stringify(response.unserialized_sample, null, 2) + '</pre>';
-                        
-                        messageDiv.html('<div class="notice notice-info inline"><p>' + info + '</p></div>');
-                        button.prop('disabled', false).text('データベース直接確認');
-                    },
-                    error: function(xhr, status, error) {
-                        console.error('[PLM Check] Error:', status, error);
-                        messageDiv.html('<div class="notice notice-error inline"><p>確認に失敗しました。</p></div>');
-                        button.prop('disabled', false).text('データベース直接確認');
-                    }
-                });
-            });
-
-            // 強制的に追加ボタン
-            $('#plm-force-insert').on('click', function() {
-                console.log('[PLM Force] Button clicked');
-                var button = $(this);
-                var messageDiv = $('#plm-error-log-message');
-                
-                button.prop('disabled', true).text('追加中...');
-                messageDiv.html('');
-                
-                $.ajax({
-                    url: '<?php echo rest_url('product-link-maker/v1/force-insert'); ?>',
-                    method: 'POST',
-                    beforeSend: function(xhr) {
-                        xhr.setRequestHeader('X-WP-Nonce', '<?php echo wp_create_nonce('wp_rest'); ?>');
-                    },
-                    success: function(response) {
-                        console.log('[PLM Force] Response:', response);
-                        
-                        var info = '<strong>強制追加結果:</strong><br>' +
-                                  '成功: ' + (response.success ? '✓ Yes' : '✗ No') + '<br>' +
-                                  'DB結果: ' + response.db_result + '<br>' +
-                                  '追加後のログ数: ' + response.log_count + '<br>' +
-                                  '確認時のログ数: ' + response.verify_count + '<br>';
-                        
-                        var messageClass = response.success ? 'notice-success' : 'notice-error';
-                        messageDiv.html('<div class="notice ' + messageClass + ' inline"><p>' + info + '</p></div>');
-                        button.prop('disabled', false).text('強制的に追加');
-                        
-                        if (response.success && response.verify_count > 0) {
-                            setTimeout(function() {
-                                location.reload();
-                            }, 2000);
-                        }
-                    },
-                    error: function(xhr, status, error) {
-                        console.error('[PLM Force] Error:', status, error);
-                        messageDiv.html('<div class="notice notice-error inline"><p>強制追加に失敗しました。</p></div>');
-                        button.prop('disabled', false).text('強制的に追加');
                     }
                 });
             });

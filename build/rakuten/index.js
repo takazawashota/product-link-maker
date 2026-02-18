@@ -1,4 +1,5 @@
 /******/ (() => { // webpackBootstrap
+/******/ 	"use strict";
 /******/ 	var __webpack_modules__ = ({
 
 /***/ "./src/rakuten/block.json":
@@ -7,7 +8,6 @@
   \********************************/
 /***/ ((module) => {
 
-"use strict";
 module.exports = /*#__PURE__*/JSON.parse('{"$schema":"https://schemas.wp.org/trunk/block.json","apiVersion":3,"name":"product-link-maker/rakuten","version":"0.1.0","title":"楽天商品リンク","category":"product-link-maker","icon":"cart","description":"楽天市場の商品情報を取得して、アフィリエイトリンク付きの商品カードを表示するブロックです。","example":{"attributes":{"id":"book:11830886","kw":"サンプル商品","title":"サンプル商品タイトル","price":"1,980","imageUrl":"https://placehold.co/300x300/e8e8e8/666?text=Product+Image","desc":"楽天市場の商品情報を自動取得してアフィリエイトリンク付きの商品カードを表示します。","shopName":"楽天ブックス","showShop":true,"showRakuten":true,"showAmazon":true,"showYahoo":true,"showMercari":true,"showDmm":true}},"supports":{"html":false},"textdomain":"product-link-maker","editorScript":"file:./index.js","editorStyle":"file:./index.css","style":"file:./style-index.css","render":"file:./render.php","viewScript":"file:./view.js","attributes":{"id":{"type":"string","default":""},"no":{"type":"string","default":""},"kw":{"type":"string","default":""},"shop":{"type":"string","default":""},"search":{"type":"string","default":""},"title":{"type":"string","default":""},"price":{"type":"boolean","default":false},"showShop":{"type":"boolean","default":true},"desc":{"type":"string","default":""},"imageUrl":{"type":"string","default":""},"showAmazon":{"type":"boolean","default":true},"showRakuten":{"type":"boolean","default":true},"showYahoo":{"type":"boolean","default":true},"showMercari":{"type":"boolean","default":true},"showDmm":{"type":"boolean","default":true},"customButtonsBefore":{"type":"array","default":[]},"customButtonsAfter":{"type":"array","default":[]}}}');
 
 /***/ }),
@@ -16,9 +16,873 @@ module.exports = /*#__PURE__*/JSON.parse('{"$schema":"https://schemas.wp.org/tru
 /*!*****************************!*\
   !*** ./src/rakuten/edit.js ***!
   \*****************************/
-/***/ (() => {
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
-throw new Error("Module build failed (from ./node_modules/babel-loader/lib/index.js):\nSyntaxError: /Users/takazawashota/Desktop/takazawa_work1/product-link-maker/src/rakuten/edit.js: Missing catch or finally clause. (384:2)\n\n\u001b[0m \u001b[90m 382 |\u001b[39m \t\tsetIsLoading(\u001b[36mtrue\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m 383 |\u001b[39m \t\tsetError(\u001b[36mnull\u001b[39m)\u001b[33m;\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 384 |\u001b[39m \t\t\u001b[36mtry\u001b[39m {\n \u001b[90m     |\u001b[39m \t\t\u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 385 |\u001b[39m \t\t\t\u001b[90m// キャッシュ削除は行わず、常にキャッシュを利用する\u001b[39m\n \u001b[90m 386 |\u001b[39m \t\t\t\u001b[36mconst\u001b[39m queryParams \u001b[33m=\u001b[39m \u001b[36mnew\u001b[39m \u001b[33mURLSearchParams\u001b[39m({\n \u001b[90m 387 |\u001b[39m \t\t\t\tid\u001b[33m:\u001b[39m attributes\u001b[33m.\u001b[39mid \u001b[33m||\u001b[39m \u001b[32m''\u001b[39m\u001b[33m,\u001b[39m\u001b[0m\n    at constructor (/Users/takazawashota/Desktop/takazawa_work1/product-link-maker/node_modules/@babel/parser/lib/index.js:363:19)\n    at JSXParserMixin.raise (/Users/takazawashota/Desktop/takazawa_work1/product-link-maker/node_modules/@babel/parser/lib/index.js:6609:19)\n    at JSXParserMixin.parseTryStatement (/Users/takazawashota/Desktop/takazawa_work1/product-link-maker/node_modules/@babel/parser/lib/index.js:13143:12)\n    at JSXParserMixin.parseStatementContent (/Users/takazawashota/Desktop/takazawa_work1/product-link-maker/node_modules/@babel/parser/lib/index.js:12722:21)\n    at JSXParserMixin.parseStatementLike (/Users/takazawashota/Desktop/takazawa_work1/product-link-maker/node_modules/@babel/parser/lib/index.js:12685:17)\n    at JSXParserMixin.parseStatementListItem (/Users/takazawashota/Desktop/takazawa_work1/product-link-maker/node_modules/@babel/parser/lib/index.js:12665:17)\n    at JSXParserMixin.parseBlockOrModuleBlockBody (/Users/takazawashota/Desktop/takazawa_work1/product-link-maker/node_modules/@babel/parser/lib/index.js:13235:61)\n    at JSXParserMixin.parseBlockBody (/Users/takazawashota/Desktop/takazawa_work1/product-link-maker/node_modules/@babel/parser/lib/index.js:13228:10)\n    at JSXParserMixin.parseBlock (/Users/takazawashota/Desktop/takazawa_work1/product-link-maker/node_modules/@babel/parser/lib/index.js:13216:10)\n    at JSXParserMixin.parseFunctionBody (/Users/takazawashota/Desktop/takazawa_work1/product-link-maker/node_modules/@babel/parser/lib/index.js:12035:24)\n    at JSXParserMixin.parseArrowExpression (/Users/takazawashota/Desktop/takazawa_work1/product-link-maker/node_modules/@babel/parser/lib/index.js:12010:10)\n    at JSXParserMixin.parseAsyncArrowFromCallExpression (/Users/takazawashota/Desktop/takazawa_work1/product-link-maker/node_modules/@babel/parser/lib/index.js:11195:10)\n    at JSXParserMixin.parseCoverCallAndAsyncArrowHead (/Users/takazawashota/Desktop/takazawa_work1/product-link-maker/node_modules/@babel/parser/lib/index.js:11125:27)\n    at JSXParserMixin.parseSubscript (/Users/takazawashota/Desktop/takazawa_work1/product-link-maker/node_modules/@babel/parser/lib/index.js:11051:19)\n    at JSXParserMixin.parseSubscripts (/Users/takazawashota/Desktop/takazawa_work1/product-link-maker/node_modules/@babel/parser/lib/index.js:11025:19)\n    at JSXParserMixin.parseExprSubscripts (/Users/takazawashota/Desktop/takazawa_work1/product-link-maker/node_modules/@babel/parser/lib/index.js:11016:17)\n    at JSXParserMixin.parseUpdate (/Users/takazawashota/Desktop/takazawa_work1/product-link-maker/node_modules/@babel/parser/lib/index.js:10997:21)\n    at JSXParserMixin.parseMaybeUnary (/Users/takazawashota/Desktop/takazawa_work1/product-link-maker/node_modules/@babel/parser/lib/index.js:10977:23)\n    at JSXParserMixin.parseMaybeUnaryOrPrivate (/Users/takazawashota/Desktop/takazawa_work1/product-link-maker/node_modules/@babel/parser/lib/index.js:10830:61)\n    at JSXParserMixin.parseExprOps (/Users/takazawashota/Desktop/takazawa_work1/product-link-maker/node_modules/@babel/parser/lib/index.js:10835:23)\n    at JSXParserMixin.parseMaybeConditional (/Users/takazawashota/Desktop/takazawa_work1/product-link-maker/node_modules/@babel/parser/lib/index.js:10812:23)\n    at JSXParserMixin.parseMaybeAssign (/Users/takazawashota/Desktop/takazawa_work1/product-link-maker/node_modules/@babel/parser/lib/index.js:10765:21)\n    at /Users/takazawashota/Desktop/takazawa_work1/product-link-maker/node_modules/@babel/parser/lib/index.js:10734:39\n    at JSXParserMixin.allowInAnd (/Users/takazawashota/Desktop/takazawa_work1/product-link-maker/node_modules/@babel/parser/lib/index.js:12361:12)\n    at JSXParserMixin.parseMaybeAssignAllowIn (/Users/takazawashota/Desktop/takazawa_work1/product-link-maker/node_modules/@babel/parser/lib/index.js:10734:17)\n    at JSXParserMixin.parseExprListItem (/Users/takazawashota/Desktop/takazawa_work1/product-link-maker/node_modules/@babel/parser/lib/index.js:12110:18)\n    at JSXParserMixin.parseCallExpressionArguments (/Users/takazawashota/Desktop/takazawa_work1/product-link-maker/node_modules/@babel/parser/lib/index.js:11183:22)\n    at JSXParserMixin.parseCoverCallAndAsyncArrowHead (/Users/takazawashota/Desktop/takazawa_work1/product-link-maker/node_modules/@babel/parser/lib/index.js:11117:29)\n    at JSXParserMixin.parseSubscript (/Users/takazawashota/Desktop/takazawa_work1/product-link-maker/node_modules/@babel/parser/lib/index.js:11051:19)\n    at JSXParserMixin.parseSubscripts (/Users/takazawashota/Desktop/takazawa_work1/product-link-maker/node_modules/@babel/parser/lib/index.js:11025:19)\n    at JSXParserMixin.parseExprSubscripts (/Users/takazawashota/Desktop/takazawa_work1/product-link-maker/node_modules/@babel/parser/lib/index.js:11016:17)\n    at JSXParserMixin.parseUpdate (/Users/takazawashota/Desktop/takazawa_work1/product-link-maker/node_modules/@babel/parser/lib/index.js:10997:21)\n    at JSXParserMixin.parseMaybeUnary (/Users/takazawashota/Desktop/takazawa_work1/product-link-maker/node_modules/@babel/parser/lib/index.js:10977:23)\n    at JSXParserMixin.parseMaybeUnaryOrPrivate (/Users/takazawashota/Desktop/takazawa_work1/product-link-maker/node_modules/@babel/parser/lib/index.js:10830:61)\n    at JSXParserMixin.parseExprOps (/Users/takazawashota/Desktop/takazawa_work1/product-link-maker/node_modules/@babel/parser/lib/index.js:10835:23)\n    at JSXParserMixin.parseMaybeConditional (/Users/takazawashota/Desktop/takazawa_work1/product-link-maker/node_modules/@babel/parser/lib/index.js:10812:23)\n    at JSXParserMixin.parseMaybeAssign (/Users/takazawashota/Desktop/takazawa_work1/product-link-maker/node_modules/@babel/parser/lib/index.js:10765:21)\n    at /Users/takazawashota/Desktop/takazawa_work1/product-link-maker/node_modules/@babel/parser/lib/index.js:10734:39\n    at JSXParserMixin.allowInAnd (/Users/takazawashota/Desktop/takazawa_work1/product-link-maker/node_modules/@babel/parser/lib/index.js:12356:16)\n    at JSXParserMixin.parseMaybeAssignAllowIn (/Users/takazawashota/Desktop/takazawa_work1/product-link-maker/node_modules/@babel/parser/lib/index.js:10734:17)\n    at JSXParserMixin.parseVar (/Users/takazawashota/Desktop/takazawa_work1/product-link-maker/node_modules/@babel/parser/lib/index.js:13303:91)\n    at JSXParserMixin.parseVarStatement (/Users/takazawashota/Desktop/takazawa_work1/product-link-maker/node_modules/@babel/parser/lib/index.js:13149:10)\n    at JSXParserMixin.parseStatementContent (/Users/takazawashota/Desktop/takazawa_work1/product-link-maker/node_modules/@babel/parser/lib/index.js:12770:23)\n    at JSXParserMixin.parseStatementLike (/Users/takazawashota/Desktop/takazawa_work1/product-link-maker/node_modules/@babel/parser/lib/index.js:12685:17)\n    at JSXParserMixin.parseStatementListItem (/Users/takazawashota/Desktop/takazawa_work1/product-link-maker/node_modules/@babel/parser/lib/index.js:12665:17)\n    at JSXParserMixin.parseBlockOrModuleBlockBody (/Users/takazawashota/Desktop/takazawa_work1/product-link-maker/node_modules/@babel/parser/lib/index.js:13235:61)\n    at JSXParserMixin.parseBlockBody (/Users/takazawashota/Desktop/takazawa_work1/product-link-maker/node_modules/@babel/parser/lib/index.js:13228:10)\n    at JSXParserMixin.parseBlock (/Users/takazawashota/Desktop/takazawa_work1/product-link-maker/node_modules/@babel/parser/lib/index.js:13216:10)\n    at JSXParserMixin.parseFunctionBody (/Users/takazawashota/Desktop/takazawa_work1/product-link-maker/node_modules/@babel/parser/lib/index.js:12035:24)\n    at JSXParserMixin.parseFunctionBodyAndFinish (/Users/takazawashota/Desktop/takazawa_work1/product-link-maker/node_modules/@babel/parser/lib/index.js:12021:10)");
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (/* binding */ Edit)
+/* harmony export */ });
+/* harmony import */ var _wordpress_i18n__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @wordpress/i18n */ "@wordpress/i18n");
+/* harmony import */ var _wordpress_i18n__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_wordpress_i18n__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _wordpress_block_editor__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @wordpress/block-editor */ "@wordpress/block-editor");
+/* harmony import */ var _wordpress_block_editor__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_wordpress_block_editor__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var _wordpress_components__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @wordpress/components */ "@wordpress/components");
+/* harmony import */ var _wordpress_components__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_wordpress_components__WEBPACK_IMPORTED_MODULE_2__);
+/* harmony import */ var _editor_scss__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./editor.scss */ "./src/rakuten/editor.scss");
+/* harmony import */ var _wordpress_element__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @wordpress/element */ "@wordpress/element");
+/* harmony import */ var _wordpress_element__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(_wordpress_element__WEBPACK_IMPORTED_MODULE_4__);
+/* harmony import */ var _wordpress_api_fetch__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! @wordpress/api-fetch */ "@wordpress/api-fetch");
+/* harmony import */ var _wordpress_api_fetch__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(_wordpress_api_fetch__WEBPACK_IMPORTED_MODULE_5__);
+/* harmony import */ var _wordpress_data__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! @wordpress/data */ "@wordpress/data");
+/* harmony import */ var _wordpress_data__WEBPACK_IMPORTED_MODULE_6___default = /*#__PURE__*/__webpack_require__.n(_wordpress_data__WEBPACK_IMPORTED_MODULE_6__);
+/* harmony import */ var react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! react/jsx-runtime */ "react/jsx-runtime");
+/* harmony import */ var react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7___default = /*#__PURE__*/__webpack_require__.n(react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__);
+
+
+
+
+// import './style.scss';
+
+
+
+
+
+/**
+ * 定数定義
+ */
+
+const DEFAULT_BUTTON_COLOR = '#2196f3';
+const DEBOUNCE_DELAY = 1000;
+
+/**
+ * 共通スタイル定義
+ */
+const COMMON_STYLES = {
+  buttonBase: {
+    color: '#fff',
+    borderRadius: '3px',
+    padding: '8px 16px',
+    display: 'inline-flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    textDecoration: 'none',
+    fontSize: '15px',
+    fontWeight: '600',
+    whiteSpace: 'nowrap',
+    minWidth: '85px',
+    boxShadow: '0 1px 3px rgba(0, 0, 0, 0.1)'
+  },
+  statusBox: {
+    padding: '32px',
+    textAlign: 'center',
+    borderRadius: '4px'
+  }
+};
+
+/**
+ * カスタムボタンコンポーネント（再利用可能）
+ */
+function CustomButtonEditor({
+  buttons,
+  onChange,
+  label
+}) {
+  return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsxs)(react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.Fragment, {
+    children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsx)("p", {
+      style: {
+        fontSize: '13px',
+        color: '#757575',
+        marginTop: 0
+      },
+      children: label
+    }), buttons.map((btn, index) => /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsxs)(_wordpress_components__WEBPACK_IMPORTED_MODULE_2__.Card, {
+      style: {
+        marginBottom: '16px',
+        border: '1px solid #ddd'
+      },
+      children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsx)(_wordpress_components__WEBPACK_IMPORTED_MODULE_2__.CardHeader, {
+        children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsxs)(_wordpress_components__WEBPACK_IMPORTED_MODULE_2__.Flex, {
+          justify: "space-between",
+          align: "center",
+          children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsxs)("span", {
+            style: {
+              fontWeight: 600
+            },
+            children: ["\u30DC\u30BF\u30F3 ", index + 1]
+          }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsx)(_wordpress_components__WEBPACK_IMPORTED_MODULE_2__.Button, {
+            isDestructive: true,
+            isSmall: true,
+            onClick: () => {
+              const newButtons = [...buttons];
+              newButtons.splice(index, 1);
+              onChange(newButtons);
+            },
+            icon: "trash"
+          })]
+        })
+      }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsxs)(_wordpress_components__WEBPACK_IMPORTED_MODULE_2__.CardBody, {
+        children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsx)(_wordpress_components__WEBPACK_IMPORTED_MODULE_2__.TextControl, {
+          label: "\u30DC\u30BF\u30F3\u30C6\u30AD\u30B9\u30C8",
+          value: btn.text || '',
+          onChange: val => {
+            const newButtons = [...buttons];
+            newButtons[index] = {
+              ...newButtons[index],
+              text: val
+            };
+            onChange(newButtons);
+          },
+          placeholder: "\u4F8B: \u516C\u5F0F\u30B5\u30A4\u30C8"
+        }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsx)(_wordpress_components__WEBPACK_IMPORTED_MODULE_2__.TextControl, {
+          label: "\u30EA\u30F3\u30AFURL",
+          value: btn.url || '',
+          onChange: val => {
+            const newButtons = [...buttons];
+            newButtons[index] = {
+              ...newButtons[index],
+              url: val
+            };
+            onChange(newButtons);
+          },
+          placeholder: "https://example.com"
+        }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsx)(_wordpress_components__WEBPACK_IMPORTED_MODULE_2__.ToggleControl, {
+          label: "\u5225\u30BF\u30D6\u3067\u958B\u304F",
+          checked: btn.openInNewTab !== false,
+          onChange: val => {
+            const newButtons = [...buttons];
+            newButtons[index] = {
+              ...newButtons[index],
+              openInNewTab: val
+            };
+            onChange(newButtons);
+          }
+        }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsxs)("div", {
+          style: {
+            marginTop: '12px'
+          },
+          children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsxs)(_wordpress_components__WEBPACK_IMPORTED_MODULE_2__.Button, {
+            variant: "secondary",
+            onClick: () => {
+              const newButtons = [...buttons];
+              newButtons[index] = {
+                ...newButtons[index],
+                showColorPicker: !newButtons[index].showColorPicker
+              };
+              onChange(newButtons);
+            },
+            style: {
+              width: '100%',
+              marginBottom: '8px'
+            },
+            children: [btn.showColorPicker ? '色を選択中' : 'ボタンの色を選択', /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsx)("span", {
+              style: {
+                marginLeft: '8px',
+                width: '20px',
+                height: '20px',
+                backgroundColor: btn.color || DEFAULT_BUTTON_COLOR,
+                display: 'inline-block',
+                borderRadius: '3px',
+                border: '1px solid #ddd',
+                verticalAlign: 'middle'
+              }
+            })]
+          }), btn.showColorPicker && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsx)(_wordpress_components__WEBPACK_IMPORTED_MODULE_2__.ColorPicker, {
+            color: btn.color || DEFAULT_BUTTON_COLOR,
+            onChange: val => {
+              const newButtons = [...buttons];
+              newButtons[index] = {
+                ...newButtons[index],
+                color: val
+              };
+              onChange(newButtons);
+            },
+            enableAlpha: true,
+            defaultValue: DEFAULT_BUTTON_COLOR
+          })]
+        })]
+      })]
+    }, index)), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsx)(_wordpress_components__WEBPACK_IMPORTED_MODULE_2__.Button, {
+      variant: "secondary",
+      onClick: () => {
+        const newButtons = [...buttons, {
+          text: '',
+          url: '',
+          openInNewTab: true,
+          color: DEFAULT_BUTTON_COLOR
+        }];
+        onChange(newButtons);
+      },
+      icon: "plus",
+      style: {
+        width: '100%',
+        justifyContent: 'center'
+      },
+      children: "\u30DC\u30BF\u30F3\u3092\u8FFD\u52A0"
+    })]
+  });
+}
+
+/**
+ * ショップボタンのスタイル定義
+ */
+const BUTTON_STYLES = {
+  amazon: {
+    backgroundColor: '#ff9900',
+    text: 'Amazon'
+  },
+  rakuten: {
+    backgroundColor: '#bf0000',
+    text: '楽天市場'
+  },
+  yahoo: {
+    backgroundColor: '#ff0033',
+    text: 'Yahoo!ショッピング'
+  },
+  mercari: {
+    backgroundColor: '#4dc9ff',
+    text: 'メルカリ'
+  },
+  dmm: {
+    backgroundColor: '#00bcd4',
+    text: 'DMM'
+  }
+};
+
+/**
+ * カスタムボタンレンダリング
+ */
+function renderCustomButton(btn, keyPrefix, idx) {
+  if (!btn.text || !btn.url) return null;
+  return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsx)("div", {
+    className: "plm-shop-custom",
+    children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsx)("a", {
+      rel: "nofollow noopener",
+      href: btn.url,
+      target: btn.openInNewTab !== false ? "_blank" : "_self",
+      style: {
+        ...COMMON_STYLES.buttonBase,
+        backgroundColor: btn.color || DEFAULT_BUTTON_COLOR
+      },
+      children: btn.text
+    })
+  }, `${keyPrefix}-${idx}`);
+}
+
+/**
+ * ショップボタンレンダリング
+ */
+function renderShopButton(shopKey, url, style) {
+  return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsx)("div", {
+    className: `plm-shop-${shopKey}`,
+    children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsx)("a", {
+      rel: "nofollow noopener",
+      href: url,
+      target: "_blank",
+      style: {
+        ...COMMON_STYLES.buttonBase,
+        backgroundColor: style.backgroundColor
+      },
+      children: style.text
+    })
+  }, shopKey);
+}
+
+/**
+ * ステータスメッセージコンポーネント
+ */
+function StatusMessage({
+  type,
+  message
+}) {
+  const styles = {
+    loading: {
+      ...COMMON_STYLES.statusBox,
+      color: '#888',
+      backgroundColor: '#f5f5f5',
+      border: '1px dashed #ccc',
+      display: 'flex',
+      alignItems: 'center',
+      gap: '8px'
+    },
+    error: {
+      ...COMMON_STYLES.statusBox,
+      color: '#d63638',
+      backgroundColor: '#fff0f0',
+      border: '1px solid #d63638'
+    },
+    empty: {
+      ...COMMON_STYLES.statusBox,
+      color: '#666',
+      backgroundColor: '#f5f5f5',
+      border: '1px dashed #ccc'
+    }
+  };
+  return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsxs)("div", {
+    style: styles[type],
+    children: [type === 'loading' && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsx)(_wordpress_components__WEBPACK_IMPORTED_MODULE_2__.Spinner, {}), message]
+  });
+}
+
+/**
+ * 全ボタンをレンダリングする関数
+ */
+function renderAllButtons(attributes) {
+  const kwArray = attributes.kw.split(',').map(s => s.trim()).filter(Boolean);
+  const kwForUrl = kwArray.join(' ');
+  const settings = window.ProductLinkMakerSettings || {};
+  const buttons = [];
+
+  // カスタムボタン（前）
+  (attributes.customButtonsBefore || []).forEach((btn, idx) => {
+    const customBtn = renderCustomButton(btn, 'custom-before', idx);
+    if (customBtn) buttons.push(customBtn);
+  });
+
+  // ショップボタン
+  if (settings.amazon && attributes.showAmazon !== false) {
+    buttons.push(renderShopButton('amazon', `https://www.amazon.co.jp/gp/search?keywords=${encodeURIComponent(kwForUrl)}`, BUTTON_STYLES.amazon));
+  }
+  if (settings.rakuten && attributes.showRakuten !== false) {
+    buttons.push(renderShopButton('rakuten', `https://search.rakuten.co.jp/search/mall/${encodeURIComponent(kwForUrl)}/`, BUTTON_STYLES.rakuten));
+  }
+  if (settings.yahoo && attributes.showYahoo !== false) {
+    buttons.push(renderShopButton('yahoo', `https://search.shopping.yahoo.co.jp/search?p=${encodeURIComponent(kwForUrl)}`, BUTTON_STYLES.yahoo));
+  }
+  if (settings.mercari && attributes.showMercari !== false) {
+    buttons.push(renderShopButton('mercari', `https://jp.mercari.com/search?keyword=${encodeURIComponent(kwForUrl)}`, BUTTON_STYLES.mercari));
+  }
+  if (settings.dmm && attributes.showDmm !== false) {
+    // DMM: キーワード設定を使用
+    const dmmUrl = `https://al.dmm.com/?lurl=https%3A%2F%2Fwww.dmm.com%2Fsearch%2F%3D%2Fsearchstr%3D${encodeURIComponent(kwForUrl)}%2Fanalyze%3DV1ECCVYAUQQ_%2Flimit%3D30%2Fsort%3Drankprofile%2F&af_id=dummy&ch=link_tool&ch_id=link`;
+    buttons.push(renderShopButton('dmm', dmmUrl, BUTTON_STYLES.dmm));
+  }
+
+  // カスタムボタン（後）
+  (attributes.customButtonsAfter || []).forEach((btn, idx) => {
+    const customBtn = renderCustomButton(btn, 'custom-after', idx);
+    if (customBtn) buttons.push(customBtn);
+  });
+  return buttons;
+}
+
+/**
+ * プレビューコンポーネント
+ */
+function ProductPreview({
+  attributes,
+  item,
+  imageUrl,
+  imageKey,
+  itemTitle,
+  itemLink
+}) {
+  return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsxs)("div", {
+    className: "plm-product-box",
+    children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsx)("figure", {
+      className: "plm-product-thumb",
+      children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsx)("a", {
+        rel: "nofollow noopener",
+        href: itemLink,
+        className: "plm-product-thumb-link",
+        target: "_blank",
+        title: itemTitle,
+        children: imageUrl && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsx)("img", {
+          decoding: "async",
+          src: imageUrl,
+          alt: itemTitle || '商品画像',
+          width: "128",
+          height: "128",
+          className: "plm-product-thumb-image"
+        }, imageKey)
+      })
+    }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsxs)("div", {
+      className: "plm-product-content",
+      children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsx)("div", {
+        className: "plm-product-title",
+        children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsx)("a", {
+          rel: "nofollow noopener",
+          href: itemLink,
+          className: "plm-product-title-link",
+          target: "_blank",
+          title: itemTitle,
+          children: itemTitle ? itemTitle : ''
+        })
+      }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsxs)("div", {
+        className: "plm-product-snippet",
+        children: [attributes.showShop !== false && (item?.shopName || attributes.shop) && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsx)("div", {
+          className: "plm-product-maker",
+          children: item?.shopName || attributes.shop
+        }), attributes.price && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsxs)("div", {
+          className: "plm-product-price",
+          children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsx)("span", {
+            className: "plm-price-value",
+            children: item?.itemPrice ? `￥ ${Number(item.itemPrice).toLocaleString('ja-JP')}` : '価格情報なし'
+          }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsx)("span", {
+            className: "acquired-date",
+            children: item?.itemPrice ? `（${new Date().toLocaleDateString()} 時点）` : ''
+          })]
+        }), attributes.desc && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsx)("div", {
+          className: "plm-product-description",
+          children: attributes.desc
+        })]
+      }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsx)("div", {
+        className: "plm-product-buttons",
+        children: attributes.kw && attributes.kw.split(',').filter(Boolean).length > 0 && renderAllButtons(attributes)
+      })]
+    })]
+  });
+}
+function Edit({
+  attributes,
+  setAttributes
+}) {
+  const [item, setItem] = (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_4__.useState)(null);
+  const [isLoading, setIsLoading] = (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_4__.useState)(true); // 初期状態をtrueに変更
+  const [error, setError] = (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_4__.useState)(null);
+  const [isClearingCache, setIsClearingCache] = (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_4__.useState)(false);
+  const [hasInitialized, setHasInitialized] = (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_4__.useState)(false); // 初回取得完了フラグ
+  const fetchTimeoutRef = (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_4__.useRef)(null);
+  const isInitialLoadRef = (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_4__.useRef)(true); // 初回ロードを追跡するRef
+
+  // 現在の投稿IDを取得
+  const postId = (0,_wordpress_data__WEBPACK_IMPORTED_MODULE_6__.useSelect)(select => {
+    const editor = select('core/editor');
+    return editor ? editor.getCurrentPostId() : null;
+  }, []);
+  const fetchData = (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_4__.useCallback)(async () => {
+    if (!attributes.id && !attributes.no && !attributes.kw) {
+      setItem(null);
+      setAttributes(prev => ({
+        ...prev,
+        imageUrl: ''
+      }));
+      setIsLoading(false);
+      setHasInitialized(true);
+      return;
+    }
+    setIsLoading(true);
+    setError(null);
+    try {
+      // キャッシュ削除は行わず、常にキャッシュを利用する
+      const queryParams = new URLSearchParams({
+        id: attributes.id || '',
+        kw: attributes.kw || '',
+        no: attributes.no || '',
+        post_id: postId || ''
+      });
+      const data = await _wordpress_api_fetch__WEBPACK_IMPORTED_MODULE_5___default()({
+        path: `/product-link-maker/v1/rakuten/?${queryParams.toString()}`
+      });
+      if (data && data.items && data.items.length > 0) {
+        // 正常にデータを取得できた場合
+        setItem(data.items[0]);
+        setAttributes(prev => ({
+          ...prev,
+          imageUrl: data.items[0]?.Item?.mediumImageUrls?.[0]?.imageUrl || ''
+        }));
+      } else if (data?.error) {
+        // APIエラーレスポンス
+        setItem(null);
+        setAttributes(prev => ({
+          ...prev,
+          imageUrl: ''
+        }));
+        setError('APIエラー: ' + (data.error_description || 'リクエスト制限に達しました。しばらく待ってから再度お試しください。'));
+
+        // エラーログに記録（rate_limit以外、かつID/キーワードが入力されている場合）
+        if (data.error !== 'rate_limit' && (attributes.id || attributes.kw || attributes.no)) {
+          try {
+            await _wordpress_api_fetch__WEBPACK_IMPORTED_MODULE_5___default()({
+              path: '/product-link-maker/v1/log-client-error/',
+              method: 'POST',
+              data: {
+                error_type: data.error,
+                error_message: data.error_description || data.error,
+                post_id: postId,
+                item_id: attributes.id || '',
+                keyword: attributes.kw || attributes.no || ''
+              }
+            });
+          } catch (logError) {
+            // エラーログの記録に失敗しても処理は継続
+          }
+        }
+      } else {
+        // データなし（商品が見つからない等）
+        setItem(null);
+        setAttributes(prev => ({
+          ...prev,
+          imageUrl: ''
+        }));
+        setError('データが取得できませんでした');
+
+        // このケースもエラーログに記録（ID/キーワードが入力されている場合のみ）
+        if (attributes.id || attributes.kw || attributes.no) {
+          try {
+            await _wordpress_api_fetch__WEBPACK_IMPORTED_MODULE_5___default()({
+              path: '/product-link-maker/v1/log-client-error/',
+              method: 'POST',
+              data: {
+                error_type: 'no_data',
+                error_message: 'データが取得できませんでした。商品IDまたはキーワードが正しいか確認してください。',
+                post_id: postId,
+                item_id: attributes.id || '',
+                keyword: attributes.kw || attributes.no || ''
+              }
+            });
+          } catch (logError) {
+            // エラーログの記録に失敗しても処理は継続
+          }
+        }
+      }
+    } catch (error) {
+      setItem(null);
+      setAttributes(prev => ({
+        ...prev,
+        imageUrl: ''
+      }));
+      setError('APIエラーが発生しました。しばらく待ってから再度お試しください。');
+
+      // 例外もエラーログに記録（ID/キーワードが入力されている場合のみ）
+      if (attributes.id || attributes.kw || attributes.no) {
+        try {
+          await _wordpress_api_fetch__WEBPACK_IMPORTED_MODULE_5___default()({
+            path: '/product-link-maker/v1/log-client-error/',
+            method: 'POST',
+            data: {
+              error_type: 'fetch_exception',
+              error_message: 'API取得中に例外が発生: ' + (error.message || error.toString()),
+              post_id: postId,
+              item_id: attributes.id || '',
+              keyword: attributes.kw || attributes.no || ''
+            }
+          });
+        } catch (logError) {
+          // エラーログの記録に失敗しても処理は継続
+        }
+      }
+    } finally {
+      setIsLoading(false);
+      setHasInitialized(true);
+      // 初回ロード完了後、フラグを更新
+      if (isInitialLoadRef.current) {
+        isInitialLoadRef.current = false;
+      }
+    }
+  }, [attributes.id, attributes.no, attributes.kw, postId, setAttributes]);
+
+  // キャッシュを削除して再取得する関数
+  const handleClearCache = (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_4__.useCallback)(async () => {
+    if (!window.confirm('キャッシュを削除して最新データを取得しますか？')) {
+      return;
+    }
+    setIsClearingCache(true);
+    try {
+      await _wordpress_api_fetch__WEBPACK_IMPORTED_MODULE_5___default()({
+        path: '/product-link-maker/v1/rakuten-cache/',
+        method: 'POST',
+        data: {
+          id: attributes.id,
+          kw: attributes.kw,
+          no: attributes.no
+        }
+      });
+      // キャッシュ削除後、再取得
+      await fetchData();
+    } catch (error) {
+      console.error('Cache clear error:', error);
+      alert('キャッシュ削除中にエラーが発生しました。');
+    } finally {
+      setIsClearingCache(false);
+    }
+  }, [attributes.id, attributes.kw, attributes.no, fetchData]);
+
+  // attributesがあれば必ずfetchDataを呼ぶ（デバウンス付き）
+  (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_4__.useEffect)(() => {
+    // 前回のタイマーをクリア
+    if (fetchTimeoutRef.current) {
+      clearTimeout(fetchTimeoutRef.current);
+    }
+    if (attributes.id || attributes.no || attributes.kw) {
+      // デバウンスを追加
+      fetchTimeoutRef.current = setTimeout(() => {
+        fetchData();
+      }, DEBOUNCE_DELAY);
+    } else {
+      setItem(null);
+      setIsLoading(false);
+      setHasInitialized(true);
+    }
+
+    // クリーンアップ
+    return () => {
+      if (fetchTimeoutRef.current) {
+        clearTimeout(fetchTimeoutRef.current);
+      }
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [attributes.id, attributes.no, attributes.kw]);
+
+  // 画像・リンク・タイトル等をAPIデータ優先で差し替え
+  const [imageKey, setImageKey] = (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_4__.useState)(0);
+  const imageUrl = attributes.imageUrl || (item && item.mediumImageUrls && item.mediumImageUrls[0] ? item.mediumImageUrls[0].imageUrl : '');
+  (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_4__.useEffect)(() => {
+    setImageKey(k => k + 1);
+  }, [imageUrl]);
+  const itemTitle = attributes.title || (item ? item.itemName : '');
+  const itemLink = item ? item.affiliateUrl || item.itemUrl || '#' : '#';
+  return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsxs)(react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.Fragment, {
+    children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsxs)(_wordpress_block_editor__WEBPACK_IMPORTED_MODULE_1__.InspectorControls, {
+      children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsxs)(_wordpress_components__WEBPACK_IMPORTED_MODULE_2__.PanelBody, {
+        title: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_0__.__)('商品情報設定', 'product-link-maker'),
+        initialOpen: true,
+        children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsx)(_wordpress_components__WEBPACK_IMPORTED_MODULE_2__.TextControl, {
+          label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_0__.__)('アイテムコード（ID）', 'product-link-maker'),
+          help: attributes.no ? (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_0__.__)('商品番号が入力されている場合は入力できません', 'product-link-maker') : '',
+          value: attributes.id,
+          disabled: !!attributes.no,
+          onChange: val => {
+            setAttributes({
+              id: val,
+              no: ''
+            }); // 入力時にnoをクリア
+          },
+          placeholder: "book:11830886",
+          style: attributes.no ? {
+            backgroundColor: '#f5f5f5',
+            color: '#aaa'
+          } : {}
+        }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsx)(_wordpress_components__WEBPACK_IMPORTED_MODULE_2__.TextControl, {
+          label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_0__.__)('商品番号', 'product-link-maker'),
+          help: attributes.id ? (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_0__.__)('アイテムコード（ID）が入力されている場合は入力できません', 'product-link-maker') : '',
+          value: attributes.no,
+          disabled: !!attributes.id,
+          onChange: val => {
+            setAttributes({
+              no: val,
+              id: ''
+            }); // 入力時にidをクリア
+          },
+          placeholder: "4902102072625",
+          style: attributes.id ? {
+            backgroundColor: '#f5f5f5',
+            color: '#aaa'
+          } : {}
+        }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsx)(_wordpress_components__WEBPACK_IMPORTED_MODULE_2__.FormTokenField, {
+          label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_0__.__)('キーワード指定', 'product-link-maker'),
+          value: attributes.kw ? attributes.kw.split(',').filter(Boolean) : [],
+          onChange: tokens => setAttributes({
+            kw: tokens.join(',')
+          }),
+          placeholder: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_0__.__)('キーワードを入力してEnter', 'product-link-maker')
+        }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsx)(_wordpress_components__WEBPACK_IMPORTED_MODULE_2__.TextControl, {
+          label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_0__.__)('ショップコード', 'product-link-maker'),
+          value: attributes.shop,
+          onChange: val => setAttributes({
+            shop: val
+          })
+        }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsx)(_wordpress_components__WEBPACK_IMPORTED_MODULE_2__.FormTokenField, {
+          label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_0__.__)('サーチ', 'product-link-maker'),
+          value: attributes.search ? attributes.search.split(',').filter(Boolean) : [],
+          onChange: tokens => setAttributes({
+            search: tokens.join(',')
+          }),
+          placeholder: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_0__.__)('サーチを入力してEnter', 'product-link-maker')
+        }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsx)(_wordpress_components__WEBPACK_IMPORTED_MODULE_2__.TextareaControl, {
+          label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_0__.__)('タイトル', 'product-link-maker'),
+          value: attributes.title,
+          onChange: val => setAttributes({
+            title: val
+          })
+        }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsx)(_wordpress_components__WEBPACK_IMPORTED_MODULE_2__.ToggleControl, {
+          label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_0__.__)('店名表示', 'product-link-maker'),
+          checked: attributes.showShop !== false,
+          onChange: val => setAttributes({
+            showShop: val
+          })
+        }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsx)(_wordpress_components__WEBPACK_IMPORTED_MODULE_2__.ToggleControl, {
+          label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_0__.__)('価格表示', 'product-link-maker'),
+          checked: attributes.price,
+          onChange: val => setAttributes({
+            price: val
+          })
+        }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsx)(_wordpress_components__WEBPACK_IMPORTED_MODULE_2__.TextareaControl, {
+          label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_0__.__)('説明文', 'product-link-maker'),
+          value: attributes.desc,
+          onChange: val => setAttributes({
+            desc: val
+          })
+        }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsx)(_wordpress_components__WEBPACK_IMPORTED_MODULE_2__.__experimentalHeading, {
+          children: "\u753B\u50CF\u30A2\u30C3\u30D7\u30ED\u30FC\u30C9"
+        }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsx)(_wordpress_block_editor__WEBPACK_IMPORTED_MODULE_1__.MediaUploadCheck, {
+          children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsxs)("div", {
+            style: {
+              marginBottom: '0'
+            },
+            children: [(attributes.imageUrl !== '' ? attributes.imageUrl : item?.mediumImageUrls?.[0]?.imageUrl) && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsx)("div", {
+              style: {
+                marginBottom: '10px',
+                display: 'flex',
+                justifyContent: 'center',
+                backgroundColor: '#eee'
+              },
+              children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsx)("img", {
+                src: attributes.imageUrl !== '' ? attributes.imageUrl : item?.mediumImageUrls?.[0]?.imageUrl,
+                alt: "",
+                style: {
+                  display: 'block'
+                }
+              })
+            }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsx)(_wordpress_block_editor__WEBPACK_IMPORTED_MODULE_1__.MediaUpload, {
+              onSelect: media => setAttributes({
+                imageUrl: media.url || ''
+              }),
+              allowedTypes: ['image'],
+              render: ({
+                open
+              }) => /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsxs)(_wordpress_components__WEBPACK_IMPORTED_MODULE_2__.Flex, {
+                children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsx)(_wordpress_components__WEBPACK_IMPORTED_MODULE_2__.Button, {
+                  onClick: open,
+                  variant: "secondary",
+                  children: "\u753B\u50CF\u3092\u9078\u629E"
+                }), attributes.imageUrl && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsx)(_wordpress_components__WEBPACK_IMPORTED_MODULE_2__.Button, {
+                  style: {
+                    marginTop: 4
+                  },
+                  onClick: () => setAttributes({
+                    imageUrl: ''
+                  }),
+                  isDestructive: true,
+                  children: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_0__.__)('画像をリセット', 'product-link-maker')
+                })]
+              })
+            })]
+          })
+        }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsx)("div", {
+          style: {
+            margin: '24px 0 0 0'
+          }
+        }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsx)(_wordpress_components__WEBPACK_IMPORTED_MODULE_2__.__experimentalHeading, {
+          children: "\u30DC\u30BF\u30F3\u8868\u793A\u8A2D\u5B9A"
+        }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsx)(_wordpress_components__WEBPACK_IMPORTED_MODULE_2__.ToggleControl, {
+          label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_0__.__)('Amazonボタンを表示', 'product-link-maker'),
+          checked: attributes.showAmazon !== false,
+          onChange: val => setAttributes({
+            showAmazon: val
+          })
+        }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsx)(_wordpress_components__WEBPACK_IMPORTED_MODULE_2__.ToggleControl, {
+          label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_0__.__)('楽天ボタンを表示', 'product-link-maker'),
+          checked: attributes.showRakuten !== false,
+          onChange: val => setAttributes({
+            showRakuten: val
+          })
+        }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsx)(_wordpress_components__WEBPACK_IMPORTED_MODULE_2__.ToggleControl, {
+          label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_0__.__)('Yahoo!ボタンを表示', 'product-link-maker'),
+          checked: attributes.showYahoo !== false,
+          onChange: val => setAttributes({
+            showYahoo: val
+          })
+        }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsx)(_wordpress_components__WEBPACK_IMPORTED_MODULE_2__.ToggleControl, {
+          label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_0__.__)('メルカリボタンを表示', 'product-link-maker'),
+          checked: attributes.showMercari !== false,
+          onChange: val => setAttributes({
+            showMercari: val
+          })
+        }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsx)(_wordpress_components__WEBPACK_IMPORTED_MODULE_2__.ToggleControl, {
+          label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_0__.__)('DMMボタンを表示', 'product-link-maker'),
+          checked: attributes.showDmm !== false,
+          onChange: val => setAttributes({
+            showDmm: val
+          })
+        })]
+      }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsx)(_wordpress_components__WEBPACK_IMPORTED_MODULE_2__.PanelBody, {
+        title: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_0__.__)('カスタムボタン（前）', 'product-link-maker'),
+        initialOpen: true,
+        children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsx)(CustomButtonEditor, {
+          buttons: attributes.customButtonsBefore || [],
+          onChange: newButtons => setAttributes({
+            customButtonsBefore: newButtons
+          }),
+          label: "\u65E2\u5B58\u306E\u30DC\u30BF\u30F3\u306E\u524D\u306B\u8868\u793A\u3055\u308C\u308B\u30AB\u30B9\u30BF\u30E0\u30DC\u30BF\u30F3\u3092\u8FFD\u52A0\u3067\u304D\u307E\u3059"
+        })
+      }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsx)(_wordpress_components__WEBPACK_IMPORTED_MODULE_2__.PanelBody, {
+        title: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_0__.__)('カスタムボタン（後）', 'product-link-maker'),
+        initialOpen: true,
+        children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsx)(CustomButtonEditor, {
+          buttons: attributes.customButtonsAfter || [],
+          onChange: newButtons => setAttributes({
+            customButtonsAfter: newButtons
+          }),
+          label: "\u65E2\u5B58\u306E\u30DC\u30BF\u30F3\u306E\u5F8C\u306B\u8868\u793A\u3055\u308C\u308B\u30AB\u30B9\u30BF\u30E0\u30DC\u30BF\u30F3\u3092\u8FFD\u52A0\u3067\u304D\u307E\u3059"
+        })
+      }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsx)(_wordpress_components__WEBPACK_IMPORTED_MODULE_2__.PanelBody, {
+        title: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_0__.__)('アフィリエイト設定', 'product-link-maker'),
+        initialOpen: false,
+        children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsx)(_wordpress_components__WEBPACK_IMPORTED_MODULE_2__.Button, {
+          href: `${window.location.origin}/wp-admin/options-general.php?page=product-link-maker`,
+          target: "_blank",
+          className: "",
+          variant: "primary",
+          icon: "admin-generic",
+          style: {
+            marginTop: '5px',
+            width: '100%',
+            textAlign: 'center'
+          },
+          children: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_0__.__)('アフィリエイト設定', 'product-link-maker')
+        })
+      })]
+    }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsx)("div", {
+      ...(0,_wordpress_block_editor__WEBPACK_IMPORTED_MODULE_1__.useBlockProps)(),
+      children: isLoading ? /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsx)(StatusMessage, {
+        type: "loading",
+        message: "Loading..."
+      }) : error ? /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsx)(StatusMessage, {
+        type: "error",
+        message: error
+      }) : !attributes.id && !attributes.no && !attributes.kw ? /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsx)(StatusMessage, {
+        type: "empty",
+        message: "\u5546\u54C1\u60C5\u5831\u3092\u8A2D\u5B9A\u3057\u3066\u304F\u3060\u3055\u3044"
+      }) : !hasInitialized || !item && (attributes.id || attributes.no) ? /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsx)(StatusMessage, {
+        type: "loading",
+        message: "Loading..."
+      }) : /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsxs)(react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.Fragment, {
+        children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsx)(ProductPreview, {
+          attributes: attributes,
+          item: item,
+          imageUrl: imageUrl,
+          imageKey: imageKey,
+          itemTitle: itemTitle,
+          itemLink: itemLink
+        }), item && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsxs)("div", {
+          className: "plm-admin-info",
+          children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsx)(_wordpress_components__WEBPACK_IMPORTED_MODULE_2__.Button, {
+            variant: "secondary",
+            onClick: handleClearCache,
+            disabled: isClearingCache,
+            isBusy: isClearingCache,
+            size: "small",
+            children: isClearingCache ? '削除中...' : 'キャッシュ更新'
+          }), item?.affiliateRate && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsxs)("span", {
+            children: ["\u6599\u7387: ", item.affiliateRate, "%"]
+          })]
+        })]
+      })
+    })]
+  });
+}
+
+/***/ }),
+
+/***/ "./src/rakuten/editor.scss":
+/*!*********************************!*\
+  !*** ./src/rakuten/editor.scss ***!
+  \*********************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+// extracted by mini-css-extract-plugin
+
 
 /***/ }),
 
@@ -28,7 +892,6 @@ throw new Error("Module build failed (from ./node_modules/babel-loader/lib/index
   \******************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
-"use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _wordpress_blocks__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @wordpress/blocks */ "@wordpress/blocks");
 /* harmony import */ var _wordpress_blocks__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_wordpress_blocks__WEBPACK_IMPORTED_MODULE_0__);
@@ -77,10 +940,29 @@ __webpack_require__.r(__webpack_exports__);
   \********************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
-"use strict";
 __webpack_require__.r(__webpack_exports__);
 // extracted by mini-css-extract-plugin
 
+
+/***/ }),
+
+/***/ "@wordpress/api-fetch":
+/*!**********************************!*\
+  !*** external ["wp","apiFetch"] ***!
+  \**********************************/
+/***/ ((module) => {
+
+module.exports = window["wp"]["apiFetch"];
+
+/***/ }),
+
+/***/ "@wordpress/block-editor":
+/*!*************************************!*\
+  !*** external ["wp","blockEditor"] ***!
+  \*************************************/
+/***/ ((module) => {
+
+module.exports = window["wp"]["blockEditor"];
 
 /***/ }),
 
@@ -90,8 +972,57 @@ __webpack_require__.r(__webpack_exports__);
   \********************************/
 /***/ ((module) => {
 
-"use strict";
 module.exports = window["wp"]["blocks"];
+
+/***/ }),
+
+/***/ "@wordpress/components":
+/*!************************************!*\
+  !*** external ["wp","components"] ***!
+  \************************************/
+/***/ ((module) => {
+
+module.exports = window["wp"]["components"];
+
+/***/ }),
+
+/***/ "@wordpress/data":
+/*!******************************!*\
+  !*** external ["wp","data"] ***!
+  \******************************/
+/***/ ((module) => {
+
+module.exports = window["wp"]["data"];
+
+/***/ }),
+
+/***/ "@wordpress/element":
+/*!*********************************!*\
+  !*** external ["wp","element"] ***!
+  \*********************************/
+/***/ ((module) => {
+
+module.exports = window["wp"]["element"];
+
+/***/ }),
+
+/***/ "@wordpress/i18n":
+/*!******************************!*\
+  !*** external ["wp","i18n"] ***!
+  \******************************/
+/***/ ((module) => {
+
+module.exports = window["wp"]["i18n"];
+
+/***/ }),
+
+/***/ "react/jsx-runtime":
+/*!**********************************!*\
+  !*** external "ReactJSXRuntime" ***!
+  \**********************************/
+/***/ ((module) => {
+
+module.exports = window["ReactJSXRuntime"];
 
 /***/ })
 
