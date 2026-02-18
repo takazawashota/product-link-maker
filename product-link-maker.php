@@ -202,9 +202,10 @@ function plm_render_settings_page() {
                 .plm-card .form-table td {
                     padding: 12px 0;
                 }
-                .plm-card .form-table input[type="text"] {
+                .plm-card .form-table input[type="text"],
+                .plm-card .form-table input[type="password"] {
                     width: 100%;
-                    max-width: 500px;
+                    max-width: 800px;
                 }
                 .plm-card p.description {
                     margin: 8px 0 0 0;
@@ -242,13 +243,18 @@ function plm_render_settings_page() {
                 </h2>
                 <table class="form-table">
                     <tr>
-                        <th scope="row">トラッキングID</th>
+                        <th scope="row">トラッキングID <span style="color: #d63638;">*</span></th>
                         <td>
                             <input type="text" name="affiliate_settings[amazon_tracking_id]" 
                                    value="<?= esc_attr($options['amazon_tracking_id'] ?? '') ?>" 
                                    class="regular-text" 
                                    placeholder="例: yourname-22" />
-                            <p class="description">Amazon アソシエイトのトラッキングIDを入力してください。</p>
+                            <p class="description">
+                                <span class="dashicons dashicons-yes-alt" style="color: #00a32a;"></span>
+                                <strong>必須:</strong> Amazonアソシエイト・プログラムのトラッキングIDを入力してください。<br>
+                                <span class="dashicons dashicons-info" style="color: #2271b1;"></span>
+                                Creators API対応。トラッキングIDのみで検索リンクの生成が可能です。
+                            </p>
                         </td>
                     </tr>
                     <tr>
@@ -257,8 +263,11 @@ function plm_render_settings_page() {
                             <input type="text" name="affiliate_settings[amazon_access_key]" 
                                    value="<?= esc_attr($options['amazon_access_key'] ?? '') ?>" 
                                    class="regular-text" 
-                                   placeholder="（オプション）" />
-                            <p class="description">Product Advertising API用（オプション）</p>
+                                   placeholder="（オプション - PA-API使用時のみ）" />
+                            <p class="description">
+                                <span class="dashicons dashicons-info" style="color: #50575e;"></span>
+                                Product Advertising API (PA-API) 5.0を使用する場合のみ必要です。
+                            </p>
                         </td>
                     </tr>
                     <tr>
@@ -267,8 +276,11 @@ function plm_render_settings_page() {
                             <input type="password" name="affiliate_settings[amazon_secret_key]" 
                                    value="<?= esc_attr($options['amazon_secret_key'] ?? '') ?>" 
                                    class="regular-text" 
-                                   placeholder="（オプション）" />
-                            <p class="description">Product Advertising API用（オプション）</p>
+                                   placeholder="（オプション - PA-API使用時のみ）" />
+                            <p class="description">
+                                <span class="dashicons dashicons-info" style="color: #50575e;"></span>
+                                Product Advertising API (PA-API) 5.0を使用する場合のみ必要です。
+                            </p>
                         </td>
                     </tr>
                 </table>
@@ -494,8 +506,12 @@ function plm_render_settings_page() {
                             <input type="number" name="affiliate_settings[cache_error_minutes]" 
                                    value="<?= esc_attr($options['cache_error_minutes'] ?? '5') ?>" 
                                    min="1" max="60"
-                                   class="small-text" /> 分
-                            <p class="description">その他エラー時のキャッシュ保存時間（1〜60分）デフォルト: 5分</p>
+                                   class="small-text" 
+                                   disabled /> 分
+                            <p class="description">
+                                <span class="dashicons dashicons-info" style="color: #2271b1;"></span>
+                                その他エラー（ネットワーク障害等）はキャッシュ<strong>されません</strong>。次回アクセス時に再試行します。
+                            </p>
                         </td>
                     </tr>
                     <tr>
@@ -775,6 +791,11 @@ function plm_cache_data( $cache_key, $data, $cache_settings ) {
 
 	if ( isset( $response_data['error'] ) ) {
 		$error_type = $response_data['error'];
+	}
+
+	// レート制限以外のエラーはキャッシュしない（一時的な障害の可能性があるため）
+	if ( 'success' !== $error_type && 'rate_limit' !== $error_type ) {
+		return;
 	}
 
 	$expiration = plm_get_cache_expiration( $error_type, $cache_settings );
