@@ -7,6 +7,7 @@ import './editor.scss';
 
 import { useEffect, useState, useRef, useCallback } from '@wordpress/element';
 import apiFetch from '@wordpress/api-fetch';
+import { useSelect } from '@wordpress/data';
 
 /**
  * 定数定義
@@ -362,6 +363,13 @@ export default function Edit({ attributes, setAttributes }) {
 	const [isClearingCache, setIsClearingCache] = useState(false);
 	const [hasInitialized, setHasInitialized] = useState(false); // 初回取得完了フラグ
 	const fetchTimeoutRef = useRef(null);
+	const isInitialLoadRef = useRef(true); // 初回ロードを追跡するRef
+
+	// 現在の投稿IDを取得
+	const postId = useSelect((select) => {
+		const editor = select('core/editor');
+		return editor ? editor.getCurrentPostId() : null;
+	}, []);
 
 	const fetchData = useCallback(async () => {
 		if (!attributes.id && !attributes.no && !attributes.kw) {
@@ -375,291 +383,353 @@ export default function Edit({ attributes, setAttributes }) {
 		setError(null);
 		try {
 			// キャッシュ削除は行わず、常にキャッシュを利用する
-			const data = await apiFetch({
-				path: `/product-link-maker/v1/rakuten/?id=${encodeURIComponent(attributes.id || '')}&kw=${encodeURIComponent(attributes.kw || '')}&no=${encodeURIComponent(attributes.no || '')}`
+			const queryParams = new URLSearchParams({
+				id: attributes.id || '',
+				kw: attributes.kw || '',
+				no: attributes.no || '',
+				post_id: postId || ''
 			});
-			if (data?.Items?.[0]?.Item) {
-				const newItem = data.Items[0].Item;
-				setItem(newItem);
-				const apiImage = newItem.mediumImageUrls?.[0]?.imageUrl || '';
-				setAttributes(prev => ({ ...prev, imageUrl: apiImage }));
-				setError(null);
-			} else if (data?.error) {
-				setItem(null);
-				setAttributes(prev => ({ ...prev, imageUrl: '' }));
-				setError('APIエラー: ' + (data.error_description || 'リクエスト制限に達しました。しばらく待ってから再度お試しください。'));
-			} else {
-				setItem(null);
-				setAttributes(prev => ({ ...prev, imageUrl: '' }));
-				setError('データが取得できませんでした');
-			}
-		} catch (error) {
-			console.error('Rakuten API fetch error:', error);
+			const data = await apiFetch({
+				path: `/product-link-maker/v1/rakuten/?${queryParams.toString()}`
+			});
+		} else if (data?.error) {
+			// APIエラーレスポンス
 			setItem(null);
 			setAttributes(prev => ({ ...prev, imageUrl: '' }));
-			setError('APIエラーが発生しました。しばらく待ってから再度お試しください。');
-		} finally {
-			setIsLoading(false);
-			setHasInitialized(true);
-		}
-	}, [attributes.id, attributes.no, attributes.kw, setAttributes]);
+			setError('APIエラー: ' + (data.error_description || 'リクエスト制限に達しました。しばらく待ってから再度お試しください。'));
 
-	// キャッシュを削除して再取得する関数
-	const handleClearCache = useCallback(async () => {
-		if (!window.confirm('キャッシュを削除して最新データを取得しますか？')) {
-			return;
-		}
-		setIsClearingCache(true);
-		try {
-			await apiFetch({
-				path: '/product-link-maker/v1/rakuten-cache/',
-				method: 'POST',
-				data: {
-					id: attributes.id,
-					kw: attributes.kw,
-					no: attributes.no,
-				},
-			});
-			// キャッシュ削除後、再取得
-			await fetchData();
-		} catch (error) {
-			console.error('Cache clear error:', error);
-			alert('キャッシュ削除中にエラーが発生しました。');
-		} finally {
-			setIsClearingCache(false);
-		}
-	}, [attributes.id, attributes.kw, attributes.no, fetchData]);
+			// エラーログに記録（rate_limit以外、かつID/キーワードが入力されている場合）
+			if (data.error !== 'rate_limit' && (attributes.id || attributes.kw || attributes.no)) {
+				try {
+					await apiFetch({
+						path: '/product-link-maker/v1/log-client-error/',
+						method: 'POST',
+						data: {
+							error_type: data.error,
+							error_message: data.error_description || data.error,
+							post_id: postId,
+							item_id: attributes.id || '',
+							keyword: attributes.kw || attributes.no || '',
+						}
+					});
+				} catch (logError) {
+					// エラーログの記録に失敗しても処理は継続
+				}
+			}
+		} else {
+			// データなし（商品が見つからない等）
+			setItem(null);
+			setAttributes(prev => ({ ...prev, imageUrl: '' }));
+			setError('データが取得できませんでした');
 
-	// attributesがあれば必ずfetchDataを呼ぶ（デバウンス付き）
-	useEffect(() => {
-		// 前回のタイマーをクリア
+			// このケースもエラーログに記録（ID/キーワードが入力されている場合のみ）
+			if (attributes.id || attributes.kw || attributes.no) {
+				try {
+					await apiFetch({
+						path: '/product-link-maker/v1/log-client-error/',
+						method: 'POST',
+						data: {
+							error_type: 'no_data',
+							error_message: 'データが取得できませんでした。商品IDまたはキーワードが正しいか確認してください。',
+							post_id: postId,
+							item_id: attributes.id || '',
+							keyword: attributes.kw || attributes.no || '',
+						}
+					});
+				} catch (logError) {
+					// エラーログの記録に失敗しても処理は継続
+				}
+			}
+		}
+	} catch (error) {
+		setItem(null);
+		setAttributes(prev => ({ ...prev, imageUrl: '' }));
+		setError('APIエラーが発生しました。しばらく待ってから再度お試しください。');
+
+		// 例外もエラーログに記録（ID/キーワードが入力されている場合のみ）
+		if (attributes.id || attributes.kw || attributes.no) {
+			try {
+				await apiFetch({
+					path: '/product-link-maker/v1/log-client-error/',
+					method: 'POST',
+					data: {
+						error_type: 'fetch_exception',
+						error_message: 'API取得中に例外が発生: ' + (error.message || error.toString()),
+						post_id: postId,
+						item_id: attributes.id || '',
+						keyword: attributes.kw || attributes.no || '',
+					}
+				});
+			} catch (logError) {
+				// エラーログの記録に失敗しても処理は継続
+			}
+		}
+	} finally {
+		setIsLoading(false);
+		setHasInitialized(true);
+		// 初回ロード完了後、フラグを更新
+		if (isInitialLoadRef.current) {
+			isInitialLoadRef.current = false;
+		}
+	}
+}, [attributes.id, attributes.no, attributes.kw, postId, setAttributes]);
+
+// キャッシュを削除して再取得する関数
+const handleClearCache = useCallback(async () => {
+	if (!window.confirm('キャッシュを削除して最新データを取得しますか？')) {
+		return;
+	}
+	setIsClearingCache(true);
+	try {
+		await apiFetch({
+			path: '/product-link-maker/v1/rakuten-cache/',
+			method: 'POST',
+			data: {
+				id: attributes.id,
+				kw: attributes.kw,
+				no: attributes.no,
+			},
+		});
+		// キャッシュ削除後、再取得
+		await fetchData();
+	} catch (error) {
+		console.error('Cache clear error:', error);
+		alert('キャッシュ削除中にエラーが発生しました。');
+	} finally {
+		setIsClearingCache(false);
+	}
+}, [attributes.id, attributes.kw, attributes.no, fetchData]);
+
+// attributesがあれば必ずfetchDataを呼ぶ（デバウンス付き）
+useEffect(() => {
+	// 前回のタイマーをクリア
+	if (fetchTimeoutRef.current) {
+		clearTimeout(fetchTimeoutRef.current);
+	}
+
+	if (attributes.id || attributes.no || attributes.kw) {
+		// デバウンスを追加
+		fetchTimeoutRef.current = setTimeout(() => {
+			fetchData();
+		}, DEBOUNCE_DELAY);
+	} else {
+		setItem(null);
+		setIsLoading(false);
+		setHasInitialized(true);
+	}
+
+	// クリーンアップ
+	return () => {
 		if (fetchTimeoutRef.current) {
 			clearTimeout(fetchTimeoutRef.current);
 		}
+	};
+	// eslint-disable-next-line react-hooks/exhaustive-deps
+}, [attributes.id, attributes.no, attributes.kw]);
 
-		if (attributes.id || attributes.no || attributes.kw) {
-			// デバウンスを追加
-			fetchTimeoutRef.current = setTimeout(() => {
-				fetchData();
-			}, DEBOUNCE_DELAY);
-		} else {
-			setItem(null);
-			setIsLoading(false);
-			setHasInitialized(true);
-		}
+// 画像・リンク・タイトル等をAPIデータ優先で差し替え
+const [imageKey, setImageKey] = useState(0);
+const imageUrl = attributes.imageUrl || (item && item.mediumImageUrls && item.mediumImageUrls[0] ? item.mediumImageUrls[0].imageUrl : '');
+useEffect(() => {
+	setImageKey(k => k + 1);
+}, [imageUrl]);
+const itemTitle = attributes.title || (item ? item.itemName : '');
+const itemLink = item ? (item.affiliateUrl || item.itemUrl || '#') : '#';
 
-		// クリーンアップ
-		return () => {
-			if (fetchTimeoutRef.current) {
-				clearTimeout(fetchTimeoutRef.current);
-			}
-		};
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [attributes.id, attributes.no, attributes.kw]);
-
-	// 画像・リンク・タイトル等をAPIデータ優先で差し替え
-	const [imageKey, setImageKey] = useState(0);
-	const imageUrl = attributes.imageUrl || (item && item.mediumImageUrls && item.mediumImageUrls[0] ? item.mediumImageUrls[0].imageUrl : '');
-	useEffect(() => {
-		setImageKey(k => k + 1);
-	}, [imageUrl]);
-	const itemTitle = attributes.title || (item ? item.itemName : '');
-	const itemLink = item ? (item.affiliateUrl || item.itemUrl || '#') : '#';
-
-	return (
-		<>
-			<InspectorControls>
-				<PanelBody title={__('商品情報設定', 'product-link-maker')} initialOpen={true}>
-					<TextControl
-						label={__('アイテムコード（ID）', 'product-link-maker')}
-						help={attributes.no ? __('商品番号が入力されている場合は入力できません', 'product-link-maker') : ''}
-						value={attributes.id}
-						disabled={!!attributes.no}
-						onChange={(val) => {
-							setAttributes({ id: val, no: '' }); // 入力時にnoをクリア
-						}}
-						placeholder="book:11830886"
-						style={attributes.no ? { backgroundColor: '#f5f5f5', color: '#aaa' } : {}}
-					/>
-					<TextControl
-						label={__('商品番号', 'product-link-maker')}
-						help={attributes.id ? __('アイテムコード（ID）が入力されている場合は入力できません', 'product-link-maker') : ''}
-						value={attributes.no}
-						disabled={!!attributes.id}
-						onChange={(val) => {
-							setAttributes({ no: val, id: '' }); // 入力時にidをクリア
-						}}
-						placeholder="4902102072625"
-						style={attributes.id ? { backgroundColor: '#f5f5f5', color: '#aaa' } : {}}
-					/>
-					<FormTokenField
-						label={__('キーワード指定', 'product-link-maker')}
-						value={attributes.kw ? attributes.kw.split(',').filter(Boolean) : []}
-						onChange={(tokens) => setAttributes({ kw: tokens.join(',') })}
-						placeholder={__('キーワードを入力してEnter', 'product-link-maker')}
-					/>
-					<TextControl
-						label={__('ショップコード', 'product-link-maker')}
-						value={attributes.shop}
-						onChange={(val) => setAttributes({ shop: val })}
-					/>
-					<FormTokenField
-						label={__('サーチ', 'product-link-maker')}
-						value={attributes.search ? attributes.search.split(',').filter(Boolean) : []}
-						onChange={(tokens) => setAttributes({ search: tokens.join(',') })}
-						placeholder={__('サーチを入力してEnter', 'product-link-maker')}
-					/>
-					<TextareaControl
-						label={__('タイトル', 'product-link-maker')}
-						value={attributes.title}
-						onChange={(val) => setAttributes({ title: val })}
-					/>
-					<ToggleControl
-						label={__('店名表示', 'product-link-maker')}
-						checked={attributes.showShop !== false}
-						onChange={(val) => setAttributes({ showShop: val })}
-					/>
-					<ToggleControl
-						label={__('価格表示', 'product-link-maker')}
-						checked={attributes.price}
-						onChange={(val) => setAttributes({ price: val })}
-					/>
-					<TextareaControl
-						label={__('説明文', 'product-link-maker')}
-						value={attributes.desc}
-						onChange={(val) => setAttributes({ desc: val })}
-					/>
-					<Heading>画像アップロード</Heading>
-					<MediaUploadCheck>
-						<div style={{ marginBottom: '0' }}>
-							{(attributes.imageUrl !== '' ? attributes.imageUrl : item?.mediumImageUrls?.[0]?.imageUrl) && (
-								<div style={{ marginBottom: '10px', display: 'flex', justifyContent: 'center', backgroundColor: '#eee' }}>
-									<img
-										src={attributes.imageUrl !== '' ? attributes.imageUrl : item?.mediumImageUrls?.[0]?.imageUrl}
-										alt=""
-										style={{ display: 'block' }}
-									/>
-								</div>
-							)}
-							<MediaUpload
-								onSelect={(media) => setAttributes({ imageUrl: media.url || '' })}
-								allowedTypes={['image']}
-								render={({ open }) => (
-									<Flex>
-										<Button onClick={open} variant="secondary">
-											画像を選択
-										</Button>
-										{attributes.imageUrl && (
-											<Button
-												style={{ marginTop: 4 }}
-												onClick={() => setAttributes({ imageUrl: '' })}
-												isDestructive
-											>
-												{__('画像をリセット', 'product-link-maker')}
-											</Button>
-										)}
-									</Flex>
-								)}
-							/>
-						</div>
-					</MediaUploadCheck>
-
-					<div style={{ margin: '24px 0 0 0' }} />
-					<Heading>ボタン表示設定</Heading>
-					<ToggleControl
-						label={__('Amazonボタンを表示', 'product-link-maker')}
-						checked={attributes.showAmazon !== false}
-						onChange={val => setAttributes({ showAmazon: val })}
-					/>
-					<ToggleControl
-						label={__('楽天ボタンを表示', 'product-link-maker')}
-						checked={attributes.showRakuten !== false}
-						onChange={val => setAttributes({ showRakuten: val })}
-					/>
-					<ToggleControl
-						label={__('Yahoo!ボタンを表示', 'product-link-maker')}
-						checked={attributes.showYahoo !== false}
-						onChange={val => setAttributes({ showYahoo: val })}
-					/>
-					<ToggleControl
-						label={__('メルカリボタンを表示', 'product-link-maker')}
-						checked={attributes.showMercari !== false}
-						onChange={val => setAttributes({ showMercari: val })}
-					/>
-					<ToggleControl
-						label={__('DMMボタンを表示', 'product-link-maker')}
-						checked={attributes.showDmm !== false}
-						onChange={val => setAttributes({ showDmm: val })}
-					/>
-
-				</PanelBody>
-				<PanelBody title={__('カスタムボタン（前）', 'product-link-maker')} initialOpen={true}>
-					<CustomButtonEditor
-						buttons={attributes.customButtonsBefore || []}
-						onChange={(newButtons) => setAttributes({ customButtonsBefore: newButtons })}
-						label="既存のボタンの前に表示されるカスタムボタンを追加できます"
-					/>
-				</PanelBody>
-				<PanelBody title={__('カスタムボタン（後）', 'product-link-maker')} initialOpen={true}>
-					<CustomButtonEditor
-						buttons={attributes.customButtonsAfter || []}
-						onChange={(newButtons) => setAttributes({ customButtonsAfter: newButtons })}
-						label="既存のボタンの後に表示されるカスタムボタンを追加できます"
-					/>
-				</PanelBody>
-				<PanelBody title={__('アフィリエイト設定', 'product-link-maker')} initialOpen={false}>
-					<Button
-						href={`${window.location.origin}/wp-admin/options-general.php?page=product-link-maker`}
-						target="_blank"
-						className=""
-						variant="primary"
-						icon="admin-generic"
-						style={{ marginTop: '5px', width: '100%', textAlign: 'center' }}
-					>
-						{__('アフィリエイト設定', 'product-link-maker')}
-					</Button>
-				</PanelBody>
-			</InspectorControls>
-			<div {...useBlockProps()}>
-				{isLoading ? (
-					<StatusMessage type="loading" message="Loading..." />
-				) : error ? (
-					<StatusMessage type="error" message={error} />
-				) : !attributes.id && !attributes.no && !attributes.kw ? (
-					<StatusMessage type="empty" message="商品情報を設定してください" />
-				) : !hasInitialized || (!item && (attributes.id || attributes.no)) ? (
-					<StatusMessage type="loading" message="Loading..." />
-				) : (
-					<>
-						<ProductPreview
-							attributes={attributes}
-							item={item}
-							imageUrl={imageUrl}
-							imageKey={imageKey}
-							itemTitle={itemTitle}
-							itemLink={itemLink}
-						/>
-						{item && (
-							<div className="plm-admin-info">
-								<Button
-									variant="secondary"
-									onClick={handleClearCache}
-									disabled={isClearingCache}
-									isBusy={isClearingCache}
-									size="small"
-								>
-									{isClearingCache ? '削除中...' : 'キャッシュ更新'}
-								</Button>
-								{item?.affiliateRate && (
-									<span>
-										料率: {item.affiliateRate}%
-									</span>
-								)}
+return (
+	<>
+		<InspectorControls>
+			<PanelBody title={__('商品情報設定', 'product-link-maker')} initialOpen={true}>
+				<TextControl
+					label={__('アイテムコード（ID）', 'product-link-maker')}
+					help={attributes.no ? __('商品番号が入力されている場合は入力できません', 'product-link-maker') : ''}
+					value={attributes.id}
+					disabled={!!attributes.no}
+					onChange={(val) => {
+						setAttributes({ id: val, no: '' }); // 入力時にnoをクリア
+					}}
+					placeholder="book:11830886"
+					style={attributes.no ? { backgroundColor: '#f5f5f5', color: '#aaa' } : {}}
+				/>
+				<TextControl
+					label={__('商品番号', 'product-link-maker')}
+					help={attributes.id ? __('アイテムコード（ID）が入力されている場合は入力できません', 'product-link-maker') : ''}
+					value={attributes.no}
+					disabled={!!attributes.id}
+					onChange={(val) => {
+						setAttributes({ no: val, id: '' }); // 入力時にidをクリア
+					}}
+					placeholder="4902102072625"
+					style={attributes.id ? { backgroundColor: '#f5f5f5', color: '#aaa' } : {}}
+				/>
+				<FormTokenField
+					label={__('キーワード指定', 'product-link-maker')}
+					value={attributes.kw ? attributes.kw.split(',').filter(Boolean) : []}
+					onChange={(tokens) => setAttributes({ kw: tokens.join(',') })}
+					placeholder={__('キーワードを入力してEnter', 'product-link-maker')}
+				/>
+				<TextControl
+					label={__('ショップコード', 'product-link-maker')}
+					value={attributes.shop}
+					onChange={(val) => setAttributes({ shop: val })}
+				/>
+				<FormTokenField
+					label={__('サーチ', 'product-link-maker')}
+					value={attributes.search ? attributes.search.split(',').filter(Boolean) : []}
+					onChange={(tokens) => setAttributes({ search: tokens.join(',') })}
+					placeholder={__('サーチを入力してEnter', 'product-link-maker')}
+				/>
+				<TextareaControl
+					label={__('タイトル', 'product-link-maker')}
+					value={attributes.title}
+					onChange={(val) => setAttributes({ title: val })}
+				/>
+				<ToggleControl
+					label={__('店名表示', 'product-link-maker')}
+					checked={attributes.showShop !== false}
+					onChange={(val) => setAttributes({ showShop: val })}
+				/>
+				<ToggleControl
+					label={__('価格表示', 'product-link-maker')}
+					checked={attributes.price}
+					onChange={(val) => setAttributes({ price: val })}
+				/>
+				<TextareaControl
+					label={__('説明文', 'product-link-maker')}
+					value={attributes.desc}
+					onChange={(val) => setAttributes({ desc: val })}
+				/>
+				<Heading>画像アップロード</Heading>
+				<MediaUploadCheck>
+					<div style={{ marginBottom: '0' }}>
+						{(attributes.imageUrl !== '' ? attributes.imageUrl : item?.mediumImageUrls?.[0]?.imageUrl) && (
+							<div style={{ marginBottom: '10px', display: 'flex', justifyContent: 'center', backgroundColor: '#eee' }}>
+								<img
+									src={attributes.imageUrl !== '' ? attributes.imageUrl : item?.mediumImageUrls?.[0]?.imageUrl}
+									alt=""
+									style={{ display: 'block' }}
+								/>
 							</div>
 						)}
-					</>
-				)}
-			</div>
-		</>
-	);
+						<MediaUpload
+							onSelect={(media) => setAttributes({ imageUrl: media.url || '' })}
+							allowedTypes={['image']}
+							render={({ open }) => (
+								<Flex>
+									<Button onClick={open} variant="secondary">
+										画像を選択
+									</Button>
+									{attributes.imageUrl && (
+										<Button
+											style={{ marginTop: 4 }}
+											onClick={() => setAttributes({ imageUrl: '' })}
+											isDestructive
+										>
+											{__('画像をリセット', 'product-link-maker')}
+										</Button>
+									)}
+								</Flex>
+							)}
+						/>
+					</div>
+				</MediaUploadCheck>
+
+				<div style={{ margin: '24px 0 0 0' }} />
+				<Heading>ボタン表示設定</Heading>
+				<ToggleControl
+					label={__('Amazonボタンを表示', 'product-link-maker')}
+					checked={attributes.showAmazon !== false}
+					onChange={val => setAttributes({ showAmazon: val })}
+				/>
+				<ToggleControl
+					label={__('楽天ボタンを表示', 'product-link-maker')}
+					checked={attributes.showRakuten !== false}
+					onChange={val => setAttributes({ showRakuten: val })}
+				/>
+				<ToggleControl
+					label={__('Yahoo!ボタンを表示', 'product-link-maker')}
+					checked={attributes.showYahoo !== false}
+					onChange={val => setAttributes({ showYahoo: val })}
+				/>
+				<ToggleControl
+					label={__('メルカリボタンを表示', 'product-link-maker')}
+					checked={attributes.showMercari !== false}
+					onChange={val => setAttributes({ showMercari: val })}
+				/>
+				<ToggleControl
+					label={__('DMMボタンを表示', 'product-link-maker')}
+					checked={attributes.showDmm !== false}
+					onChange={val => setAttributes({ showDmm: val })}
+				/>
+
+			</PanelBody>
+			<PanelBody title={__('カスタムボタン（前）', 'product-link-maker')} initialOpen={true}>
+				<CustomButtonEditor
+					buttons={attributes.customButtonsBefore || []}
+					onChange={(newButtons) => setAttributes({ customButtonsBefore: newButtons })}
+					label="既存のボタンの前に表示されるカスタムボタンを追加できます"
+				/>
+			</PanelBody>
+			<PanelBody title={__('カスタムボタン（後）', 'product-link-maker')} initialOpen={true}>
+				<CustomButtonEditor
+					buttons={attributes.customButtonsAfter || []}
+					onChange={(newButtons) => setAttributes({ customButtonsAfter: newButtons })}
+					label="既存のボタンの後に表示されるカスタムボタンを追加できます"
+				/>
+			</PanelBody>
+			<PanelBody title={__('アフィリエイト設定', 'product-link-maker')} initialOpen={false}>
+				<Button
+					href={`${window.location.origin}/wp-admin/options-general.php?page=product-link-maker`}
+					target="_blank"
+					className=""
+					variant="primary"
+					icon="admin-generic"
+					style={{ marginTop: '5px', width: '100%', textAlign: 'center' }}
+				>
+					{__('アフィリエイト設定', 'product-link-maker')}
+				</Button>
+			</PanelBody>
+		</InspectorControls>
+		<div {...useBlockProps()}>
+			{isLoading ? (
+				<StatusMessage type="loading" message="Loading..." />
+			) : error ? (
+				<StatusMessage type="error" message={error} />
+			) : !attributes.id && !attributes.no && !attributes.kw ? (
+				<StatusMessage type="empty" message="商品情報を設定してください" />
+			) : !hasInitialized || (!item && (attributes.id || attributes.no)) ? (
+				<StatusMessage type="loading" message="Loading..." />
+			) : (
+				<>
+					<ProductPreview
+						attributes={attributes}
+						item={item}
+						imageUrl={imageUrl}
+						imageKey={imageKey}
+						itemTitle={itemTitle}
+						itemLink={itemLink}
+					/>
+					{item && (
+						<div className="plm-admin-info">
+							<Button
+								variant="secondary"
+								onClick={handleClearCache}
+								disabled={isClearingCache}
+								isBusy={isClearingCache}
+								size="small"
+							>
+								{isClearingCache ? '削除中...' : 'キャッシュ更新'}
+							</Button>
+							{item?.affiliateRate && (
+								<span>
+									料率: {item.affiliateRate}%
+								</span>
+							)}
+						</div>
+					)}
+				</>
+			)}
+		</div>
+	</>
+);
 }

@@ -60,13 +60,47 @@ $dmm_affiliate_id = $affiliate_settings['dmm_id'] ?? '';
 $item_id = $id; // 商品ID
 $keyword = $no ?: $kw; // 商品番号があれば優先してキーワードに
 $json = plm_get_rakuten_item_cached($rakuten_application_id, $rakuten_affiliate_id, $item_id, $keyword, $no);
-// echo $json;
 $data = json_decode($json, true);
 
-// エラーチェック - エラーの場合は何も表示しない
-if (isset($data['error'])) {
+// 投稿情報を取得（エラーログ用）
+$post_id = get_the_ID();
+$post_title = get_the_title( $post_id );
+
+// エラーチェック
+$should_log_error = false;
+$error_type = '';
+$error_message = '';
+
+if ( isset( $data['error'] ) ) {
+    // APIエラーレスポンス
+    $error_type = $data['error'];
+    $error_message = $data['error_description'] ?? $data['error'];
+    $should_log_error = ( 'rate_limit' !== $error_type ); // レート制限以外はログに記録
+} elseif ( ! isset( $data['Items'] ) || ! isset( $data['Items'][0] ) || ! isset( $data['Items'][0]['Item'] ) ) {
+    // データが存在しない（商品が見つからない等）
+    $error_type = 'no_data';
+    $error_message = 'データが取得できませんでした。商品IDまたはキーワードが正しいか確認してください。';
+    $should_log_error = true;
+}
+
+// エラーログに記録
+if ( $should_log_error ) {
+    plm_log_error(
+        $error_type,
+        $error_message,
+        array(
+            'post_id'    => $post_id,
+            'post_title' => $post_title,
+            'item_id'    => $item_id,
+            'keyword'    => $keyword,
+        )
+    );
+}
+
+// エラーまたはデータなしの場合は何も表示しない
+if ( isset( $data['error'] ) || ! isset( $data['Items'][0]['Item'] ) ) {
     // エラーメッセージを表示する場合はここに追加
-    // echo '<!-- Rakuten API Error: ' . esc_html($data['error_description'] ?? $data['error']) . ' -->';
+    // echo '<!-- Rakuten API Error: ' . esc_html($error_message) . ' -->';
     return;
 }
 

@@ -540,11 +540,192 @@ function plm_render_settings_page() {
                 </table>
             </div>
 
+            <!-- デバッグ情報 -->
+            <div class="plm-card" style="background: #fff3cd; border-color: #ffc107;">
+                <h2>
+                    <span class="dashicons dashicons-admin-tools" style="color: #856404;"></span>
+                    デバッグ情報
+                </h2>
+                <?php
+                global $wpdb;
+                $option_exists = $wpdb->get_var( $wpdb->prepare(
+                    "SELECT option_id FROM {$wpdb->options} WHERE option_name = %s",
+                    'plm_error_logs'
+                ) );
+                $option_value = get_option( 'plm_error_logs', null );
+                $option_autoload = $wpdb->get_var( $wpdb->prepare(
+                    "SELECT autoload FROM {$wpdb->options} WHERE option_name = %s",
+                    'plm_error_logs'
+                ) );
+                ?>
+                <table class="form-table">
+                    <tr>
+                        <th style="width: 250px;">データベースオプション存在</th>
+                        <td>
+                            <?php if ( $option_exists ) : ?>
+                                <strong style="color: #00a32a;">✓ 存在する (ID: <?= esc_html( $option_exists ) ?>)</strong>
+                            <?php else : ?>
+                                <strong style="color: #d63638;">✗ 存在しない</strong>
+                            <?php endif; ?>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>get_option() 結果</th>
+                        <td>
+                            <?php if ( is_array( $option_value ) ) : ?>
+                                配列 (<?= count( $option_value ) ?>件)
+                            <?php elseif ( is_null( $option_value ) ) : ?>
+                                <strong style="color: #d63638;">NULL</strong>
+                            <?php else : ?>
+                                <?= gettype( $option_value ) ?>
+                            <?php endif; ?>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>Autoload設定</th>
+                        <td><?= esc_html( $option_autoload ?? 'N/A' ) ?></td>
+                    </tr>
+                    <tr>
+                        <th>WP_DEBUG設定</th>
+                        <td>
+                            <?php if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) : ?>
+                                <strong style="color: #00a32a;">✓ 有効</strong>
+                            <?php else : ?>
+                                <strong style="color: #d63638;">✗ 無効</strong>
+                            <?php endif; ?>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>WP_DEBUG_LOG設定</th>
+                        <td>
+                            <?php if ( defined( 'WP_DEBUG_LOG' ) && WP_DEBUG_LOG ) : ?>
+                                <strong style="color: #00a32a;">✓ 有効</strong>
+                            <?php else : ?>
+                                <strong style="color: #d63638;">✗ 無効</strong>
+                            <?php endif; ?>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>ログデータ（最新3件）</th>
+                        <td>
+                            <?php if ( is_array( $option_value ) && ! empty( $option_value ) ) : ?>
+                                <pre style="background: #f5f5f5; padding: 10px; border-radius: 4px; max-height: 300px; overflow: auto; font-size: 11px;"><?= esc_html( print_r( array_slice( $option_value, 0, 3 ), true ) ) ?></pre>
+                            <?php else : ?>
+                                <em style="color: #666;">データなし</em>
+                            <?php endif; ?>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+
+            <!-- エラーログ -->
+            <div class="plm-card">
+                <h2>
+                    <span class="dashicons dashicons-warning" style="color: #d63638;"></span>
+                    エラーログ
+                    <?php
+                    $error_logs = plm_get_error_logs();
+                    if ( ! empty( $error_logs ) ) :
+                    ?>
+                        <span class="plm-status-badge" style="background: #d63638; color: #fff;">
+                            <?= count( $error_logs ) ?>件
+                        </span>
+                    <?php else : ?>
+                        <span class="plm-status-badge plm-status-inactive">0件</span>
+                    <?php endif; ?>
+                </h2>
+                
+                <div style="margin-bottom: 12px; display: flex; gap: 8px; flex-wrap: wrap;">
+                    <?php if ( ! empty( $error_logs ) ) : ?>
+                        <button type="button" id="plm-clear-error-logs" class="button">
+                            <span class="dashicons dashicons-dismiss" style="margin-top: 3px;"></span>
+                            エラーログをクリア
+                        </button>
+                    <?php endif; ?>
+                    <button type="button" id="plm-test-error-log" class="button button-primary">
+                        <span class="dashicons dashicons-welcome-learn-more" style="margin-top: 3px;"></span>
+                        テストログを追加
+                    </button>
+                    <button type="button" id="plm-clear-error-cache" class="button" style="background: #f0ad4e; color: #fff; border-color: #f0ad4e;">
+                        <span class="dashicons dashicons-update" style="margin-top: 3px;"></span>
+                        エラーキャッシュをクリア
+                    </button>
+                    <button type="button" id="plm-check-db" class="button">
+                        <span class="dashicons dashicons-database" style="margin-top: 3px;"></span>
+                        データベース直接確認
+                    </button>
+                    <button type="button" id="plm-force-insert" class="button" style="background: #d63638; color: #fff; border-color: #d63638;">
+                        <span class="dashicons dashicons-plus-alt" style="margin-top: 3px;"></span>
+                        強制的に追加
+                    </button>
+                </div>
+                <div id="plm-error-log-message" style="margin-top: 10px;"></div>
+                
+                <?php if ( ! empty( $error_logs ) ) : ?>
+                    <table class="wp-list-table widefat fixed striped" style="margin-top: 12px;">
+                        <thead>
+                            <tr>
+                                <th style="width: 150px;">日時</th>
+                                <th style="width: 120px;">エラータイプ</th>
+                                <th>エラー内容</th>
+                                <th style="width: 200px;">投稿</th>
+                                <th style="width: 150px;">商品ID/キーワード</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?php foreach ( array_slice( $error_logs, 0, 20 ) as $log ) : ?>
+                            <tr>
+                                <td><?= esc_html( $log['timestamp'] ) ?></td>
+                                <td>
+                                    <code style="color: #d63638; font-size: 11px;">
+                                        <?= esc_html( $log['error_type'] ) ?>
+                                    </code>
+                                </td>
+                                <td><?= esc_html( $log['error_message'] ) ?></td>
+                                <td>
+                                    <?php if ( $log['post_id'] ) : ?>
+                                        <a href="<?= get_edit_post_link( $log['post_id'] ) ?>" target="_blank">
+                                            <?= esc_html( $log['post_title'] ?: '(タイトルなし)' ) ?>
+                                            <span class="dashicons dashicons-external" style="font-size: 14px;"></span>
+                                        </a>
+                                        <br><small style="color: #666;">ID: <?= esc_html( $log['post_id'] ) ?></small>
+                                    <?php else : ?>
+                                        <span style="color: #999;">-</span>
+                                    <?php endif; ?>
+                                </td>
+                                <td>
+                                    <?php if ( $log['item_id'] ) : ?>
+                                        <strong>ID:</strong> <?= esc_html( $log['item_id'] ) ?>
+                                    <?php elseif ( $log['keyword'] ) : ?>
+                                        <strong>KW:</strong> <?= esc_html( $log['keyword'] ) ?>
+                                    <?php else : ?>
+                                        <span style="color: #999;">-</span>
+                                    <?php endif; ?>
+                                </td>
+                            </tr>
+                            <?php endforeach; ?>
+                        </tbody>
+                    </table>
+                    <?php if ( count( $error_logs ) > 20 ) : ?>
+                        <p class="description" style="margin-top: 12px;">
+                            <span class="dashicons dashicons-info" style="color: #2271b1;"></span>
+                            最新20件を表示しています（全<?= count( $error_logs ) ?>件）
+                        </p>
+                    <?php endif; ?>
+                <?php else : ?>
+                    <p style="padding: 20px; background: #f9f9f9; border-radius: 4px; color: #666;">
+                        <span class="dashicons dashicons-yes-alt" style="color: #00a32a;"></span>
+                        現在エラーログはありません。楽天APIでエラーが発生すると、ここに自動的に記録されます。
+                    </p>
+                <?php endif; ?>
+            </div>
+
             <?php submit_button('設定を保存', 'primary large'); ?>
         </form>
 
         <script>
         jQuery(document).ready(function($) {
+            // キャッシュクリアボタン
             $('#plm-clear-cache').on('click', function() {
                 var button = $(this);
                 var messageDiv = $('#plm-cache-message');
@@ -569,6 +750,206 @@ function plm_render_settings_page() {
                     error: function() {
                         messageDiv.html('<div class="notice notice-error inline"><p>キャッシュの削除に失敗しました。</p></div>');
                         button.prop('disabled', false).text('すべてのキャッシュを削除');
+                    }
+                });
+            });
+
+            // エラーログクリアボタン
+            $('#plm-clear-error-logs').on('click', function() {
+                if (!confirm('すべてのエラーログを削除しますか？')) {
+                    return;
+                }
+                
+                var button = $(this);
+                var messageDiv = $('#plm-error-log-message');
+                
+                button.prop('disabled', true).text('削除中...');
+                messageDiv.html('');
+                
+                $.ajax({
+                    url: '<?php echo rest_url('product-link-maker/v1/clear-error-logs'); ?>',
+                    method: 'POST',
+                    beforeSend: function(xhr) {
+                        xhr.setRequestHeader('X-WP-Nonce', '<?php echo wp_create_nonce('wp_rest'); ?>');
+                    },
+                    success: function(response) {
+                        messageDiv.html('<div class="notice notice-success inline"><p>' + response.message + '</p></div>');
+                        button.prop('disabled', false).text('エラーログをクリア');
+                        // エラーログセクションを更新するためにページをリロード
+                        setTimeout(function() {
+                            location.reload();
+                        }, 1000);
+                    },
+                    error: function() {
+                        messageDiv.html('<div class="notice notice-error inline"><p>エラーログのクリアに失敗しました。</p></div>');
+                        button.prop('disabled', false).text('エラーログをクリア');
+                    }
+                });
+            });
+
+            // テストログ追加ボタン
+            $('#plm-test-error-log').on('click', function() {
+                console.log('[PLM Test] Button clicked');
+                var button = $(this);
+                var messageDiv = $('#plm-error-log-message');
+                
+                button.prop('disabled', true).text('追加中...');
+                messageDiv.html('');
+                
+                $.ajax({
+                    url: '<?php echo rest_url('product-link-maker/v1/test-error-log'); ?>',
+                    method: 'POST',
+                    beforeSend: function(xhr) {
+                        xhr.setRequestHeader('X-WP-Nonce', '<?php echo wp_create_nonce('wp_rest'); ?>');
+                    },
+                    success: function(response) {
+                        console.log('[PLM Test] Response:', response);
+                        
+                        var messageClass = response.success ? 'notice-success' : 'notice-error';
+                        var debugInfo = '';
+                        if (response.debug) {
+                            debugInfo = '<br><small>Log count: ' + response.log_count + 
+                                       ', Insert result: ' + response.debug.insert_result + '</small>';
+                        }
+                        
+                        messageDiv.html('<div class="notice ' + messageClass + ' inline"><p>' + 
+                                      response.message + debugInfo + '</p></div>');
+                        button.prop('disabled', false).text('テストログを追加');
+                        
+                        // 成功時のみリロード
+                        if (response.success) {
+                            setTimeout(function() {
+                                location.reload();
+                            }, 1500);
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        console.error('[PLM Test] Error:', status, error);
+                        console.error('[PLM Test] Response:', xhr.responseText);
+                        messageDiv.html('<div class="notice notice-error inline"><p>テストログの追加に失敗しました。コンソールを確認してください。</p></div>');
+                        button.prop('disabled', false).text('テストログを追加');
+                    }
+                });
+            });
+
+            // エラーキャッシュクリアボタン
+            $('#plm-clear-error-cache').on('click', function() {
+                if (!confirm('エラーに関する全てのキャッシュをクリアしますか？\nこれにより、エラーが再度API経由で確認され、ログに記録されます。')) {
+                    return;
+                }
+                
+                console.log('[PLM Clear] Clearing error cache');
+                var button = $(this);
+                var messageDiv = $('#plm-error-log-message');
+                
+                button.prop('disabled', true).text('削除中...');
+                messageDiv.html('');
+                
+                $.ajax({
+                    url: '<?php echo admin_url('admin-ajax.php'); ?>',
+                    method: 'POST',
+                    data: {
+                        action: 'plm_clear_error_cache',
+                        nonce: '<?php echo wp_create_nonce('plm_clear_error_cache'); ?>'
+                    },
+                    success: function(response) {
+                        console.log('[PLM Clear] Response:', response);
+                        
+                        var messageClass = response.success ? 'notice-success' : 'notice-error';
+                        var message = response.data || response.message || 'エラーキャッシュをクリアしました';
+                        
+                        messageDiv.html('<div class="notice ' + messageClass + ' inline"><p>' + message + '</p></div>');
+                        button.prop('disabled', false).text('エラーキャッシュをクリア');
+                        
+                        if (response.success) {
+                            setTimeout(function() {
+                                messageDiv.html('<div class="notice notice-info inline"><p>キャッシュをクリアしました。エディタでエラーブロックを再読み込みしてください。</p></div>');
+                            }, 2000);
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        console.error('[PLM Clear] Error:', status, error);
+                        messageDiv.html('<div class="notice notice-error inline"><p>クリアに失敗しました。</p></div>');
+                        button.prop('disabled', false).text('エラーキャッシュをクリア');
+                    }
+                });
+            });
+
+            // データベース直接確認ボタン
+            $('#plm-check-db').on('click', function() {
+                console.log('[PLM Check] Button clicked');
+                var button = $(this);
+                var messageDiv = $('#plm-error-log-message');
+                
+                button.prop('disabled', true).text('確認中...');
+                messageDiv.html('');
+                
+                $.ajax({
+                    url: '<?php echo rest_url('product-link-maker/v1/check-db'); ?>',
+                    method: 'POST',
+                    beforeSend: function(xhr) {
+                        xhr.setRequestHeader('X-WP-Nonce', '<?php echo wp_create_nonce('wp_rest'); ?>');
+                    },
+                    success: function(response) {
+                        console.log('[PLM Check] Response:', response);
+                        
+                        var info = '<strong>データベース診断結果:</strong><br>' +
+                                  'DBに存在: ' + (response.db_exists ? '✓ Yes' : '✗ No') + '<br>' +
+                                  'DB値の長さ: ' + response.db_value_length + ' bytes<br>' +
+                                  'DB内のログ数: ' + response.db_unserialized_count + '<br>' +
+                                  'get_option()結果: ' + response.get_option_count + ' logs<br>' +
+                                  '<pre style="margin-top:10px; background:#f5f5f5; padding:10px; max-height:200px; overflow:auto;">' +
+                                  JSON.stringify(response.unserialized_sample, null, 2) + '</pre>';
+                        
+                        messageDiv.html('<div class="notice notice-info inline"><p>' + info + '</p></div>');
+                        button.prop('disabled', false).text('データベース直接確認');
+                    },
+                    error: function(xhr, status, error) {
+                        console.error('[PLM Check] Error:', status, error);
+                        messageDiv.html('<div class="notice notice-error inline"><p>確認に失敗しました。</p></div>');
+                        button.prop('disabled', false).text('データベース直接確認');
+                    }
+                });
+            });
+
+            // 強制的に追加ボタン
+            $('#plm-force-insert').on('click', function() {
+                console.log('[PLM Force] Button clicked');
+                var button = $(this);
+                var messageDiv = $('#plm-error-log-message');
+                
+                button.prop('disabled', true).text('追加中...');
+                messageDiv.html('');
+                
+                $.ajax({
+                    url: '<?php echo rest_url('product-link-maker/v1/force-insert'); ?>',
+                    method: 'POST',
+                    beforeSend: function(xhr) {
+                        xhr.setRequestHeader('X-WP-Nonce', '<?php echo wp_create_nonce('wp_rest'); ?>');
+                    },
+                    success: function(response) {
+                        console.log('[PLM Force] Response:', response);
+                        
+                        var info = '<strong>強制追加結果:</strong><br>' +
+                                  '成功: ' + (response.success ? '✓ Yes' : '✗ No') + '<br>' +
+                                  'DB結果: ' + response.db_result + '<br>' +
+                                  '追加後のログ数: ' + response.log_count + '<br>' +
+                                  '確認時のログ数: ' + response.verify_count + '<br>';
+                        
+                        var messageClass = response.success ? 'notice-success' : 'notice-error';
+                        messageDiv.html('<div class="notice ' + messageClass + ' inline"><p>' + info + '</p></div>');
+                        button.prop('disabled', false).text('強制的に追加');
+                        
+                        if (response.success && response.verify_count > 0) {
+                            setTimeout(function() {
+                                location.reload();
+                            }, 2000);
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        console.error('[PLM Force] Error:', status, error);
+                        messageDiv.html('<div class="notice notice-error inline"><p>強制追加に失敗しました。</p></div>');
+                        button.prop('disabled', false).text('強制的に追加');
                     }
                 });
             });
@@ -840,6 +1221,102 @@ function plm_get_rakuten_item_cached( $app_id, $affiliate_id, $item_id = null, $
 
 
 /**
+ * エラーログを記録
+ *
+ * @param string $error_type エラータイプ
+ * @param string $error_message エラーメッセージ
+ * @param array  $context コンテキスト情報
+ */
+function plm_log_error( $error_type, $error_message, $context = array() ) {
+	// オプションが存在しない場合は初期化
+	$logs = get_option( 'plm_error_logs', false );
+	if ( false === $logs ) {
+		$logs = array();
+		add_option( 'plm_error_logs', $logs, '', 'no' );
+	} elseif ( ! is_array( $logs ) ) {
+		$logs = array();
+	}
+
+	$log_entry = array(
+		'timestamp'     => current_time( 'mysql' ),
+		'error_type'    => $error_type,
+		'error_message' => $error_message,
+		'post_id'       => $context['post_id'] ?? null,
+		'post_title'    => $context['post_title'] ?? null,
+		'item_id'       => $context['item_id'] ?? null,
+		'keyword'       => $context['keyword'] ?? null,
+	);
+
+	// 同じpost_id, item_id, error_typeの既存エントリを検索
+	$existing_index = -1;
+	foreach ( $logs as $index => $existing_log ) {
+		if ( 
+			$existing_log['post_id'] === $log_entry['post_id'] &&
+			$existing_log['item_id'] === $log_entry['item_id'] &&
+			$existing_log['error_type'] === $log_entry['error_type']
+		) {
+			$existing_index = $index;
+			break;
+		}
+	}
+
+	// 既存のエントリがある場合は削除（後で先頭に追加するため）
+	if ( $existing_index !== -1 ) {
+		array_splice( $logs, $existing_index, 1 );
+	}
+
+	// 最新100件まで保持
+	array_unshift( $logs, $log_entry );
+	$logs = array_slice( $logs, 0, 100 );
+
+	// 直接データベースに書き込む（update_optionのキャッシュ問題を回避）
+	global $wpdb;
+	$serialized_data = maybe_serialize( $logs );
+	
+	$result = $wpdb->query(
+		$wpdb->prepare(
+			"INSERT INTO {$wpdb->options} (option_name, option_value, autoload) 
+			VALUES (%s, %s, 'no') 
+			ON DUPLICATE KEY UPDATE option_value = %s",
+			'plm_error_logs',
+			$serialized_data,
+			$serialized_data
+		)
+	);
+	
+	// キャッシュをクリア
+	wp_cache_delete( 'plm_error_logs', 'options' );
+	
+	return $result !== false;
+}
+
+/**
+ * エラーログを取得
+ *
+ * @return array エラーログの配列
+ */
+function plm_get_error_logs() {
+	// キャッシュをクリアして最新データを取得
+	wp_cache_delete( 'plm_error_logs', 'options' );
+	
+	$logs = get_option( 'plm_error_logs', array() );
+	
+	// 配列でない場合は空配列を返す
+	if ( ! is_array( $logs ) ) {
+		return array();
+	}
+	
+	return $logs;
+}
+
+/**
+ * エラーログをクリア
+ */
+function plm_clear_error_logs() {
+	delete_option( 'plm_error_logs' );
+}
+
+/**
  * 楽天商品情報を取得するREST APIハンドラ
  *
  * @param WP_REST_Request $request リクエストオブジェクト
@@ -848,15 +1325,43 @@ function plm_get_rakuten_item_cached( $app_id, $affiliate_id, $item_id = null, $
 function plm_rest_get_rakuten_item( $request ) {
 	$settings = plm_get_affiliate_settings();
 
+	$item_id = $request->get_param( 'id' );
+	$keyword = $request->get_param( 'kw' );
+	$no      = $request->get_param( 'no' );
+	$post_id = $request->get_param( 'post_id' );
+
 	$json = plm_get_rakuten_item_cached(
 		$settings['rakuten_app_id'] ?? '',
 		$settings['rakuten_affiliate_id'] ?? '',
-		$request->get_param( 'id' ),
-		$request->get_param( 'kw' ),
-		$request->get_param( 'no' )
+		$item_id,
+		$keyword,
+		$no
 	);
 
-	$result                  = json_decode( $json, true );
+	$result = json_decode( $json, true );
+
+	// エラーが発生した場合はログに記録（レート制限以外）
+	if ( isset( $result['error'] ) && 'rate_limit' !== $result['error'] ) {
+		$post_title = '';
+		if ( $post_id ) {
+			$post = get_post( $post_id );
+			if ( $post ) {
+				$post_title = $post->post_title;
+			}
+		}
+
+		plm_log_error(
+			$result['error'],
+			$result['error_description'] ?? '',
+			array(
+				'post_id'    => $post_id,
+				'post_title' => $post_title,
+				'item_id'    => $item_id,
+				'keyword'    => $keyword ?: $no,
+			)
+		);
+	}
+
 	$result['affiliate_ids'] = array(
 		'rakuten_app_id'       => $settings['rakuten_app_id'] ?? '',
 		'rakuten_affiliate_id' => $settings['rakuten_affiliate_id'] ?? '',
@@ -946,6 +1451,10 @@ function plm_register_rest_routes() {
 					'type'              => 'string',
 					'sanitize_callback' => 'sanitize_text_field',
 				),
+				'post_id' => array(
+					'type'              => 'integer',
+					'sanitize_callback' => 'absint',
+				),
 			),
 		)
 	);
@@ -973,5 +1482,290 @@ function plm_register_rest_routes() {
 			},
 		)
 	);
+
+	// エラーログクリア
+	register_rest_route(
+		'product-link-maker/v1',
+		'/clear-error-logs/',
+		array(
+			'methods'             => 'POST',
+			'callback'            => function() {
+				plm_clear_error_logs();
+				return rest_ensure_response(
+					array(
+						'success' => true,
+						'message' => __( 'エラーログをクリアしました。', 'product-link-maker' ),
+					)
+				);
+			},
+			'permission_callback' => function () {
+				return current_user_can( 'manage_options' );
+			},
+		)
+	);
+
+	// テストエラーログ追加
+	register_rest_route(
+		'product-link-maker/v1',
+		'/test-error-log/',
+		array(
+			'methods'             => 'POST',
+			'callback'            => function() {
+				$result = plm_log_error(
+					'test_error',
+					'これはテストエラーです。エラーログ機能が正常に動作しています。',
+					array(
+						'post_id'   => 0,
+						'post_title' => 'テスト',
+						'item_id'   => 'test-12345',
+					)
+				);
+				
+				// 最新のログを取得して確認
+				$logs = plm_get_error_logs();
+				
+				return rest_ensure_response(
+					array(
+						'success' => $result,
+						'message' => $result 
+							? __( 'テストログを追加しました。', 'product-link-maker' )
+							: __( 'テストログの追加に失敗しました。', 'product-link-maker' ),
+						'log_count' => count( $logs ),
+					)
+				);
+			},
+			'permission_callback' => function () {
+				return current_user_can( 'manage_options' );
+			},
+		)
+	);
+
+	// データベース直接確認
+	register_rest_route(
+		'product-link-maker/v1',
+		'/check-db/',
+		array(
+			'methods'             => 'POST',
+			'callback'            => function() {
+				global $wpdb;
+				
+				// データベースから直接取得
+				$db_value = $wpdb->get_var(
+					$wpdb->prepare(
+						"SELECT option_value FROM {$wpdb->options} WHERE option_name = %s",
+						'plm_error_logs'
+					)
+				);
+				
+				$db_exists = $wpdb->get_var(
+					$wpdb->prepare(
+						"SELECT COUNT(*) FROM {$wpdb->options} WHERE option_name = %s",
+						'plm_error_logs'
+					)
+				);
+				
+				$unserialized = $db_value ? maybe_unserialize( $db_value ) : null;
+				
+				// get_option経由でも取得
+				$option_value = get_option( 'plm_error_logs', null );
+				
+				return rest_ensure_response(
+					array(
+						'success' => true,
+						'db_exists' => (bool) $db_exists,
+						'db_value_length' => $db_value ? strlen( $db_value ) : 0,
+						'db_unserialized_count' => is_array( $unserialized ) ? count( $unserialized ) : 0,
+						'get_option_count' => is_array( $option_value ) ? count( $option_value ) : 0,
+						'db_raw' => substr( $db_value, 0, 500 ),
+						'unserialized_sample' => is_array( $unserialized ) && ! empty( $unserialized ) 
+							? array_slice( $unserialized, 0, 2 ) 
+							: $unserialized,
+					)
+				);
+			},
+			'permission_callback' => function () {
+				return current_user_can( 'manage_options' );
+			},
+		)
+	);
+
+	// 強制的にログを追加
+	register_rest_route(
+		'product-link-maker/v1',
+		'/force-insert/',
+		array(
+			'methods'             => 'POST',
+			'callback'            => function() {
+				global $wpdb;
+				
+				$log_entry = array(
+					'timestamp'     => current_time( 'mysql' ),
+					'error_type'    => 'force_test',
+					'error_message' => '強制追加テスト - ' . time(),
+					'post_id'       => 999,
+					'post_title'    => '強制テスト投稿',
+					'item_id'       => 'force-test-' . time(),
+					'keyword'       => null,
+				);
+				
+				// まず現在の値を取得
+				$current = $wpdb->get_var(
+					$wpdb->prepare(
+						"SELECT option_value FROM {$wpdb->options} WHERE option_name = %s",
+						'plm_error_logs'
+					)
+				);
+				
+				$logs = $current ? maybe_unserialize( $current ) : array();
+				if ( ! is_array( $logs ) ) {
+					$logs = array();
+				}
+				
+				// 新しいログを追加
+				array_unshift( $logs, $log_entry );
+				$logs = array_slice( $logs, 0, 100 );
+				
+				$serialized = maybe_serialize( $logs );
+				
+				// データベースに直接書き込み
+				if ( $current === false || $current === null ) {
+					// オプションが存在しない場合は INSERT
+					$result = $wpdb->insert(
+						$wpdb->options,
+						array(
+							'option_name'  => 'plm_error_logs',
+							'option_value' => $serialized,
+							'autoload'     => 'no',
+						),
+						array( '%s', '%s', '%s' )
+					);
+				} else {
+					// 既存の場合は UPDATE
+					$result = $wpdb->update(
+						$wpdb->options,
+						array( 'option_value' => $serialized ),
+						array( 'option_name' => 'plm_error_logs' ),
+						array( '%s' ),
+						array( '%s' )
+					);
+				}
+				
+				// キャッシュクリア
+				wp_cache_delete( 'plm_error_logs', 'options' );
+				
+				// 確認
+				$verify = plm_get_error_logs();
+				
+				return rest_ensure_response(
+					array(
+						'success' => $result !== false,
+						'db_result' => $result,
+						'log_count' => count( $logs ),
+						'verify_count' => count( $verify ),
+						'latest' => ! empty( $verify ) ? $verify[0] : null,
+					)
+				);
+			},
+			'permission_callback' => function () {
+				return current_user_can( 'manage_options' );
+			},
+		)
+	);
+
+	// クライアント側からのエラーログ記録
+	register_rest_route(
+		'product-link-maker/v1',
+		'/log-client-error/',
+		array(
+			'methods'             => 'POST',
+			'callback'            => function( $request ) {
+				$error_type    = $request->get_param( 'error_type' );
+				$error_message = $request->get_param( 'error_message' );
+				$post_id       = $request->get_param( 'post_id' );
+				$item_id       = $request->get_param( 'item_id' );
+				$keyword       = $request->get_param( 'keyword' );
+				
+			// レート制限以外のエラーをログに記録
+			if ( 'rate_limit' !== $error_type ) {
+				$post_title = '';
+				if ( $post_id ) {
+					$post = get_post( $post_id );
+					if ( $post ) {
+						$post_title = $post->post_title;
+					}
+				}
+				
+				$result = plm_log_error(
+					$error_type,
+					$error_message,
+					array(
+						'post_id'    => $post_id,
+						'post_title' => $post_title,
+						'item_id'    => $item_id,
+						'keyword'    => $keyword,
+					)
+				);
+				}
+				
+				return rest_ensure_response(
+					array(
+						'success' => false,
+						'message' => 'Rate limit error not logged',
+					)
+				);
+			},
+			'permission_callback' => '__return_true',
+			'args'                => array(
+				'error_type' => array(
+					'required'          => true,
+					'type'              => 'string',
+					'sanitize_callback' => 'sanitize_text_field',
+				),
+				'error_message' => array(
+					'type'              => 'string',
+					'sanitize_callback' => 'sanitize_text_field',
+				),
+				'post_id' => array(
+					'type'              => 'integer',
+					'sanitize_callback' => 'absint',
+				),
+				'item_id' => array(
+					'type'              => 'string',
+					'sanitize_callback' => 'sanitize_text_field',
+				),
+				'keyword' => array(
+					'type'              => 'string',
+					'sanitize_callback' => 'sanitize_text_field',
+				),
+			),
+		)
+	);
 }
 add_action( 'rest_api_init', 'plm_register_rest_routes' );
+
+/**
+ * エラーキャッシュをクリアするAJAXハンドラー
+ */
+function plm_ajax_clear_error_cache() {
+	check_ajax_referer( 'plm_clear_error_cache', 'nonce' );
+	
+	if ( ! current_user_can( 'manage_options' ) ) {
+		wp_send_json_error( 'Permission denied' );
+	}
+	
+	global $wpdb;
+	
+	// エラーがキャッシュされている可能性のあるトランジェントを削除
+	// rate_limit以外のエラーは本来キャッシュされないはずだが、念のため全てクリア
+	$deleted = $wpdb->query(
+		"DELETE FROM {$wpdb->options} 
+		WHERE option_name LIKE '_transient_rakuten_item_%' 
+		OR option_name LIKE '_transient_timeout_rakuten_item_%'"
+	);
+	
+	wp_send_json_success( 
+		sprintf( '%d 件のキャッシュをクリアしました。', $deleted ),
+		200
+	);
+}
+add_action( 'wp_ajax_plm_clear_error_cache', 'plm_ajax_clear_error_cache' );
