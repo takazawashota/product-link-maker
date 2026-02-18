@@ -229,7 +229,7 @@ const BUTTON_STYLES = {
   },
   rakuten: {
     backgroundColor: '#bf0000',
-    text: '楽天'
+    text: '楽天市場'
   },
   yahoo: {
     backgroundColor: '#ff0033',
@@ -296,7 +296,10 @@ function StatusMessage({
       ...COMMON_STYLES.statusBox,
       color: '#888',
       backgroundColor: '#f5f5f5',
-      border: '1px dashed #ccc'
+      border: '1px dashed #ccc',
+      display: 'flex',
+      alignItems: 'center',
+      gap: '8px'
     },
     error: {
       ...COMMON_STYLES.statusBox,
@@ -311,9 +314,9 @@ function StatusMessage({
       border: '1px dashed #ccc'
     }
   };
-  return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)("div", {
+  return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsxs)("div", {
     style: styles[type],
-    children: message
+    children: [type === 'loading' && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)(_wordpress_components__WEBPACK_IMPORTED_MODULE_2__.Spinner, {}), message]
   });
 }
 

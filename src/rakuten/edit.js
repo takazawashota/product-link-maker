@@ -1,6 +1,6 @@
 import { __ } from '@wordpress/i18n';
 import { useBlockProps, MediaUpload, InspectorControls, MediaUploadCheck } from '@wordpress/block-editor';
-import { PanelBody, TextControl, ToggleControl, TextareaControl, FormTokenField, Button, Flex, __experimentalHeading as Heading, ColorPicker, Card, CardHeader, CardBody, Icon } from '@wordpress/components';
+import { PanelBody, TextControl, ToggleControl, TextareaControl, FormTokenField, Button, Flex, __experimentalHeading as Heading, ColorPicker, Card, CardHeader, CardBody, Icon, Spinner } from '@wordpress/components';
 
 // import './style.scss';
 import './editor.scss';
@@ -161,7 +161,7 @@ function CustomButtonEditor({ buttons, onChange, label }) {
  */
 const BUTTON_STYLES = {
 	amazon: { backgroundColor: '#ff9900', text: 'Amazon' },
-	rakuten: { backgroundColor: '#bf0000', text: '楽天' },
+	rakuten: { backgroundColor: '#bf0000', text: '楽天市場' },
 	yahoo: { backgroundColor: '#ff0033', text: 'Yahoo!ショッピング' },
 	mercari: { backgroundColor: '#4dc9ff', text: 'メルカリ' },
 	dmm: { backgroundColor: '#00bcd4', text: 'DMM' }
@@ -220,7 +220,10 @@ function StatusMessage({ type, message }) {
 			...COMMON_STYLES.statusBox,
 			color: '#888',
 			backgroundColor: '#f5f5f5',
-			border: '1px dashed #ccc'
+			border: '1px dashed #ccc',
+			display: 'flex',
+			alignItems: 'center',
+			gap: '8px'
 		},
 		error: {
 			...COMMON_STYLES.statusBox,
@@ -236,7 +239,12 @@ function StatusMessage({ type, message }) {
 		}
 	};
 
-	return <div style={styles[type]}>{message}</div>;
+	return (
+		<div style={styles[type]}>
+			{type === 'loading' && <Spinner />}
+			{message}
+		</div>
+	);
 }
 
 /**

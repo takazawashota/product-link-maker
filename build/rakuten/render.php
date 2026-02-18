@@ -156,7 +156,7 @@ endif;
 				<?php endif; ?>
 				<?php if ( $showRakuten && ! empty( $rakuten_affiliate_id ) ) : ?>
 					<div class="plm-shop-rakuten">
-						<a rel="nofollow noopener" href="https://hb.afl.rakuten.co.jp/hgc/<?php echo esc_attr( $rakuten_affiliate_id ); ?>/?pc=<?php echo urlencode( 'https://search.rakuten.co.jp/search/mall/' . $kw_for_url . '/' ); ?>&m=<?php echo urlencode( 'https://search.rakuten.co.jp/search/mall/' . $kw_for_url . '/' ); ?>" target="_blank">楽天</a>
+						<a rel="nofollow noopener" href="https://hb.afl.rakuten.co.jp/hgc/<?php echo esc_attr( $rakuten_affiliate_id ); ?>/?pc=<?php echo urlencode( 'https://search.rakuten.co.jp/search/mall/' . $kw_for_url . '/' ); ?>&m=<?php echo urlencode( 'https://search.rakuten.co.jp/search/mall/' . $kw_for_url . '/' ); ?>" target="_blank">楽天市場</a>
 					</div>
 				<?php endif; ?>
 				<?php if ( $showYahoo && ! empty( $vc_sid ) && ! empty( $vc_pid ) ) : ?>

@@ -439,7 +439,7 @@ function plm_render_settings_page() {
                             }
                             ?>
                             <div style="display: flex; gap: 16px; margin-bottom: 12px;">
-                                <div style="flex: 1; padding: 20px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 8px; color: #fff; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+                                <div style="flex: 1; padding: 20px; background: #667eea; border-radius: 8px; color: #fff; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
                                     <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 8px;">
                                         <span class="dashicons dashicons-database-view" style="font-size: 28px; width: 28px; height: 28px;"></span>
                                         <span style="font-size: 13px; opacity: 0.9; font-weight: 500;">キャッシュ件数</span>
@@ -449,7 +449,7 @@ function plm_render_settings_page() {
                                     </div>
                                     <div style="font-size: 12px; opacity: 0.8; margin-top: 4px;">件</div>
                                 </div>
-                                <div style="flex: 1; padding: 20px; background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); border-radius: 8px; color: #fff; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+                                <div style="flex: 1; padding: 20px; background: #f5576c; border-radius: 8px; color: #fff; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
                                     <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 8px;">
                                         <span class="dashicons dashicons-chart-area" style="font-size: 28px; width: 28px; height: 28px;"></span>
                                         <span style="font-size: 13px; opacity: 0.9; font-weight: 500;">データサイズ</span>
@@ -502,7 +502,7 @@ function plm_render_settings_page() {
                         <th scope="row">キャッシュ削除</th>
                         <td>
                             <button type="button" id="plm-clear-cache" class="button" style="
-                                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                                background: #667eea;
                                 color: #fff;
                                 border: none;
                                 padding: 8px 20px;
