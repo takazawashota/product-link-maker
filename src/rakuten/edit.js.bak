@@ -723,7 +723,6 @@ export default function Edit({ attributes, setAttributes }) {
 							imageKey={imageKey}
 							itemTitle={itemTitle}
 							itemLink={itemLink}
-							affiliateIds={affiliateIds}
 						/>
 						{item && (
 							<div className="plm-admin-info">

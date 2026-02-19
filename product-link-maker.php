@@ -197,6 +197,10 @@ function plm_render_settings_page() {
             <?php settings_fields( 'plm_settings_group' ); ?>
 
             <style>
+                .nav-tab-active {
+                    background: #fff !important;
+                    border-bottom-color: #fff !important;
+                }
                 .plm-card {
                     background: #fff;
                     border: 1px solid #ddd;
@@ -1184,6 +1188,7 @@ function plm_rest_get_rakuten_item( $request ) {
 	}
 
 	$result['affiliate_ids'] = array(
+		'amazon_tracking_id'   => $settings['amazon_tracking_id'] ?? '',
 		'rakuten_app_id'       => $settings['rakuten_app_id'] ?? '',
 		'rakuten_affiliate_id' => $settings['rakuten_affiliate_id'] ?? '',
 		'yahoo_sid'            => $settings['yahoo_sid'] ?? '',
