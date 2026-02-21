@@ -143,7 +143,7 @@ function plm_sanitize_settings( $settings ) {
 	$sanitized = $existing;
 
 	$text_fields = array(
-		'amazon_tracking_id', 'amazon_access_key', 'amazon_secret_key',
+		'amazon_tracking_id',
 		'rakuten_app_id', 'rakuten_affiliate_id',
 		'yahoo_sid', 'yahoo_pid',
 		'mercari_id', 'dmm_id'
@@ -299,7 +299,7 @@ function plm_render_settings_page() {
             
             <?php elseif ( $current_tab === 'cache' ) : ?>
             <!-- キャッシュタブ: 他のタブの設定を隠しフィールドで保持 -->
-            <?php foreach ( array( 'amazon_tracking_id', 'amazon_access_key', 'amazon_secret_key', 'rakuten_app_id', 'rakuten_affiliate_id', 'yahoo_sid', 'yahoo_pid', 'mercari_id', 'dmm_id' ) as $field ) : ?>
+            <?php foreach ( array( 'amazon_tracking_id', 'rakuten_app_id', 'rakuten_affiliate_id', 'yahoo_sid', 'yahoo_pid', 'mercari_id', 'dmm_id' ) as $field ) : ?>
                 <?php if ( isset( $options[ $field ] ) && $options[ $field ] !== '' ) : ?>
                     <input type="hidden" name="affiliate_settings[<?= esc_attr( $field ) ?>]" value="<?= esc_attr( $options[ $field ] ) ?>" />
                 <?php endif; ?>
@@ -307,7 +307,7 @@ function plm_render_settings_page() {
             
             <?php elseif ( $current_tab === 'error-logs' ) : ?>
             <!-- エラーログタブ: 他のタブの設定を隠しフィールドで保持 -->
-            <?php foreach ( array( 'amazon_tracking_id', 'amazon_access_key', 'amazon_secret_key', 'rakuten_app_id', 'rakuten_affiliate_id', 'yahoo_sid', 'yahoo_pid', 'mercari_id', 'dmm_id', 'cache_success_hours', 'cache_ratelimit_minutes', 'cache_error_minutes' ) as $field ) : ?>
+            <?php foreach ( array( 'amazon_tracking_id', 'rakuten_app_id', 'rakuten_affiliate_id', 'yahoo_sid', 'yahoo_pid', 'mercari_id', 'dmm_id', 'cache_success_hours', 'cache_ratelimit_minutes', 'cache_error_minutes' ) as $field ) : ?>
                 <?php if ( isset( $options[ $field ] ) && $options[ $field ] !== '' ) : ?>
                     <input type="hidden" name="affiliate_settings[<?= esc_attr( $field ) ?>]" value="<?= esc_attr( $options[ $field ] ) ?>" />
                 <?php endif; ?>

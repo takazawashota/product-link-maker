@@ -99,14 +99,9 @@ if ( $should_log_error ) {
 
 // エラーまたはデータなしの場合は何も表示しない
 if ( isset( $data['error'] ) || ! isset( $data['Items'][0]['Item'] ) ) {
-    // エラーメッセージを表示する場合はここに追加
-    // echo '<!-- Rakuten API Error: ' . esc_html($error_message) . ' -->';
     return;
 }
 
-// echo '<pre>';
-// var_dump($data); // デバッグ用
-// echo '</pre>';
 if (
     isset($data['Items']) &&
     isset($data['Items'][0]) &&
