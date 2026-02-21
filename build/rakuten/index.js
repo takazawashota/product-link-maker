@@ -340,20 +340,26 @@ function renderAllButtons(attributes) {
 
   // ショップボタン
   if (settings.amazon && attributes.showAmazon !== false) {
-    buttons.push(renderShopButton('amazon', `https://www.amazon.co.jp/gp/search?keywords=${encodeURIComponent(kwForUrl)}`, BUTTON_STYLES.amazon));
+    const amazonUrl = `https://www.amazon.co.jp/gp/search?keywords=${encodeURIComponent(kwForUrl)}${settings.amazonTrackingId ? '&tag=' + settings.amazonTrackingId : ''}`;
+    buttons.push(renderShopButton('amazon', amazonUrl, BUTTON_STYLES.amazon));
   }
   if (settings.rakuten && attributes.showRakuten !== false) {
-    buttons.push(renderShopButton('rakuten', `https://search.rakuten.co.jp/search/mall/${encodeURIComponent(kwForUrl)}/`, BUTTON_STYLES.rakuten));
+    const rakutenSearchUrl = encodeURIComponent('https://search.rakuten.co.jp/search/mall/' + kwForUrl + '/');
+    const rakutenUrl = `https://hb.afl.rakuten.co.jp/hgc/${settings.rakutenAffiliateId || ''}/?pc=${rakutenSearchUrl}&m=${rakutenSearchUrl}`;
+    buttons.push(renderShopButton('rakuten', rakutenUrl, BUTTON_STYLES.rakuten));
   }
   if (settings.yahoo && attributes.showYahoo !== false) {
-    buttons.push(renderShopButton('yahoo', `https://search.shopping.yahoo.co.jp/search?p=${encodeURIComponent(kwForUrl)}`, BUTTON_STYLES.yahoo));
+    const yahooSearchUrl = encodeURIComponent('https://search.shopping.yahoo.co.jp/search?p=' + kwForUrl);
+    const yahooUrl = `https://ck.jp.ap.valuecommerce.com/servlet/referral?sid=${settings.yahooSid || ''}&pid=${settings.yahooPid || ''}&vc_url=${yahooSearchUrl}`;
+    buttons.push(renderShopButton('yahoo', yahooUrl, BUTTON_STYLES.yahoo));
   }
   if (settings.mercari && attributes.showMercari !== false) {
-    buttons.push(renderShopButton('mercari', `https://jp.mercari.com/search?keyword=${encodeURIComponent(kwForUrl)}`, BUTTON_STYLES.mercari));
+    const mercariUrl = `https://jp.mercari.com/search?afid=${settings.mercariId || ''}&keyword=${encodeURIComponent(kwForUrl)}`;
+    buttons.push(renderShopButton('mercari', mercariUrl, BUTTON_STYLES.mercari));
   }
   if (settings.dmm && attributes.showDmm !== false) {
-    // DMM: キーワード設定を使用
-    const dmmUrl = `https://al.dmm.com/?lurl=https%3A%2F%2Fwww.dmm.com%2Fsearch%2F%3D%2Fsearchstr%3D${encodeURIComponent(kwForUrl)}%2Fanalyze%3DV1ECCVYAUQQ_%2Flimit%3D30%2Fsort%3Drankprofile%2F&af_id=dummy&ch=link_tool&ch_id=link`;
+    // DMM: キーワード設定を使用（render.phpと同じ形式）
+    const dmmUrl = `https://al.dmm.com/?lurl=https%3A%2F%2Fwww.dmm.com%2Fsearch%2F%3D%2Fsearchstr%3D${encodeURIComponent(kwForUrl)}%2Fanalyze%3DV1ECCVYAUQQ_%2Flimit%3D30%2Fsort%3Drankprofile%2F&af_id=${settings.dmmId || ''}&ch=link_tool&ch_id=link`;
     buttons.push(renderShopButton('dmm', dmmUrl, BUTTON_STYLES.dmm));
   }
 
@@ -473,12 +479,12 @@ function Edit({
       const data = await _wordpress_api_fetch__WEBPACK_IMPORTED_MODULE_5___default()({
         path: `/product-link-maker/v1/rakuten/?${queryParams.toString()}`
       });
-      if (data && data.items && data.items.length > 0) {
+      if (data && data.Items && data.Items.length > 0 && data.Items[0]?.Item) {
         // 正常にデータを取得できた場合
-        setItem(data.items[0]);
+        setItem(data.Items[0].Item);
         setAttributes(prev => ({
           ...prev,
-          imageUrl: data.items[0]?.Item?.mediumImageUrls?.[0]?.imageUrl || ''
+          imageUrl: data.Items[0].Item?.mediumImageUrls?.[0]?.imageUrl || ''
         }));
       } else if (data?.error) {
         // APIエラーレスポンス
@@ -489,8 +495,8 @@ function Edit({
         }));
         setError('APIエラー: ' + (data.error_description || 'リクエスト制限に達しました。しばらく待ってから再度お試しください。'));
 
-        // エラーログに記録（rate_limit以外、かつID/キーワードが入力されている場合）
-        if (data.error !== 'rate_limit' && (attributes.id || attributes.kw || attributes.no)) {
+        // エラーログに記録（初回データ取得完了後のみ、rate_limit以外）
+        if (hasInitialized && data.error !== 'rate_limit' && (attributes.id || attributes.kw || attributes.no)) {
           try {
             await _wordpress_api_fetch__WEBPACK_IMPORTED_MODULE_5___default()({
               path: '/product-link-maker/v1/log-client-error/',
@@ -516,15 +522,15 @@ function Edit({
         }));
         setError('データが取得できませんでした');
 
-        // このケースもエラーログに記録（ID/キーワードが入力されている場合のみ）
-        if (attributes.id || attributes.kw || attributes.no) {
+        // 初回データ取得完了後のみエラーログに記録（商品削除の検知）
+        if (hasInitialized && (attributes.id || attributes.kw || attributes.no)) {
           try {
             await _wordpress_api_fetch__WEBPACK_IMPORTED_MODULE_5___default()({
               path: '/product-link-maker/v1/log-client-error/',
               method: 'POST',
               data: {
-                error_type: 'no_data',
-                error_message: 'データが取得できませんでした。商品IDまたはキーワードが正しいか確認してください。',
+                error_type: 'product_not_found',
+                error_message: '商品が見つかりませんでした。商品が削除されたか、IDが正しくない可能性があります。',
                 post_id: postId,
                 item_id: attributes.id || '',
                 keyword: attributes.kw || attributes.no || ''
@@ -536,15 +542,25 @@ function Edit({
         }
       }
     } catch (error) {
+      console.error('Rakuten API fetch error:', error);
       setItem(null);
       setAttributes(prev => ({
         ...prev,
         imageUrl: ''
       }));
-      setError('APIエラーが発生しました。しばらく待ってから再度お試しください。');
 
-      // 例外もエラーログに記録（ID/キーワードが入力されている場合のみ）
-      if (attributes.id || attributes.kw || attributes.no) {
+      // より詳細なエラーメッセージを表示
+      let errorMessage = 'APIエラーが発生しました。';
+      if (error.message) {
+        errorMessage += ' ' + error.message;
+      }
+      if (error.data?.message) {
+        errorMessage += ' ' + error.data.message;
+      }
+      setError(errorMessage);
+
+      // 例外もエラーログに記録（初回データ取得完了後のみ）
+      if (hasInitialized && (attributes.id || attributes.kw || attributes.no)) {
         try {
           await _wordpress_api_fetch__WEBPACK_IMPORTED_MODULE_5___default()({
             path: '/product-link-maker/v1/log-client-error/',
@@ -712,52 +728,6 @@ function Edit({
           onChange: val => setAttributes({
             desc: val
           })
-        }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsx)(_wordpress_components__WEBPACK_IMPORTED_MODULE_2__.__experimentalHeading, {
-          children: "\u753B\u50CF\u30A2\u30C3\u30D7\u30ED\u30FC\u30C9"
-        }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsx)(_wordpress_block_editor__WEBPACK_IMPORTED_MODULE_1__.MediaUploadCheck, {
-          children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsxs)("div", {
-            style: {
-              marginBottom: '0'
-            },
-            children: [(attributes.imageUrl !== '' ? attributes.imageUrl : item?.mediumImageUrls?.[0]?.imageUrl) && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsx)("div", {
-              style: {
-                marginBottom: '10px',
-                display: 'flex',
-                justifyContent: 'center',
-                backgroundColor: '#eee'
-              },
-              children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsx)("img", {
-                src: attributes.imageUrl !== '' ? attributes.imageUrl : item?.mediumImageUrls?.[0]?.imageUrl,
-                alt: "",
-                style: {
-                  display: 'block'
-                }
-              })
-            }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsx)(_wordpress_block_editor__WEBPACK_IMPORTED_MODULE_1__.MediaUpload, {
-              onSelect: media => setAttributes({
-                imageUrl: media.url || ''
-              }),
-              allowedTypes: ['image'],
-              render: ({
-                open
-              }) => /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsxs)(_wordpress_components__WEBPACK_IMPORTED_MODULE_2__.Flex, {
-                children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsx)(_wordpress_components__WEBPACK_IMPORTED_MODULE_2__.Button, {
-                  onClick: open,
-                  variant: "secondary",
-                  children: "\u753B\u50CF\u3092\u9078\u629E"
-                }), attributes.imageUrl && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsx)(_wordpress_components__WEBPACK_IMPORTED_MODULE_2__.Button, {
-                  style: {
-                    marginTop: 4
-                  },
-                  onClick: () => setAttributes({
-                    imageUrl: ''
-                  }),
-                  isDestructive: true,
-                  children: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_0__.__)('画像をリセット', 'product-link-maker')
-                })]
-              })
-            })]
-          })
         }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsx)("div", {
           style: {
             margin: '24px 0 0 0'
@@ -814,6 +784,54 @@ function Edit({
             customButtonsAfter: newButtons
           }),
           label: "\u65E2\u5B58\u306E\u30DC\u30BF\u30F3\u306E\u5F8C\u306B\u8868\u793A\u3055\u308C\u308B\u30AB\u30B9\u30BF\u30E0\u30DC\u30BF\u30F3\u3092\u8FFD\u52A0\u3067\u304D\u307E\u3059"
+        })
+      }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsx)(_wordpress_components__WEBPACK_IMPORTED_MODULE_2__.PanelBody, {
+        title: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_0__.__)('画像アップロード', 'product-link-maker'),
+        initialOpen: true,
+        children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsx)(_wordpress_block_editor__WEBPACK_IMPORTED_MODULE_1__.MediaUploadCheck, {
+          children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsxs)("div", {
+            style: {
+              marginBottom: '0'
+            },
+            children: [(attributes.imageUrl !== '' ? attributes.imageUrl : item?.mediumImageUrls?.[0]?.imageUrl) && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsx)("div", {
+              style: {
+                marginBottom: '10px',
+                display: 'flex',
+                justifyContent: 'center',
+                backgroundColor: '#eee'
+              },
+              children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsx)("img", {
+                src: attributes.imageUrl !== '' ? attributes.imageUrl : item?.mediumImageUrls?.[0]?.imageUrl,
+                alt: "",
+                style: {
+                  display: 'block'
+                }
+              })
+            }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsx)(_wordpress_block_editor__WEBPACK_IMPORTED_MODULE_1__.MediaUpload, {
+              onSelect: media => setAttributes({
+                imageUrl: media.url || ''
+              }),
+              allowedTypes: ['image'],
+              render: ({
+                open
+              }) => /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsxs)(_wordpress_components__WEBPACK_IMPORTED_MODULE_2__.Flex, {
+                children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsx)(_wordpress_components__WEBPACK_IMPORTED_MODULE_2__.Button, {
+                  onClick: open,
+                  variant: "secondary",
+                  children: "\u753B\u50CF\u3092\u9078\u629E"
+                }), attributes.imageUrl && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsx)(_wordpress_components__WEBPACK_IMPORTED_MODULE_2__.Button, {
+                  style: {
+                    marginTop: 4
+                  },
+                  onClick: () => setAttributes({
+                    imageUrl: ''
+                  }),
+                  isDestructive: true,
+                  children: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_0__.__)('画像をリセット', 'product-link-maker')
+                })]
+              })
+            })]
+          })
         })
       }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsx)(_wordpress_components__WEBPACK_IMPORTED_MODULE_2__.PanelBody, {
         title: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_0__.__)('アフィリエイト設定', 'product-link-maker'),

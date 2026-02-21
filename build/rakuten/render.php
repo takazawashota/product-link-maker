@@ -78,8 +78,8 @@ if ( isset( $data['error'] ) ) {
     $should_log_error = ( 'rate_limit' !== $error_type ); // レート制限以外はログに記録
 } elseif ( ! isset( $data['Items'] ) || ! isset( $data['Items'][0] ) || ! isset( $data['Items'][0]['Item'] ) ) {
     // データが存在しない（商品が見つからない等）
-    $error_type = 'no_data';
-    $error_message = 'データが取得できませんでした。商品IDまたはキーワードが正しいか確認してください。';
+    $error_type = 'product_not_found';
+    $error_message = '商品が見つかりませんでした。商品が削除されたか、IDが正しくない可能性があります。';
     $should_log_error = true;
 }
 

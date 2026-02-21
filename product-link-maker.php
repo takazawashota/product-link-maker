@@ -138,7 +138,10 @@ function plm_sanitize_settings( $settings ) {
 		return array();
 	}
 
-	$sanitized = array();
+	// 既存の設定を取得してマージ（部分的な更新に対応）
+	$existing = get_option( PLM_OPTION_NAME, array() );
+	$sanitized = $existing;
+
 	$text_fields = array(
 		'amazon_tracking_id', 'amazon_access_key', 'amazon_secret_key',
 		'rakuten_app_id', 'rakuten_affiliate_id',
@@ -147,13 +150,21 @@ function plm_sanitize_settings( $settings ) {
 	);
 
 	foreach ( $text_fields as $field ) {
-		$sanitized[ $field ] = isset( $settings[ $field ] ) ? sanitize_text_field( $settings[ $field ] ) : '';
+		if ( isset( $settings[ $field ] ) ) {
+			$sanitized[ $field ] = sanitize_text_field( $settings[ $field ] );
+		}
 	}
 
 	// 数値フィールド
-	$sanitized['cache_success_hours']     = isset( $settings['cache_success_hours'] ) ? absint( $settings['cache_success_hours'] ) : PLM_CACHE_SUCCESS_HOURS;
-	$sanitized['cache_ratelimit_minutes'] = isset( $settings['cache_ratelimit_minutes'] ) ? absint( $settings['cache_ratelimit_minutes'] ) : PLM_CACHE_RATELIMIT_MINUTES;
-	$sanitized['cache_error_minutes']     = isset( $settings['cache_error_minutes'] ) ? absint( $settings['cache_error_minutes'] ) : PLM_CACHE_ERROR_MINUTES;
+	if ( isset( $settings['cache_success_hours'] ) ) {
+		$sanitized['cache_success_hours'] = absint( $settings['cache_success_hours'] );
+	}
+	if ( isset( $settings['cache_ratelimit_minutes'] ) ) {
+		$sanitized['cache_ratelimit_minutes'] = absint( $settings['cache_ratelimit_minutes'] );
+	}
+	if ( isset( $settings['cache_error_minutes'] ) ) {
+		$sanitized['cache_error_minutes'] = absint( $settings['cache_error_minutes'] );
+	}
 
 	return $sanitized;
 }
@@ -162,6 +173,23 @@ function plm_sanitize_settings( $settings ) {
  */
 function plm_render_settings_page() {
 	$options = get_option( PLM_OPTION_NAME, array() );
+	
+	// 設定が更新された場合のメッセージ表示
+	if ( isset( $_GET['settings-updated'] ) ) {
+		add_settings_error(
+			'plm_messages',
+			'plm_message',
+			__( '設定を保存しました。', 'product-link-maker' ),
+			'updated'
+		);
+	}
+	
+	// デバッグ: 現在の設定を表示
+	if ( isset( $_GET['debug'] ) && $_GET['debug'] === '1' ) {
+		echo '<div class="notice notice-info"><h3>現在の設定 (デバッグ)</h3><pre>';
+		print_r( $options );
+		echo '</pre></div>';
+	}
 	
 	// 現在のタブを取得（デフォルトは api-keys）
 	$current_tab = isset( $_GET['tab'] ) ? sanitize_text_field( $_GET['tab'] ) : 'api-keys';
@@ -258,10 +286,33 @@ function plm_render_settings_page() {
             </style>
 
             <?php if ( $current_tab === 'api-keys' ) : ?>
-            <!-- APIキー設定タブ -->
+            <!-- APIキー設定タブ: キャッシュ設定を隠しフィールドで保持 -->
+            <?php foreach ( array( 'cache_success_hours', 'cache_ratelimit_minutes', 'cache_error_minutes' ) as $field ) : ?>
+                <?php if ( isset( $options[ $field ] ) && $options[ $field ] !== '' ) : ?>
+                    <input type="hidden" name="affiliate_settings[<?= esc_attr( $field ) ?>]" value="<?= esc_attr( $options[ $field ] ) ?>" />
+                <?php endif; ?>
+            <?php endforeach; ?>
+            
+            <?php elseif ( $current_tab === 'cache' ) : ?>
+            <!-- キャッシュタブ: 他のタブの設定を隠しフィールドで保持 -->
+            <?php foreach ( array( 'amazon_tracking_id', 'amazon_access_key', 'amazon_secret_key', 'rakuten_app_id', 'rakuten_affiliate_id', 'yahoo_sid', 'yahoo_pid', 'mercari_id', 'dmm_id' ) as $field ) : ?>
+                <?php if ( isset( $options[ $field ] ) && $options[ $field ] !== '' ) : ?>
+                    <input type="hidden" name="affiliate_settings[<?= esc_attr( $field ) ?>]" value="<?= esc_attr( $options[ $field ] ) ?>" />
+                <?php endif; ?>
+            <?php endforeach; ?>
+            
+            <?php elseif ( $current_tab === 'error-logs' ) : ?>
+            <!-- エラーログタブ: 他のタブの設定を隠しフィールドで保持 -->
+            <?php foreach ( array( 'amazon_tracking_id', 'amazon_access_key', 'amazon_secret_key', 'rakuten_app_id', 'rakuten_affiliate_id', 'yahoo_sid', 'yahoo_pid', 'mercari_id', 'dmm_id', 'cache_success_hours', 'cache_ratelimit_minutes', 'cache_error_minutes' ) as $field ) : ?>
+                <?php if ( isset( $options[ $field ] ) && $options[ $field ] !== '' ) : ?>
+                    <input type="hidden" name="affiliate_settings[<?= esc_attr( $field ) ?>]" value="<?= esc_attr( $options[ $field ] ) ?>" />
+                <?php endif; ?>
+            <?php endforeach; ?>
+            <?php endif; ?>
+
+            <?php if ( $current_tab === 'api-keys' ) : ?>
             <div class="plm-card">
                 <h2>
-                    <span class="dashicons dashicons-cart" style="color: #ff9900;"></span>
                     Amazon
                     <?php if (!empty($options['amazon_tracking_id'])): ?>
                         <span class="plm-status-badge plm-status-active">設定済み</span>
@@ -281,33 +332,9 @@ function plm_render_settings_page() {
                                 <span class="dashicons dashicons-yes-alt" style="color: #00a32a;"></span>
                                 <strong>必須:</strong> Amazonアソシエイト・プログラムのトラッキングIDを入力してください。<br>
                                 <span class="dashicons dashicons-info" style="color: #2271b1;"></span>
-                                Creators API対応。トラッキングIDのみで検索リンクの生成が可能です。
-                            </p>
-                        </td>
-                    </tr>
-                    <tr>
-                        <th scope="row">アクセスキーID</th>
-                        <td>
-                            <input type="text" name="affiliate_settings[amazon_access_key]" 
-                                   value="<?= esc_attr($options['amazon_access_key'] ?? '') ?>" 
-                                   class="regular-text" 
-                                   placeholder="（オプション - PA-API使用時のみ）" />
-                            <p class="description">
-                                <span class="dashicons dashicons-info" style="color: #50575e;"></span>
-                                Product Advertising API (PA-API) 5.0を使用する場合のみ必要です。
-                            </p>
-                        </td>
-                    </tr>
-                    <tr>
-                        <th scope="row">シークレットキー</th>
-                        <td>
-                            <input type="password" name="affiliate_settings[amazon_secret_key]" 
-                                   value="<?= esc_attr($options['amazon_secret_key'] ?? '') ?>" 
-                                   class="regular-text" 
-                                   placeholder="（オプション - PA-API使用時のみ）" />
-                            <p class="description">
-                                <span class="dashicons dashicons-info" style="color: #50575e;"></span>
-                                Product Advertising API (PA-API) 5.0を使用する場合のみ必要です。
+                                Creators API対応。トラッキングIDのみで検索リンクの生成が可能です。<br>
+                                <span class="dashicons dashicons-external" style="color: #2271b1;"></span>
+                                <a href="https://affiliate.amazon.co.jp/" target="_blank" rel="noopener">Amazonアソシエイト・プログラムに登録する →</a>
                             </p>
                         </td>
                     </tr>
@@ -317,7 +344,6 @@ function plm_render_settings_page() {
             <!-- 楽天 -->
             <div class="plm-card">
                 <h2>
-                    <span class="dashicons dashicons-store" style="color: #bf0000;"></span>
                     楽天
                     <?php if (!empty($options['rakuten_affiliate_id'])): ?>
                         <span class="plm-status-badge plm-status-active">設定済み</span>
@@ -333,7 +359,11 @@ function plm_render_settings_page() {
                                    value="<?= esc_attr($options['rakuten_app_id'] ?? '') ?>" 
                                    class="regular-text" 
                                    placeholder="例: 1234567890123456789" />
-                            <p class="description">楽天ウェブサービスで取得したアプリケーションIDを入力してください。</p>
+                            <p class="description">
+                                楽天ウェブサービスで取得したアプリケーションIDを入力してください。<br>
+                                <span class="dashicons dashicons-external" style="color: #2271b1;"></span>
+                                <a href="https://webservice.rakuten.co.jp/" target="_blank" rel="noopener">楽天ウェブサービスに登録する →</a>
+                            </p>
                         </td>
                     </tr>
                     <tr>
@@ -343,7 +373,11 @@ function plm_render_settings_page() {
                                    value="<?= esc_attr($options['rakuten_affiliate_id'] ?? '') ?>" 
                                    class="regular-text" 
                                    placeholder="例: 12345678.90123456.12345678.90123456" />
-                            <p class="description">楽天アフィリエイトIDを入力してください。</p>
+                            <p class="description">
+                                楽天アフィリエイトIDを入力してください。<br>
+                                <span class="dashicons dashicons-external" style="color: #2271b1;"></span>
+                                <a href="https://affiliate.rakuten.co.jp/" target="_blank" rel="noopener">楽天アフィリエイトに登録する →</a>
+                            </p>
                         </td>
                     </tr>
                 </table>
@@ -352,7 +386,6 @@ function plm_render_settings_page() {
             <!-- Yahoo!ショッピング -->
             <div class="plm-card">
                 <h2>
-                    <span class="dashicons dashicons-tag" style="color: #ff0033;"></span>
                     Yahoo!ショッピング
                     <?php if (!empty($options['yahoo_sid']) && !empty($options['yahoo_pid'])): ?>
                         <span class="plm-status-badge plm-status-active">設定済み</span>
@@ -368,7 +401,11 @@ function plm_render_settings_page() {
                                    value="<?= esc_attr($options['yahoo_sid'] ?? '') ?>" 
                                    class="regular-text" 
                                    placeholder="例: 1234567" />
-                            <p class="description">バリューコマースのSID（サイトID）を入力してください。</p>
+                            <p class="description">
+                                バリューコマースのSID（サイトID）を入力してください。<br>
+                                <span class="dashicons dashicons-external" style="color: #2271b1;"></span>
+                                <a href="https://www.valuecommerce.ne.jp/" target="_blank" rel="noopener">バリューコマースに登録する →</a>
+                            </p>
                         </td>
                     </tr>
                     <tr>
@@ -378,7 +415,7 @@ function plm_render_settings_page() {
                                    value="<?= esc_attr($options['yahoo_pid'] ?? '') ?>" 
                                    class="regular-text" 
                                    placeholder="例: 890123456" />
-                            <p class="description">バリューコマースのPID（プロモーションID）を入力してください。</p>
+                            <p class="description">バリューコマースのPID（プロモーションID）を入力してください。SIDと同じ管理画面で確認できます。</p>
                         </td>
                     </tr>
                 </table>
@@ -387,7 +424,6 @@ function plm_render_settings_page() {
             <!-- メルカリ -->
             <div class="plm-card">
                 <h2>
-                    <span class="dashicons dashicons-smartphone" style="color: #4dc9ff;"></span>
                     メルカリ
                     <?php if (!empty($options['mercari_id'])): ?>
                         <span class="plm-status-badge plm-status-active">設定済み</span>
@@ -403,7 +439,11 @@ function plm_render_settings_page() {
                                    value="<?= esc_attr($options['mercari_id'] ?? '') ?>" 
                                    class="regular-text" 
                                    placeholder="例: your_ambassador_id" />
-                            <p class="description">メルカリアンバサダープログラムのIDを入力してください。</p>
+                            <p class="description">
+                                メルカリアンバサダープログラムのIDを入力してください。<br>
+                                <span class="dashicons dashicons-external" style="color: #2271b1;"></span>
+                                <a href="https://ambassador.mercari.com/" target="_blank" rel="noopener">メルカリアンバサダーに登録する →</a>
+                            </p>
                         </td>
                     </tr>
                 </table>
@@ -412,7 +452,6 @@ function plm_render_settings_page() {
             <!-- DMM -->
             <div class="plm-card">
                 <h2>
-                    <span class="dashicons dashicons-video-alt3" style="color: #00bcd4;"></span>
                     DMM
                     <?php if (!empty($options['dmm_id'])): ?>
                         <span class="plm-status-badge plm-status-active">設定済み</span>
@@ -428,7 +467,11 @@ function plm_render_settings_page() {
                                    value="<?= esc_attr($options['dmm_id'] ?? '') ?>" 
                                    class="regular-text" 
                                    placeholder="例: yourname-001" />
-                            <p class="description">DMMアフィリエイトIDを入力してください。</p>
+                            <p class="description">
+                                DMMアフィリエイトIDを入力してください。<br>
+                                <span class="dashicons dashicons-external" style="color: #2271b1;"></span>
+                                <a href="https://www.dmm.com/digital/affiliate/-/guide/" target="_blank" rel="noopener">DMMアフィリエイトに登録する →</a>
+                            </p>
                         </td>
                     </tr>
                 </table>
@@ -440,7 +483,6 @@ function plm_render_settings_page() {
             <!-- キャッシュ設定 -->
             <div class="plm-card plm-cache-settings">
                 <h2>
-                    <span class="dashicons dashicons-database" style="color: #9b59b6;"></span>
                     キャッシュ設定
                 </h2>
                 <table class="form-table">
@@ -810,6 +852,13 @@ function plm_enqueue_editor_assets() {
 			'yahoo'   => ! empty( $settings['yahoo_sid'] ) && ! empty( $settings['yahoo_pid'] ),
 			'mercari' => ! empty( $settings['mercari_id'] ),
 			'dmm'     => ! empty( $settings['dmm_id'] ),
+			// アフィリエイトID（エディタプレビュー用）
+			'amazonTrackingId' => $settings['amazon_tracking_id'] ?? '',
+			'rakutenAffiliateId' => $settings['rakuten_affiliate_id'] ?? '',
+			'yahooSid' => $settings['yahoo_sid'] ?? '',
+			'yahooPid' => $settings['yahoo_pid'] ?? '',
+			'mercariId' => $settings['mercari_id'] ?? '',
+			'dmmId' => $settings['dmm_id'] ?? '',
 		)
 	);
 }
@@ -1183,7 +1232,9 @@ function plm_rest_get_rakuten_item( $request ) {
 		);
 	}
 
+	// affiliate_idsを追加
 	$result['affiliate_ids'] = array(
+		'amazon_tracking_id'   => $settings['amazon_tracking_id'] ?? '',
 		'rakuten_app_id'       => $settings['rakuten_app_id'] ?? '',
 		'rakuten_affiliate_id' => $settings['rakuten_affiliate_id'] ?? '',
 		'yahoo_sid'            => $settings['yahoo_sid'] ?? '',
