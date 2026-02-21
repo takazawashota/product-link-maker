@@ -74,6 +74,10 @@
 			"type": "string",
 			"default": ""
 		},
+		"showImage": {
+			"type": "boolean",
+			"default": true
+		},
 		"showAmazon": {
 			"type": "boolean",
 			"default": true

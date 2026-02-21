@@ -77,6 +77,10 @@ return array(
 				'type' => 'string',
 				'default' => ''
 			),
+			'showImage' => array(
+				'type' => 'boolean',
+				'default' => true
+			),
 			'showAmazon' => array(
 				'type' => 'boolean',
 				'default' => true

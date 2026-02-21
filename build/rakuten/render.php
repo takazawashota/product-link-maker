@@ -35,6 +35,7 @@ $price      = ! empty( $attributes['price'] );
 $showShop   = isset( $attributes['showShop'] ) ? $attributes['showShop'] : true;
 $desc       = isset( $attributes['desc'] ) ? esc_html( $attributes['desc'] ) : '';
 $imageUrl   = isset( $attributes['imageUrl'] ) ? esc_html( $attributes['imageUrl'] ) : '';
+$showImage  = isset( $attributes['showImage'] ) && $attributes['showImage'] !== false ? true : false;
 
 // ボタン表示設定（デフォルトはtrue）
 $showAmazon  = isset( $attributes['showAmazon'] ) ? $attributes['showAmazon'] : true;
@@ -132,12 +133,14 @@ if (
 endif;
 ?>
 <div <?php echo get_block_wrapper_attributes(); ?>>
-	<div class="plm-product-box <?php echo esc_attr($itemCode ?? ''); ?>">
+	<div class="plm-product-box <?php echo esc_attr($itemCode ?? ''); ?><?php echo !$showImage ? ' plm-product-box--no-image' : ''; ?>">
+		<?php if ( $showImage ) : ?>
 		<figure class="plm-product-thumb">
 			<a rel="nofollow noopener" href="<?php echo esc_url($affiliateUrl ?? $itemUrl ?? '#'); ?>" class="plm-product-thumb-link" target="_blank" title="<?php echo esc_attr($title ?: ($itemName ?? '')); ?>">
 				<img decoding="async" src="<?php echo esc_url($imageUrl ?: ($mediumImageUrl ?? '')); ?>" alt="<?php echo esc_attr($title ?: ($itemName ?? '商品画像')); ?>" width="128" height="128" class="plm-product-thumb-image">
 			</a>
 		</figure>
+		<?php endif; ?>
 		<div class="plm-product-content">
 			<div class="plm-product-title">
 				<a rel="nofollow noopener" href="<?php echo esc_url($affiliateUrl ?? $itemUrl ?? '#'); ?>" class="plm-product-title-link" target="_blank" title="<?php echo esc_attr($title ?: ($itemName ?? '')); ?>">
@@ -170,7 +173,7 @@ endif;
 			</div>
 		<div class="plm-product-buttons">
 		<?php
-		// キーワード指定があればボタンを出す
+		// 商品検索キーワードがあればボタンを出す
 		$kw_tokens = array_filter( array_map( 'trim', explode( ',', $kw ) ) );
 		if ( count( $kw_tokens ) > 0 ) :
 			$kw_for_url = implode( ' ', $kw_tokens );

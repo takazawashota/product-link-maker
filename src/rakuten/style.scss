@@ -49,6 +49,15 @@
 	width: 100%;
 	max-width: 100%;
 	box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+
+	// 画像非表示時のレイアウト調整
+	&.plm-product-box--no-image {
+		display: block;
+
+		.plm-product-content {
+			width: 100%;
+		}
+	}
 }
 
 // ========================================
