@@ -111,7 +111,7 @@ function CustomButtonEditor({ buttons, onChange, label }) {
 							>
 								{btn.showColorPicker ? '色を選択中' : 'ボタンの色を選択'}
 								<span style={{
-									marginLeft: '8px',
+									marginLeft: 'auto',
 									width: '20px',
 									height: '20px',
 									backgroundColor: btn.color || DEFAULT_BUTTON_COLOR,
@@ -301,28 +301,31 @@ function renderAllButtons(attributes) {
  * プレビューコンポーネント
  */
 function ProductPreview({ attributes, item, imageUrl, imageKey, itemTitle, itemLink }) {
+	const showImage = attributes.showImage !== false;
 	return (
-		<div className="plm-product-box">
-			<figure className="plm-product-thumb">
-				<a rel="nofollow noopener"
-					href={itemLink}
-					className="plm-product-thumb-link"
-					target="_blank"
-					title={itemTitle}
-				>
-					{imageUrl && (
-						<img
-							key={imageKey}
-							decoding="async"
-							src={imageUrl}
-							alt={itemTitle || '商品画像'}
-							width="128"
-							height="128"
-							className="plm-product-thumb-image"
-						/>
-					)}
-				</a>
-			</figure>
+		<div className={`plm-product-box ${!showImage ? 'plm-product-box--no-image' : ''}`}>
+			{showImage && (
+				<figure className="plm-product-thumb">
+					<a rel="nofollow noopener"
+						href={itemLink}
+						className="plm-product-thumb-link"
+						target="_blank"
+						title={itemTitle}
+					>
+						{imageUrl && (
+							<img
+								key={imageKey}
+								decoding="async"
+								src={imageUrl}
+								alt={itemTitle || '商品画像'}
+								width="128"
+								height="128"
+								className="plm-product-thumb-image"
+							/>
+						)}
+					</a>
+				</figure>
+			)}
 			<div className="plm-product-content">
 				<div className="plm-product-title">
 					<a rel="nofollow noopener"
@@ -363,6 +366,7 @@ function ProductPreview({ attributes, item, imageUrl, imageKey, itemTitle, itemL
 }
 
 export default function Edit({ attributes, setAttributes }) {
+	const settings = window.ProductLinkMakerSettings || {};
 	const [item, setItem] = useState(null);
 	const [isLoading, setIsLoading] = useState(true); // 初期状態をtrueに変更
 	const [error, setError] = useState(null);
@@ -625,31 +629,41 @@ export default function Edit({ attributes, setAttributes }) {
 					/>
 					<div style={{ margin: '24px 0 0 0' }} />
 					<Heading>ボタン表示設定</Heading>
-					<ToggleControl
-						label={__('Amazonボタンを表示', 'product-link-maker')}
-						checked={attributes.showAmazon !== false}
-						onChange={val => setAttributes({ showAmazon: val })}
-					/>
-					<ToggleControl
-						label={__('楽天ボタンを表示', 'product-link-maker')}
-						checked={attributes.showRakuten !== false}
-						onChange={val => setAttributes({ showRakuten: val })}
-					/>
-					<ToggleControl
-						label={__('Yahoo!ボタンを表示', 'product-link-maker')}
-						checked={attributes.showYahoo !== false}
-						onChange={val => setAttributes({ showYahoo: val })}
-					/>
-					<ToggleControl
-						label={__('メルカリボタンを表示', 'product-link-maker')}
-						checked={attributes.showMercari !== false}
-						onChange={val => setAttributes({ showMercari: val })}
-					/>
-					<ToggleControl
-						label={__('DMMボタンを表示', 'product-link-maker')}
-						checked={attributes.showDmm !== false}
-						onChange={val => setAttributes({ showDmm: val })}
-					/>
+					{settings.amazon && (
+						<ToggleControl
+							label={__('Amazonボタンを表示', 'product-link-maker')}
+							checked={attributes.showAmazon !== false}
+							onChange={val => setAttributes({ showAmazon: val })}
+						/>
+					)}
+					{settings.rakuten && (
+						<ToggleControl
+							label={__('楽天ボタンを表示', 'product-link-maker')}
+							checked={attributes.showRakuten !== false}
+							onChange={val => setAttributes({ showRakuten: val })}
+						/>
+					)}
+					{settings.yahoo && (
+						<ToggleControl
+							label={__('Yahoo!ボタンを表示', 'product-link-maker')}
+							checked={attributes.showYahoo !== false}
+							onChange={val => setAttributes({ showYahoo: val })}
+						/>
+					)}
+					{settings.mercari && (
+						<ToggleControl
+							label={__('メルカリボタンを表示', 'product-link-maker')}
+							checked={attributes.showMercari !== false}
+							onChange={val => setAttributes({ showMercari: val })}
+						/>
+					)}
+					{settings.dmm && (
+						<ToggleControl
+							label={__('DMMボタンを表示', 'product-link-maker')}
+							checked={attributes.showDmm !== false}
+							onChange={val => setAttributes({ showDmm: val })}
+						/>
+					)}
 
 				</PanelBody>
 				<PanelBody title={__('カスタムボタン（前）', 'product-link-maker')} initialOpen={true}>
@@ -666,40 +680,47 @@ export default function Edit({ attributes, setAttributes }) {
 						label="既存のボタンの後に表示されるカスタムボタンを追加できます"
 					/>
 				</PanelBody>
-				<PanelBody title={__('画像アップロード', 'product-link-maker')} initialOpen={true}>
-					<MediaUploadCheck>
-						<div style={{ marginBottom: '0' }}>
-							{(attributes.imageUrl !== '' ? attributes.imageUrl : item?.mediumImageUrls?.[0]?.imageUrl) && (
-								<div style={{ marginBottom: '10px', display: 'flex', justifyContent: 'center', backgroundColor: '#eee' }}>
-									<img
-										src={attributes.imageUrl !== '' ? attributes.imageUrl : item?.mediumImageUrls?.[0]?.imageUrl}
-										alt=""
-										style={{ display: 'block' }}
-									/>
-								</div>
-							)}
-							<MediaUpload
-								onSelect={(media) => setAttributes({ imageUrl: media.url || '' })}
-								allowedTypes={['image']}
-								render={({ open }) => (
-									<Flex>
-										<Button onClick={open} variant="secondary">
-											画像を選択
-										</Button>
-										{attributes.imageUrl && (
-											<Button
-												style={{ marginTop: 4 }}
-												onClick={() => setAttributes({ imageUrl: '' })}
-												isDestructive
-											>
-												{__('画像をリセット', 'product-link-maker')}
-											</Button>
-										)}
-									</Flex>
+				<PanelBody title={__('商品画像設定', 'product-link-maker')} initialOpen={true}>
+					<ToggleControl
+						label={__('商品画像を表示', 'product-link-maker')}
+						checked={attributes.showImage !== false}
+						onChange={(val) => setAttributes({ showImage: val })}
+					/>
+					{attributes.showImage !== false && (
+						<MediaUploadCheck>
+							<div style={{ marginBottom: '0', marginTop: '16px' }}>
+								{(attributes.imageUrl !== '' ? attributes.imageUrl : item?.mediumImageUrls?.[0]?.imageUrl) && (
+									<div style={{ marginBottom: '10px', display: 'flex', justifyContent: 'center', backgroundColor: '#eee' }}>
+										<img
+											src={attributes.imageUrl !== '' ? attributes.imageUrl : item?.mediumImageUrls?.[0]?.imageUrl}
+											alt=""
+											style={{ display: 'block' }}
+										/>
+									</div>
 								)}
-							/>
-						</div>
-					</MediaUploadCheck>
+								<MediaUpload
+									onSelect={(media) => setAttributes({ imageUrl: media.url || '' })}
+									allowedTypes={['image']}
+									render={({ open }) => (
+										<Flex>
+											<Button onClick={open} variant="secondary">
+												画像を選択
+											</Button>
+											{attributes.imageUrl && (
+												<Button
+													style={{ marginTop: 4 }}
+													onClick={() => setAttributes({ imageUrl: '' })}
+													isDestructive
+												>
+													{__('画像をリセット', 'product-link-maker')}
+												</Button>
+											)}
+										</Flex>
+									)}
+								/>
+							</div>
+						</MediaUploadCheck>
+					)}
 				</PanelBody>
 				<PanelBody title={__('アフィリエイト設定', 'product-link-maker')} initialOpen={false}>
 					<Button

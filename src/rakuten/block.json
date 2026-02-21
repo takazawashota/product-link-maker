@@ -94,6 +94,10 @@
 			"type": "boolean",
 			"default": true
 		},
+		"showImage": {
+			"type": "boolean",
+			"default": true
+		},
 		"customButtonsBefore": {
 			"type": "array",
 			"default": []

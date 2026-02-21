@@ -43,6 +43,9 @@ $showYahoo   = isset( $attributes['showYahoo'] ) ? $attributes['showYahoo'] : tr
 $showMercari = isset( $attributes['showMercari'] ) ? $attributes['showMercari'] : true;
 $showDmm     = isset( $attributes['showDmm'] ) ? $attributes['showDmm'] : true;
 
+// 画像表示設定（デフォルトはtrue）
+$showImage   = isset( $attributes['showImage'] ) ? $attributes['showImage'] : true;
+
 // カスタムボタン
 $customButtonsBefore = isset( $attributes['customButtonsBefore'] ) ? $attributes['customButtonsBefore'] : [];
 $customButtonsAfter  = isset( $attributes['customButtonsAfter'] ) ? $attributes['customButtonsAfter'] : [];
@@ -132,12 +135,14 @@ if (
 endif;
 ?>
 <div <?php echo get_block_wrapper_attributes(); ?>>
-	<div class="plm-product-box <?php echo esc_attr($itemCode ?? ''); ?>">
+	<div class="plm-product-box <?php echo esc_attr($itemCode ?? ''); ?> <?php echo !$showImage ? 'plm-product-box--no-image' : ''; ?>">
+		<?php if ( $showImage ) : ?>
 		<figure class="plm-product-thumb">
 			<a rel="nofollow noopener" href="<?php echo esc_url($affiliateUrl ?? $itemUrl ?? '#'); ?>" class="plm-product-thumb-link" target="_blank" title="<?php echo esc_attr($title ?: ($itemName ?? '')); ?>">
 				<img decoding="async" src="<?php echo esc_url($imageUrl ?: ($mediumImageUrl ?? '')); ?>" alt="<?php echo esc_attr($title ?: ($itemName ?? '商品画像')); ?>" width="128" height="128" class="plm-product-thumb-image">
 			</a>
 		</figure>
+		<?php endif; ?>
 		<div class="plm-product-content">
 			<div class="plm-product-title">
 				<a rel="nofollow noopener" href="<?php echo esc_url($affiliateUrl ?? $itemUrl ?? '#'); ?>" class="plm-product-title-link" target="_blank" title="<?php echo esc_attr($title ?: ($itemName ?? '')); ?>">
