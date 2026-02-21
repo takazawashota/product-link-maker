@@ -59,7 +59,7 @@ $dmm_affiliate_id = $affiliate_settings['dmm_id'] ?? '';
 
 $item_id = $id; // 商品ID
 $keyword = $no ?: $kw; // 商品番号があれば優先してキーワードに
-$json = plm_get_rakuten_item_cached($rakuten_application_id, $rakuten_affiliate_id, $item_id, $keyword, $no);
+$json = PLM_Cache_Manager::get_rakuten_item_cached($rakuten_application_id, $rakuten_affiliate_id, $item_id, $keyword, $no);
 $data = json_decode($json, true);
 
 // 投稿情報を取得（エラーログ用）
@@ -85,7 +85,7 @@ if ( isset( $data['error'] ) ) {
 
 // エラーログに記録
 if ( $should_log_error ) {
-    plm_log_error(
+    PLM_Error_Logger::log(
         $error_type,
         $error_message,
         array(
