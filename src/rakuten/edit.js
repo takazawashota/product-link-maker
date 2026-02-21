@@ -410,7 +410,7 @@ export default function Edit({ attributes, setAttributes }) {
 				// APIエラーレスポンス
 				setItem(null);
 				setAttributes(prev => ({ ...prev, imageUrl: '' }));
-				setError('APIエラー: ' + (data.error_description || 'リクエスト制限に達しました。しばらく待ってから再度お試しください。'));
+				setError(data.error_description || 'APIエラーが発生しました。しばらく待ってから再度お試しください。');
 
 				// エラーログに記録（初回データ取得完了後のみ、rate_limit以外）
 				if (hasInitialized && data.error !== 'rate_limit' && (attributes.id || attributes.kw || attributes.no)) {

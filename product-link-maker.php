@@ -162,9 +162,7 @@ function plm_sanitize_settings( $settings ) {
 	if ( isset( $settings['cache_ratelimit_minutes'] ) ) {
 		$sanitized['cache_ratelimit_minutes'] = absint( $settings['cache_ratelimit_minutes'] );
 	}
-	if ( isset( $settings['cache_error_minutes'] ) ) {
-		$sanitized['cache_error_minutes'] = absint( $settings['cache_error_minutes'] );
-	}
+	// cache_error_minutesは使用されないため処理不要（エラーはキャッシュされない）
 
 	return $sanitized;
 }
@@ -333,12 +331,7 @@ function plm_render_settings_page() {
                                    class="regular-text" 
                                    placeholder="例: yourname-22" />
                             <p class="description">
-                                <span class="dashicons dashicons-yes-alt" style="color: #00a32a;"></span>
-                                <strong>必須:</strong> Amazonアソシエイト・プログラムのトラッキングIDを入力してください。<br>
-                                <span class="dashicons dashicons-info" style="color: #2271b1;"></span>
-                                Creators API対応。トラッキングIDのみで検索リンクの生成が可能です。<br>
-                                <span class="dashicons dashicons-external" style="color: #2271b1;"></span>
-                                <a href="https://affiliate.amazon.co.jp/" target="_blank" rel="noopener">Amazonアソシエイト・プログラムに登録する →</a>
+                                Amazonアソシエイト・プログラムのトラッキングIDを入力してください。<br>
                             </p>
                         </td>
                     </tr>
@@ -365,8 +358,6 @@ function plm_render_settings_page() {
                                    placeholder="例: 1234567890123456789" />
                             <p class="description">
                                 楽天ウェブサービスで取得したアプリケーションIDを入力してください。<br>
-                                <span class="dashicons dashicons-external" style="color: #2271b1;"></span>
-                                <a href="https://webservice.rakuten.co.jp/" target="_blank" rel="noopener">楽天ウェブサービスに登録する →</a>
                             </p>
                         </td>
                     </tr>
@@ -379,8 +370,6 @@ function plm_render_settings_page() {
                                    placeholder="例: 12345678.90123456.12345678.90123456" />
                             <p class="description">
                                 楽天アフィリエイトIDを入力してください。<br>
-                                <span class="dashicons dashicons-external" style="color: #2271b1;"></span>
-                                <a href="https://affiliate.rakuten.co.jp/" target="_blank" rel="noopener">楽天アフィリエイトに登録する →</a>
                             </p>
                         </td>
                     </tr>
@@ -406,9 +395,7 @@ function plm_render_settings_page() {
                                    class="regular-text" 
                                    placeholder="例: 1234567" />
                             <p class="description">
-                                バリューコマースのSID（サイトID）を入力してください。<br>
-                                <span class="dashicons dashicons-external" style="color: #2271b1;"></span>
-                                <a href="https://www.valuecommerce.ne.jp/" target="_blank" rel="noopener">バリューコマースに登録する →</a>
+                                バリューコマースのSID（サイトID）を入力してください。
                             </p>
                         </td>
                     </tr>
@@ -444,9 +431,7 @@ function plm_render_settings_page() {
                                    class="regular-text" 
                                    placeholder="例: your_ambassador_id" />
                             <p class="description">
-                                メルカリアンバサダープログラムのIDを入力してください。<br>
-                                <span class="dashicons dashicons-external" style="color: #2271b1;"></span>
-                                <a href="https://ambassador.mercari.com/" target="_blank" rel="noopener">メルカリアンバサダーに登録する →</a>
+                                メルカリアンバサダープログラムのIDを入力してください。
                             </p>
                         </td>
                     </tr>
@@ -472,9 +457,7 @@ function plm_render_settings_page() {
                                    class="regular-text" 
                                    placeholder="例: yourname-001" />
                             <p class="description">
-                                DMMアフィリエイトIDを入力してください。<br>
-                                <span class="dashicons dashicons-external" style="color: #2271b1;"></span>
-                                <a href="https://www.dmm.com/digital/affiliate/-/guide/" target="_blank" rel="noopener">DMMアフィリエイトに登録する →</a>
+                                DMMアフィリエイトIDを入力してください。
                             </p>
                         </td>
                     </tr>
@@ -1026,11 +1009,8 @@ function plm_get_cache_expiration( $error_type, $cache_settings ) {
 		return $cache_settings['ratelimit_minutes'] * MINUTE_IN_SECONDS;
 	}
 
-	if ( 'success' === $error_type ) {
-		return $cache_settings['success_hours'] * HOUR_IN_SECONDS;
-	}
-
-	return $cache_settings['error_minutes'] * MINUTE_IN_SECONDS;
+	// 'success'のみ（それ以外はplm_cache_dataで早期リターンされるため到達しない）
+	return $cache_settings['success_hours'] * HOUR_IN_SECONDS;
 }
 
 /**
