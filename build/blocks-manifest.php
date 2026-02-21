@@ -101,10 +101,6 @@ return array(
 				'type' => 'boolean',
 				'default' => true
 			),
-			'showImage' => array(
-				'type' => 'boolean',
-				'default' => true
-			),
 			'customButtonsBefore' => array(
 				'type' => 'array',
 				'default' => array(
