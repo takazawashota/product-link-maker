@@ -1,6 +1,6 @@
 import { __ } from '@wordpress/i18n';
-import { useBlockProps, MediaUpload, InspectorControls, MediaUploadCheck } from '@wordpress/block-editor';
-import { PanelBody, TextControl, ToggleControl, TextareaControl, FormTokenField, Button, Flex, __experimentalHeading as Heading, ColorPicker, Card, CardHeader, CardBody, Icon, Spinner } from '@wordpress/components';
+import { useBlockProps, MediaUpload, InspectorControls, MediaUploadCheck, BlockControls } from '@wordpress/block-editor';
+import { PanelBody, TextControl, ToggleControl, TextareaControl, FormTokenField, Button, Flex, __experimentalHeading as Heading, ColorPicker, Card, CardHeader, CardBody, Icon, Spinner, ToolbarGroup, ToolbarButton, Dropdown, MenuGroup, MenuItem } from '@wordpress/components';
 
 // import './style.scss';
 import './editor.scss';
@@ -111,7 +111,7 @@ function CustomButtonEditor({ buttons, onChange, label }) {
 							>
 								{btn.showColorPicker ? '色を選択中' : 'ボタンの色を選択'}
 								<span style={{
-									marginLeft: '8px',
+									marginLeft: 'auto',
 									width: '20px',
 									height: '20px',
 									backgroundColor: btn.color || DEFAULT_BUTTON_COLOR,
@@ -374,6 +374,9 @@ export default function Edit({ attributes, setAttributes }) {
 	const fetchTimeoutRef = useRef(null);
 	const isInitialLoadRef = useRef(true); // 初回ロードを追跡するRef
 
+	// 設定を取得
+	const settings = window.ProductLinkMakerSettings || {};
+
 	// 現在の投稿IDを取得
 	const postId = useSelect((select) => {
 		const editor = select('core/editor');
@@ -463,7 +466,8 @@ export default function Edit({ attributes, setAttributes }) {
 			setItem(null);
 			setAttributes(prev => ({ ...prev, imageUrl: '' }));
 
-			// より詳細なエラーメッセージを表示
+			// より						<MenuGroup label={__('表示設定', 'product-link-maker')}>
+			詳細なエラーメッセージを表示
 			let errorMessage = 'APIエラーが発生しました。';
 			if (error.message) {
 				errorMessage += ' ' + error.message;
@@ -565,6 +569,91 @@ export default function Edit({ attributes, setAttributes }) {
 
 	return (
 		<>
+			<BlockControls>
+				<ToolbarGroup>
+					<Dropdown
+						popoverProps={{ placement: 'bottom-start' }}
+						renderToggle={({ isOpen, onToggle }) => (
+							<ToolbarButton
+								icon="admin-settings"
+								label={__('表示設定', 'product-link-maker')}
+								onClick={onToggle}
+								aria-expanded={isOpen}
+							/>
+						)}
+						renderContent={() => (
+							<MenuGroup>
+								<MenuItem
+									icon={attributes.showImage !== false ? 'yes' : undefined}
+									isSelected={attributes.showImage !== false}
+									onClick={() => setAttributes({ showImage: !attributes.showImage })}
+								>
+									{__('商品画像を表示', 'product-link-maker')}
+								</MenuItem>
+								<MenuItem
+									icon={attributes.showShop !== false ? 'yes' : undefined}
+									isSelected={attributes.showShop !== false}
+									onClick={() => setAttributes({ showShop: !attributes.showShop })}
+								>
+									{__('店名表示', 'product-link-maker')}
+								</MenuItem>
+								<MenuItem
+									icon={attributes.price ? 'yes' : undefined}
+									isSelected={attributes.price}
+									onClick={() => setAttributes({ price: !attributes.price })}
+								>
+									{__('価格表示', 'product-link-maker')}
+								</MenuItem>
+								{settings.amazon && (
+									<MenuItem
+										icon={attributes.showAmazon !== false ? 'yes' : undefined}
+										isSelected={attributes.showAmazon !== false}
+										onClick={() => setAttributes({ showAmazon: !attributes.showAmazon })}
+									>
+										{__('Amazonボタンを表示', 'product-link-maker')}
+									</MenuItem>
+								)}
+								{settings.rakuten && (
+									<MenuItem
+										icon={attributes.showRakuten !== false ? 'yes' : undefined}
+										isSelected={attributes.showRakuten !== false}
+										onClick={() => setAttributes({ showRakuten: !attributes.showRakuten })}
+									>
+										{__('楽天ボタンを表示', 'product-link-maker')}
+									</MenuItem>
+								)}
+								{settings.yahoo && (
+									<MenuItem
+										icon={attributes.showYahoo !== false ? 'yes' : undefined}
+										isSelected={attributes.showYahoo !== false}
+										onClick={() => setAttributes({ showYahoo: !attributes.showYahoo })}
+									>
+										{__('Yahoo!ボタンを表示', 'product-link-maker')}
+									</MenuItem>
+								)}
+								{settings.mercari && (
+									<MenuItem
+										icon={attributes.showMercari !== false ? 'yes' : undefined}
+										isSelected={attributes.showMercari !== false}
+										onClick={() => setAttributes({ showMercari: !attributes.showMercari })}
+									>
+										{__('メルカリボタンを表示', 'product-link-maker')}
+									</MenuItem>
+								)}
+								{settings.dmm && (
+									<MenuItem
+										icon={attributes.showDmm !== false ? 'yes' : undefined}
+										isSelected={attributes.showDmm !== false}
+										onClick={() => setAttributes({ showDmm: !attributes.showDmm })}
+									>
+										{__('DMMボタンを表示', 'product-link-maker')}
+									</MenuItem>
+								)}
+							</MenuGroup>
+						)}
+					/>
+				</ToolbarGroup>
+			</BlockControls>
 			<InspectorControls>
 				<PanelBody title={__('商品情報設定', 'product-link-maker')} initialOpen={true}>
 					<TextControl
