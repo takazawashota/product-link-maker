@@ -689,7 +689,7 @@ export default function Edit({ attributes, setAttributes }) {
 						style={attributes.id ? { backgroundColor: '#f5f5f5', color: '#aaa' } : {}}
 					/>
 					<FormTokenField
-						label={__('商品検索キーワード', 'product-link-maker')}
+						label={__('検索キーワード', 'product-link-maker')}
 						value={attributes.kw ? attributes.kw.split(',').filter(Boolean) : []}
 						onChange={(tokens) => setAttributes({ kw: tokens.join(',') })}
 						placeholder={__('キーワードを入力してEnter', 'product-link-maker')}
@@ -715,7 +715,7 @@ export default function Edit({ attributes, setAttributes }) {
 						onChange={(val) => setAttributes({ desc: val })}
 					/>
 					<div style={{ margin: '24px 0 0 0' }} />
-					<Heading>ボタン表示設定</Heading>
+					<Heading style={{ fontSize: '11px', fontWeight: '500', marginBottom: '8px' }}>ボタン表示設定</Heading>
 					<ToggleControl
 						label={__('Amazonボタンを表示', 'product-link-maker')}
 						checked={attributes.showAmazon !== false}

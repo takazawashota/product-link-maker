@@ -92,7 +92,6 @@ function plm_add_block_category( $categories ) {
 	$custom_category = array(
 		'slug'  => 'product-link-maker',
 		'title' => __( 'Product Link Maker', 'product-link-maker' ),
-		'icon'  => 'cart',
 	);
 
 	// ウィジェットカテゴリーの前に挿入

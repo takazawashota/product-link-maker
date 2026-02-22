@@ -773,7 +773,7 @@ function Edit({
             color: '#aaa'
           } : {}
         }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsx)(_wordpress_components__WEBPACK_IMPORTED_MODULE_2__.FormTokenField, {
-          label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_0__.__)('商品検索キーワード', 'product-link-maker'),
+          label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_0__.__)('検索キーワード', 'product-link-maker'),
           value: attributes.kw ? attributes.kw.split(',').filter(Boolean) : [],
           onChange: tokens => setAttributes({
             kw: tokens.join(',')
@@ -808,6 +808,11 @@ function Edit({
             margin: '24px 0 0 0'
           }
         }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsx)(_wordpress_components__WEBPACK_IMPORTED_MODULE_2__.__experimentalHeading, {
+          style: {
+            fontSize: '11px',
+            fontWeight: '500',
+            marginBottom: '8px'
+          },
           children: "\u30DC\u30BF\u30F3\u8868\u793A\u8A2D\u5B9A"
         }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsx)(_wordpress_components__WEBPACK_IMPORTED_MODULE_2__.ToggleControl, {
           label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_0__.__)('Amazonボタンを表示', 'product-link-maker'),
