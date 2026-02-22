@@ -20,7 +20,7 @@ if ( ! defined( 'ABSPATH' ) ) {
     </h2>
     <table class="form-table">
         <tr>
-            <th scope="row">トラッキングID <span style="color: #d63638;">*</span></th>
+            <th scope="row">トラッキングID</th>
             <td>
                 <input type="text" name="affiliate_settings[amazon_tracking_id]" 
                        value="<?= esc_attr( $options['amazon_tracking_id'] ?? '' ) ?>" 

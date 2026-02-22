@@ -407,11 +407,21 @@ export default function Edit({ attributes, setAttributes }) {
 
 			if (data && data.Items && data.Items.length > 0 && data.Items[0]?.Item) {
 				// 正常にデータを取得できた場合
+				const apiImageUrl = data.Items[0].Item?.mediumImageUrls?.[0]?.imageUrl || '';
 				setItem(data.Items[0].Item);
-				setAttributes(prev => ({
-					...prev,
-					imageUrl: data.Items[0].Item?.mediumImageUrls?.[0]?.imageUrl || ''
-				}));
+
+				// カスタム画像が設定されている場合は保持する
+				// imageUrlが空、またはAPIの画像URLを含む場合のみ更新
+				setAttributes(prev => {
+					const hasCustomImage = prev.imageUrl &&
+						prev.imageUrl !== '' &&
+						!prev.imageUrl.includes('thumbnail.image.rakuten.co.jp');
+
+					return {
+						...prev,
+						imageUrl: hasCustomImage ? prev.imageUrl : apiImageUrl
+					};
+				});
 			} else if (data?.error) {
 				// APIエラーレスポンス
 				setItem(null);
@@ -655,7 +665,7 @@ export default function Edit({ attributes, setAttributes }) {
 				</ToolbarGroup>
 			</BlockControls>
 			<InspectorControls>
-				<PanelBody title={__('商品情報設定', 'product-link-maker')} initialOpen={true}>
+				<PanelBody title={__('商品情報', 'product-link-maker')} initialOpen={true}>
 					<TextControl
 						label={__('アイテムコード（ID）', 'product-link-maker')}
 						help={attributes.no ? __('商品番号が入力されている場合は入力できません', 'product-link-maker') : ''}
@@ -747,7 +757,7 @@ export default function Edit({ attributes, setAttributes }) {
 						label="既存のボタンの後に表示されるカスタムボタンを追加できます"
 					/>
 				</PanelBody>
-				<PanelBody title={__('商品画像設定', 'product-link-maker')} initialOpen={true}>
+				<PanelBody title={__('商品画像', 'product-link-maker')} initialOpen={true}>
 					<ToggleControl
 						label={__('商品画像を表示', 'product-link-maker')}
 						checked={attributes.showImage !== false}
@@ -773,7 +783,7 @@ export default function Edit({ attributes, setAttributes }) {
 											<Button onClick={open} variant="secondary">
 												画像を選択
 											</Button>
-											{attributes.imageUrl && (
+											{attributes.imageUrl && attributes.imageUrl !== '' && attributes.imageUrl !== item?.mediumImageUrls?.[0]?.imageUrl && (
 												<Button
 													style={{ marginTop: 4 }}
 													onClick={() => setAttributes({ imageUrl: '' })}
@@ -789,10 +799,7 @@ export default function Edit({ attributes, setAttributes }) {
 						</MediaUploadCheck>
 					)}
 				</PanelBody>
-				<PanelBody title={__('アフィリエイト設定', 'product-link-maker')} initialOpen={false}>
-					<p style={{ marginBottom: '12px', color: '#757575', fontSize: '13px' }}>
-						各アフィリエイトサービスのIDを設定できます。
-					</p>
+				<PanelBody title={__('API設定', 'product-link-maker')} initialOpen={false}>
 					<Button
 						href={`${window.location.origin}/wp-admin/options-general.php?page=product-link-maker`}
 						target="_blank"
@@ -810,7 +817,9 @@ export default function Edit({ attributes, setAttributes }) {
 							border: '1px solid #2271b1',
 							borderRadius: '4px',
 							justifyContent: 'center',
-							transition: 'all 0.2s ease'
+							transition: 'all 0.2s ease',
+							marginTop: '16px',
+							marginBottom: '0'
 						}}
 						onMouseEnter={(e) => {
 							e.currentTarget.style.backgroundColor = '#2271b1';

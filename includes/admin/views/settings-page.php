@@ -40,10 +40,6 @@ if ( ! defined( 'ABSPATH' ) ) {
         <?php settings_fields( 'plm_settings_group' ); ?>
 
         <style>
-            .nav-tab-active {
-                background: #fff !important;
-                border-bottom-color: #fff !important;
-            }
             .plm-card {
                 background: #fff;
                 border: 1px solid #ddd;
