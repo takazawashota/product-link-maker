@@ -790,15 +790,38 @@ export default function Edit({ attributes, setAttributes }) {
 					)}
 				</PanelBody>
 				<PanelBody title={__('アフィリエイト設定', 'product-link-maker')} initialOpen={false}>
+					<p style={{ marginBottom: '12px', color: '#757575', fontSize: '13px' }}>
+						各アフィリエイトサービスのIDを設定できます。
+					</p>
 					<Button
 						href={`${window.location.origin}/wp-admin/options-general.php?page=product-link-maker`}
 						target="_blank"
-						className=""
-						variant="primary"
-						icon="admin-generic"
-						style={{ marginTop: '5px', width: '100%', textAlign: 'center' }}
+						variant="link"
+						icon="external"
+						style={{
+							textDecoration: 'none',
+							color: '#2271b1',
+							fontSize: '14px',
+							fontWeight: '500',
+							display: 'flex',
+							alignItems: 'center',
+							gap: '6px',
+							padding: '8px 12px',
+							border: '1px solid #2271b1',
+							borderRadius: '4px',
+							justifyContent: 'center',
+							transition: 'all 0.2s ease'
+						}}
+						onMouseEnter={(e) => {
+							e.currentTarget.style.backgroundColor = '#2271b1';
+							e.currentTarget.style.color = '#fff';
+						}}
+						onMouseLeave={(e) => {
+							e.currentTarget.style.backgroundColor = 'transparent';
+							e.currentTarget.style.color = '#2271b1';
+						}}
 					>
-						{__('アフィリエイト設定', 'product-link-maker')}
+						{__('アフィリエイト設定を開く', 'product-link-maker')}
 					</Button>
 				</PanelBody>
 			</InspectorControls>
