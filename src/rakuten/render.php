@@ -133,9 +133,9 @@ if ( isset( $data['error'] ) || ! isset( $data['Items'][0]['Item'] ) ) {
         $button_text = '楽天で探す';
     }
     ?>
-    <div class="plm-error-fallback" style="padding: 16px; text-align: center; background: #f8f9fa; border: 1px solid #e1e4e8; border-radius: 8px; margin: 10px 0;">
-        <p style="margin: 0 0 12px 0; color: #666; font-size: 14px;">商品情報を取得できませんでした</p>
-        <a href="<?php echo esc_url( $rakuten_search_url ); ?>" target="_blank" rel="nofollow noopener" style="display: inline-block; padding: 10px 20px; background-color: #bf0000; color: #fff; text-decoration: none; border-radius: 4px; font-weight: 500; transition: background-color 0.2s;" onmouseover="this.style.backgroundColor='#a00000'" onmouseout="this.style.backgroundColor='#bf0000'">
+    <div class="plm-error-fallback" style="padding: 16px; text-align: center; background: #fff; border: 1px solid #e1e4e8; border-radius: 8px; margin: 10px 0;">
+        <p style="margin: 0 0 12px 0; color: #666; font-size: 14px;">楽天市場で商品を探す</p>
+        <a href="<?php echo esc_url( $rakuten_search_url ); ?>" target="_blank" rel="nofollow noopener" style="display: inline-block; padding: 10px 20px; background-color: #bf0000; color: #fff; text-decoration: none; border-radius: 4px; font-weight: bold; transition: background-color 0.2s;" onmouseover="this.style.backgroundColor='#a00000'" onmouseout="this.style.backgroundColor='#bf0000'">
             <?php echo esc_html( $button_text ); ?>
         </a>
     </div>
