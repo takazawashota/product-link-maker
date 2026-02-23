@@ -112,19 +112,23 @@ if ( isset( $data['error'] ) || ! isset( $data['Items'][0]['Item'] ) ) {
     $affiliate_settings = get_option( 'affiliate_settings', array() );
     $rakuten_affiliate_id_param = ! empty( $affiliate_settings['rakuten_affiliate_id'] ) ? $affiliate_settings['rakuten_affiliate_id'] : '';
     
-    // キーワードに応じてリンクを生成
+    // キーワードに応じてリンクを生成（hb.afl.rakuten.co.jp形式に統一）
     if ( $search_keyword !== '' && strlen( $search_keyword ) > 0 ) {
         // 検索キーワードがある場合：楽天検索リンク
-        $rakuten_search_url = 'https://search.rakuten.co.jp/search/mall/' . urlencode( $search_keyword ) . '/';
+        $search_url = 'https://search.rakuten.co.jp/search/mall/' . urlencode( $search_keyword ) . '/';
         if ( ! empty( $rakuten_affiliate_id_param ) ) {
-            $rakuten_search_url .= '?f=0&grp=product&scid=af_url_txt&sc2id=' . urlencode( $rakuten_affiliate_id_param );
+            $rakuten_search_url = 'https://hb.afl.rakuten.co.jp/hgc/' . esc_attr( $rakuten_affiliate_id_param ) . '/?pc=' . urlencode( $search_url ) . '&m=' . urlencode( $search_url );
+        } else {
+            $rakuten_search_url = $search_url;
         }
         $button_text = '楽天で商品を探す';
     } else {
         // キーワードがない場合：楽天トップページ
-        $rakuten_search_url = 'https://www.rakuten.co.jp/';
+        $rakuten_top_url = 'https://www.rakuten.co.jp/';
         if ( ! empty( $rakuten_affiliate_id_param ) ) {
-            $rakuten_search_url .= '?scid=af_url_txt&sc2id=' . urlencode( $rakuten_affiliate_id_param );
+            $rakuten_search_url = 'https://hb.afl.rakuten.co.jp/hgc/' . esc_attr( $rakuten_affiliate_id_param ) . '/?pc=' . urlencode( $rakuten_top_url ) . '&m=' . urlencode( $rakuten_top_url );
+        } else {
+            $rakuten_search_url = $rakuten_top_url;
         }
         $button_text = '楽天で探す';
     }
