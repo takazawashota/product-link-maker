@@ -98,8 +98,44 @@ if ( $should_log_error ) {
     );
 }
 
-// エラーまたはデータなしの場合は何も表示しない
+// エラーまたはデータなしの場合は「楽天で商品を探す」リンクを表示
 if ( isset( $data['error'] ) || ! isset( $data['Items'][0]['Item'] ) ) {
+    // 検索用のキーワードを決定（ユーザーが設定した検索キーワードのみ使用）
+    $search_keyword = '';
+    
+    // kwフィールドに入力がある場合のみ使用
+    if ( ! empty( $kw ) && is_string( $kw ) && trim( $kw ) !== '' ) {
+        $search_keyword = trim( $kw );
+    }
+    
+    // アフィリエイトIDを取得
+    $affiliate_settings = get_option( 'affiliate_settings', array() );
+    $rakuten_affiliate_id_param = ! empty( $affiliate_settings['rakuten_affiliate_id'] ) ? $affiliate_settings['rakuten_affiliate_id'] : '';
+    
+    // キーワードに応じてリンクを生成
+    if ( $search_keyword !== '' && strlen( $search_keyword ) > 0 ) {
+        // 検索キーワードがある場合：楽天検索リンク
+        $rakuten_search_url = 'https://search.rakuten.co.jp/search/mall/' . urlencode( $search_keyword ) . '/';
+        if ( ! empty( $rakuten_affiliate_id_param ) ) {
+            $rakuten_search_url .= '?f=0&grp=product&scid=af_url_txt&sc2id=' . urlencode( $rakuten_affiliate_id_param );
+        }
+        $button_text = '楽天で商品を探す';
+    } else {
+        // キーワードがない場合：楽天トップページ
+        $rakuten_search_url = 'https://www.rakuten.co.jp/';
+        if ( ! empty( $rakuten_affiliate_id_param ) ) {
+            $rakuten_search_url .= '?scid=af_url_txt&sc2id=' . urlencode( $rakuten_affiliate_id_param );
+        }
+        $button_text = '楽天で探す';
+    }
+    ?>
+    <div class="plm-error-fallback" style="padding: 16px; text-align: center; background: #f8f9fa; border: 1px solid #e1e4e8; border-radius: 8px; margin: 10px 0;">
+        <p style="margin: 0 0 12px 0; color: #666; font-size: 14px;">商品情報を取得できませんでした</p>
+        <a href="<?php echo esc_url( $rakuten_search_url ); ?>" target="_blank" rel="nofollow noopener" style="display: inline-block; padding: 10px 20px; background-color: #bf0000; color: #fff; text-decoration: none; border-radius: 4px; font-weight: 500; transition: background-color 0.2s;" onmouseover="this.style.backgroundColor='#a00000'" onmouseout="this.style.backgroundColor='#bf0000'">
+            <?php echo esc_html( $button_text ); ?>
+        </a>
+    </div>
+    <?php
     return;
 }
 
