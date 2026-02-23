@@ -432,10 +432,13 @@ function ProductPreview({
           className: "plm-product-description",
           children: attributes.desc
         })]
-      }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsx)("div", {
-        className: "plm-product-buttons",
-        children: attributes.kw && attributes.kw.split(',').filter(Boolean).length > 0 && renderAllButtons(attributes)
-      })]
+      }), (() => {
+        const buttons = attributes.kw && attributes.kw.split(',').filter(Boolean).length > 0 ? renderAllButtons(attributes) : [];
+        return buttons.length > 0 ? /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsx)("div", {
+          className: "plm-product-buttons",
+          children: buttons
+        }) : null;
+      })()]
     })]
   });
 }
@@ -560,8 +563,7 @@ function Edit({
         imageUrl: ''
       }));
 
-      // より						<MenuGroup label={__('表示設定', 'product-link-maker')}>
-      詳細なエラーメッセージを表示;
+      // より詳細なエラーメッセージを表示
       let errorMessage = 'APIエラーが発生しました。';
       if (error.message) {
         errorMessage += ' ' + error.message;
@@ -757,7 +759,7 @@ function Edit({
               });
             }
           },
-          placeholder: "book:11830886 \u307E\u305F\u306F 4902102072625"
+          placeholder: "shop:12345678 / 1234567890123"
         }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsx)(_wordpress_components__WEBPACK_IMPORTED_MODULE_2__.FormTokenField, {
           label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_0__.__)('検索キーワード', 'product-link-maker'),
           value: attributes.kw ? attributes.kw.split(',').filter(Boolean) : [],
@@ -870,7 +872,7 @@ function Edit({
                 marginBottom: '10px',
                 display: 'flex',
                 justifyContent: 'center',
-                backgroundColor: '#eee'
+                border: '1px solid #ddd'
               },
               children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsx)("img", {
                 src: attributes.imageUrl !== '' ? attributes.imageUrl : item?.mediumImageUrls?.[0]?.imageUrl,

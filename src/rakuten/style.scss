@@ -89,7 +89,6 @@
 	font-size: 18px;
 	font-weight: 700;
 	line-height: 1.5;
-	margin-bottom: 12px;
 	color: #111827;
 	word-wrap: break-word;
 }
@@ -97,13 +96,12 @@
 .plm-product-snippet {
 	font-size: 15px;
 	line-height: 1.6;
-	margin-bottom: 12px;
 	color: #4b5563;
 }
 
 .plm-product-maker {
 	font-size: 13px;
-	margin-bottom: 8px;
+	margin-top: 8px;
 	color: #6b7280;
 }
 
@@ -116,7 +114,7 @@
 	gap: 8px;
 	font-size: 16px;
 	font-weight: 600;
-	margin-bottom: 16px;
+	margin-top: 16px;
 	color: #374151;
 
 	.plm-price-value {
@@ -130,7 +128,7 @@
 .plm-product-description {
 	font-size: 14px;
 	line-height: 1.7;
-	margin-bottom: 20px;
+	margin-top: 10px;
 	color: #6b7280;
 	display: -webkit-box;
 	-webkit-line-clamp: 3;
@@ -145,7 +143,7 @@
 	display: flex;
 	flex-wrap: wrap;
 	gap: 9px;
-	margin-top: auto;
+	margin-top: 16px;
 
 	// ボタンが少ない場合は横並びにする
 	&>div {
@@ -243,7 +241,6 @@
 
 	.plm-product-title {
 		font-size: 17px;
-		margin-bottom: 10px;
 	}
 
 	.plm-product-snippet {
@@ -251,7 +248,7 @@
 	}
 
 	.plm-product-price {
-		margin-bottom: 14px;
+		margin-top: 14px;
 
 		.plm-price-value {
 			font-size: 22px;
@@ -260,7 +257,7 @@
 
 	.plm-product-description {
 		font-size: 13px;
-		margin-bottom: 16px;
+		margin-top: 16px;
 	}
 
 	.plm-product-buttons {

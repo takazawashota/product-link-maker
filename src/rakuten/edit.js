@@ -357,9 +357,12 @@ function ProductPreview({ attributes, item, imageUrl, imageKey, itemTitle, itemL
 						<div className="plm-product-description">{attributes.desc}</div>
 					)}
 				</div>
-				<div className="plm-product-buttons">
-					{attributes.kw && attributes.kw.split(',').filter(Boolean).length > 0 && renderAllButtons(attributes)}
-				</div>
+				{(() => {
+					const buttons = attributes.kw && attributes.kw.split(',').filter(Boolean).length > 0 ? renderAllButtons(attributes) : [];
+					return buttons.length > 0 ? (
+						<div className="plm-product-buttons">{buttons}</div>
+					) : null;
+				})()}
 			</div>
 		</div>
 	);
@@ -476,8 +479,7 @@ export default function Edit({ attributes, setAttributes }) {
 			setItem(null);
 			setAttributes(prev => ({ ...prev, imageUrl: '' }));
 
-			// より						<MenuGroup label={__('表示設定', 'product-link-maker')}>
-			詳細なエラーメッセージを表示
+			// より詳細なエラーメッセージを表示
 			let errorMessage = 'APIエラーが発生しました。';
 			if (error.message) {
 				errorMessage += ' ' + error.message;
@@ -677,7 +679,7 @@ export default function Edit({ attributes, setAttributes }) {
 								setAttributes({ no: val, id: '' });
 							}
 						}}
-						placeholder="book:11830886 または 4902102072625"
+						placeholder="shop:12345678 / 1234567890123"
 					/>
 					<FormTokenField
 						label={__('検索キーワード', 'product-link-maker')}
@@ -757,7 +759,7 @@ export default function Edit({ attributes, setAttributes }) {
 						<MediaUploadCheck>
 							<div style={{ marginBottom: '0', marginTop: '16px' }}>
 								{(attributes.imageUrl !== '' ? attributes.imageUrl : item?.mediumImageUrls?.[0]?.imageUrl) && (
-									<div style={{ marginBottom: '10px', display: 'flex', justifyContent: 'center', backgroundColor: '#eee' }}>
+									<div style={{ marginBottom: '10px', display: 'flex', justifyContent: 'center', border: '1px solid #ddd' }}>
 										<img
 											src={attributes.imageUrl !== '' ? attributes.imageUrl : item?.mediumImageUrls?.[0]?.imageUrl}
 											alt=""

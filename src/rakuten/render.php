@@ -211,13 +211,26 @@ endif;
 					</div>
 				<?php endif; ?>
 			</div>
-		<div class="plm-product-buttons">
 		<?php
 		// 商品検索キーワードがあればボタンを出す
 		$kw_tokens = array_filter( array_map( 'trim', explode( ',', $kw ) ) );
 		if ( count( $kw_tokens ) > 0 ) :
 			$kw_for_url = implode( ' ', $kw_tokens );
 			
+			// ボタンが1つでも表示されるかチェック
+			$has_buttons = false;
+			$has_buttons = $has_buttons || ( ! empty( $customButtonsBefore ) && count( array_filter( $customButtonsBefore, function( $btn ) { return ! empty( $btn['text'] ) && ! empty( $btn['url'] ); } ) ) > 0 );
+			$has_buttons = $has_buttons || ( $showAmazon && ! empty( $amazon_tracking_id ) );
+			$has_buttons = $has_buttons || ( $showRakuten && ! empty( $rakuten_affiliate_id ) );
+			$has_buttons = $has_buttons || ( $showYahoo && ! empty( $vc_sid ) && ! empty( $vc_pid ) );
+			$has_buttons = $has_buttons || ( $showMercari && ! empty( $mercari_ambassador_id ) );
+			$has_buttons = $has_buttons || ( $showDmm && ! empty( $dmm_affiliate_id ) );
+			$has_buttons = $has_buttons || ( ! empty( $customButtonsAfter ) && count( array_filter( $customButtonsAfter, function( $btn ) { return ! empty( $btn['text'] ) && ! empty( $btn['url'] ); } ) ) > 0 );
+			
+			if ( $has_buttons ) :
+		?>
+		<div class="plm-product-buttons">
+			<?php
 			// カスタムボタン（前）
 			plm_render_custom_buttons( $customButtonsBefore );
 			
@@ -253,8 +266,9 @@ endif;
 			// カスタムボタン（後）
 			plm_render_custom_buttons( $customButtonsAfter );
 			?>
-		<?php endif; ?>
-			</div>
+		</div>
+			<?php endif; // $has_buttons ?>
+		<?php endif; // count( $kw_tokens ) > 0 ?>
 		</div>
 	</div>
 </div>
