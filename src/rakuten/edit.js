@@ -667,26 +667,18 @@ export default function Edit({ attributes, setAttributes }) {
 			<InspectorControls>
 				<PanelBody title={__('商品情報', 'product-link-maker')} initialOpen={true}>
 					<TextControl
-						label={__('アイテムコード（ID）', 'product-link-maker')}
-						help={attributes.no ? __('商品番号が入力されている場合は入力できません', 'product-link-maker') : ''}
-						value={attributes.id}
-						disabled={!!attributes.no}
+						label={__('商品ID・商品番号', 'product-link-maker')}
+						help="アイテムコード（例: book:11830886）または商品番号（例: 4902102072625）を入力"
+						value={attributes.id || attributes.no || ''}
 						onChange={(val) => {
-							setAttributes({ id: val, no: '' }); // 入力時にnoをクリア
+							// コロンを含む場合はアイテムコード、それ以外は商品番号として判定
+							if (val.includes(':')) {
+								setAttributes({ id: val, no: '' });
+							} else {
+								setAttributes({ no: val, id: '' });
+							}
 						}}
-						placeholder="book:11830886"
-						style={attributes.no ? { backgroundColor: '#f5f5f5', color: '#aaa' } : {}}
-					/>
-					<TextControl
-						label={__('商品番号', 'product-link-maker')}
-						help={attributes.id ? __('アイテムコード（ID）が入力されている場合は入力できません', 'product-link-maker') : ''}
-						value={attributes.no}
-						disabled={!!attributes.id}
-						onChange={(val) => {
-							setAttributes({ no: val, id: '' }); // 入力時にidをクリア
-						}}
-						placeholder="4902102072625"
-						style={attributes.id ? { backgroundColor: '#f5f5f5', color: '#aaa' } : {}}
+						placeholder="例: book:11830886 または 4902102072625"
 					/>
 					<FormTokenField
 						label={__('検索キーワード', 'product-link-maker')}

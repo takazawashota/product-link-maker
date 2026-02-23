@@ -741,37 +741,24 @@ function Edit({
         title: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_0__.__)('商品情報', 'product-link-maker'),
         initialOpen: true,
         children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsx)(_wordpress_components__WEBPACK_IMPORTED_MODULE_2__.TextControl, {
-          label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_0__.__)('アイテムコード（ID）', 'product-link-maker'),
-          help: attributes.no ? (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_0__.__)('商品番号が入力されている場合は入力できません', 'product-link-maker') : '',
-          value: attributes.id,
-          disabled: !!attributes.no,
+          label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_0__.__)('商品ID・商品番号', 'product-link-maker'),
+          help: "\u30A2\u30A4\u30C6\u30E0\u30B3\u30FC\u30C9\uFF08\u4F8B: book:11830886\uFF09\u307E\u305F\u306F\u5546\u54C1\u756A\u53F7\uFF08\u4F8B: 4902102072625\uFF09\u3092\u5165\u529B",
+          value: attributes.id || attributes.no || '',
           onChange: val => {
-            setAttributes({
-              id: val,
-              no: ''
-            }); // 入力時にnoをクリア
+            // コロンを含む場合はアイテムコード、それ以外は商品番号として判定
+            if (val.includes(':')) {
+              setAttributes({
+                id: val,
+                no: ''
+              });
+            } else {
+              setAttributes({
+                no: val,
+                id: ''
+              });
+            }
           },
-          placeholder: "book:11830886",
-          style: attributes.no ? {
-            backgroundColor: '#f5f5f5',
-            color: '#aaa'
-          } : {}
-        }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsx)(_wordpress_components__WEBPACK_IMPORTED_MODULE_2__.TextControl, {
-          label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_0__.__)('商品番号', 'product-link-maker'),
-          help: attributes.id ? (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_0__.__)('アイテムコード（ID）が入力されている場合は入力できません', 'product-link-maker') : '',
-          value: attributes.no,
-          disabled: !!attributes.id,
-          onChange: val => {
-            setAttributes({
-              no: val,
-              id: ''
-            }); // 入力時にidをクリア
-          },
-          placeholder: "4902102072625",
-          style: attributes.id ? {
-            backgroundColor: '#f5f5f5',
-            color: '#aaa'
-          } : {}
+          placeholder: "\u4F8B: book:11830886 \u307E\u305F\u306F 4902102072625"
         }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsx)(_wordpress_components__WEBPACK_IMPORTED_MODULE_2__.FormTokenField, {
           label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_0__.__)('検索キーワード', 'product-link-maker'),
           value: attributes.kw ? attributes.kw.split(',').filter(Boolean) : [],
