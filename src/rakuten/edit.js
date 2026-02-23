@@ -605,14 +605,14 @@ export default function Edit({ attributes, setAttributes }) {
 									isSelected={attributes.showShop !== false}
 									onClick={() => setAttributes({ showShop: !attributes.showShop })}
 								>
-									{__('店名表示', 'product-link-maker')}
+									{__('店名を表示', 'product-link-maker')}
 								</MenuItem>
 								<MenuItem
 									icon={attributes.price ? 'yes' : undefined}
 									isSelected={attributes.price}
 									onClick={() => setAttributes({ price: !attributes.price })}
 								>
-									{__('価格表示', 'product-link-maker')}
+									{__('価格を表示', 'product-link-maker')}
 								</MenuItem>
 								{settings.amazon && (
 									<MenuItem
@@ -667,8 +667,7 @@ export default function Edit({ attributes, setAttributes }) {
 			<InspectorControls>
 				<PanelBody title={__('商品情報', 'product-link-maker')} initialOpen={true}>
 					<TextControl
-						label={__('商品ID・商品番号', 'product-link-maker')}
-						help="アイテムコード（例: book:11830886）または商品番号（例: 4902102072625）を入力"
+						label={__('アイテムコード(商品ID)・商品番号', 'product-link-maker')}
 						value={attributes.id || attributes.no || ''}
 						onChange={(val) => {
 							// コロンを含む場合はアイテムコード、それ以外は商品番号として判定
@@ -678,13 +677,12 @@ export default function Edit({ attributes, setAttributes }) {
 								setAttributes({ no: val, id: '' });
 							}
 						}}
-						placeholder="例: book:11830886 または 4902102072625"
+						placeholder="book:11830886 または 4902102072625"
 					/>
 					<FormTokenField
 						label={__('検索キーワード', 'product-link-maker')}
 						value={attributes.kw ? attributes.kw.split(',').filter(Boolean) : []}
 						onChange={(tokens) => setAttributes({ kw: tokens.join(',') })}
-						placeholder={__('キーワードを入力してEnter', 'product-link-maker')}
 					/>
 					<TextControl
 						label={__('商品タイトル', 'product-link-maker')}
@@ -692,12 +690,12 @@ export default function Edit({ attributes, setAttributes }) {
 						onChange={(val) => setAttributes({ title: val })}
 					/>
 					<ToggleControl
-						label={__('店名表示', 'product-link-maker')}
+						label={__('店名を表示', 'product-link-maker')}
 						checked={attributes.showShop !== false}
 						onChange={(val) => setAttributes({ showShop: val })}
 					/>
 					<ToggleControl
-						label={__('価格表示', 'product-link-maker')}
+						label={__('価格を表示', 'product-link-maker')}
 						checked={attributes.price}
 						onChange={(val) => setAttributes({ price: val })}
 					/>

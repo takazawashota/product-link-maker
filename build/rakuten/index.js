@@ -689,14 +689,14 @@ function Edit({
               onClick: () => setAttributes({
                 showShop: !attributes.showShop
               }),
-              children: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_0__.__)('店名表示', 'product-link-maker')
+              children: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_0__.__)('店名を表示', 'product-link-maker')
             }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsx)(_wordpress_components__WEBPACK_IMPORTED_MODULE_2__.MenuItem, {
               icon: attributes.price ? 'yes' : undefined,
               isSelected: attributes.price,
               onClick: () => setAttributes({
                 price: !attributes.price
               }),
-              children: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_0__.__)('価格表示', 'product-link-maker')
+              children: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_0__.__)('価格を表示', 'product-link-maker')
             }), settings.amazon && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsx)(_wordpress_components__WEBPACK_IMPORTED_MODULE_2__.MenuItem, {
               icon: attributes.showAmazon !== false ? 'yes' : undefined,
               isSelected: attributes.showAmazon !== false,
@@ -741,8 +741,7 @@ function Edit({
         title: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_0__.__)('商品情報', 'product-link-maker'),
         initialOpen: true,
         children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsx)(_wordpress_components__WEBPACK_IMPORTED_MODULE_2__.TextControl, {
-          label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_0__.__)('商品ID・商品番号', 'product-link-maker'),
-          help: "\u30A2\u30A4\u30C6\u30E0\u30B3\u30FC\u30C9\uFF08\u4F8B: book:11830886\uFF09\u307E\u305F\u306F\u5546\u54C1\u756A\u53F7\uFF08\u4F8B: 4902102072625\uFF09\u3092\u5165\u529B",
+          label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_0__.__)('アイテムコード(商品ID)・商品番号', 'product-link-maker'),
           value: attributes.id || attributes.no || '',
           onChange: val => {
             // コロンを含む場合はアイテムコード、それ以外は商品番号として判定
@@ -758,14 +757,13 @@ function Edit({
               });
             }
           },
-          placeholder: "\u4F8B: book:11830886 \u307E\u305F\u306F 4902102072625"
+          placeholder: "book:11830886 \u307E\u305F\u306F 4902102072625"
         }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsx)(_wordpress_components__WEBPACK_IMPORTED_MODULE_2__.FormTokenField, {
           label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_0__.__)('検索キーワード', 'product-link-maker'),
           value: attributes.kw ? attributes.kw.split(',').filter(Boolean) : [],
           onChange: tokens => setAttributes({
             kw: tokens.join(',')
-          }),
-          placeholder: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_0__.__)('キーワードを入力してEnter', 'product-link-maker')
+          })
         }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsx)(_wordpress_components__WEBPACK_IMPORTED_MODULE_2__.TextControl, {
           label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_0__.__)('商品タイトル', 'product-link-maker'),
           value: attributes.title,
@@ -773,13 +771,13 @@ function Edit({
             title: val
           })
         }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsx)(_wordpress_components__WEBPACK_IMPORTED_MODULE_2__.ToggleControl, {
-          label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_0__.__)('店名表示', 'product-link-maker'),
+          label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_0__.__)('店名を表示', 'product-link-maker'),
           checked: attributes.showShop !== false,
           onChange: val => setAttributes({
             showShop: val
           })
         }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsx)(_wordpress_components__WEBPACK_IMPORTED_MODULE_2__.ToggleControl, {
-          label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_0__.__)('価格表示', 'product-link-maker'),
+          label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_0__.__)('価格を表示', 'product-link-maker'),
           checked: attributes.price,
           onChange: val => setAttributes({
             price: val
