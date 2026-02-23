@@ -20,9 +20,20 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 // プラグイン定数
-define( 'PLM_VERSION', '0.1.0' );
-define( 'PLM_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
-define( 'PLM_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
+$plugin_data = get_file_data(
+	__FILE__,
+	array(
+		'Version'    => 'Version',
+		'TextDomain' => 'Text Domain',
+	)
+);
+
+define( 'PLM_PLUGIN_FILE', __FILE__ );
+define( 'PLM_VERSION', $plugin_data['Version'] );
+define( 'PLM_TEXT_DOMAIN', $plugin_data['TextDomain'] );
+define( 'PLM_PLUGIN_DIR', plugin_dir_path( PLM_PLUGIN_FILE ) );
+define( 'PLM_PLUGIN_URL', plugin_dir_url( PLM_PLUGIN_FILE ) );
+define( 'PLM_BUILD_DIR', PLM_PLUGIN_DIR . 'build' );
 define( 'PLM_OPTION_NAME', 'affiliate_settings' );
 
 // キャッシュ設定のデフォルト値
@@ -56,18 +67,17 @@ PLM_Settings::init();
  * ブロックタイプを登録
  */
 function plm_register_blocks() {
-	$build_dir = PLM_PLUGIN_DIR . 'build';
-	$manifest_file = $build_dir . '/blocks-manifest.php';
+	$manifest_file = PLM_BUILD_DIR . '/blocks-manifest.php';
 
 	// WordPress 6.8以降
 	if ( function_exists( 'wp_register_block_types_from_metadata_collection' ) ) {
-		wp_register_block_types_from_metadata_collection( $build_dir, $manifest_file );
+		wp_register_block_types_from_metadata_collection( PLM_BUILD_DIR, $manifest_file );
 		return;
 	}
 
 	// WordPress 6.7
 	if ( function_exists( 'wp_register_block_metadata_collection' ) ) {
-		wp_register_block_metadata_collection( $build_dir, $manifest_file );
+		wp_register_block_metadata_collection( PLM_BUILD_DIR, $manifest_file );
 	}
 
 	// それ以前のバージョン
@@ -77,7 +87,7 @@ function plm_register_blocks() {
 
 	$manifest_data = require $manifest_file;
 	foreach ( array_keys( $manifest_data ) as $block_type ) {
-		register_block_type( $build_dir . '/' . $block_type );
+		register_block_type( PLM_BUILD_DIR . '/' . $block_type );
 	}
 }
 add_action( 'init', 'plm_register_blocks' );
@@ -90,8 +100,8 @@ add_action( 'init', 'plm_register_blocks' );
  */
 function plm_add_block_category( $categories ) {
 	$custom_category = array(
-		'slug'  => 'product-link-maker',
-		'title' => __( 'Product Link Maker', 'product-link-maker' ),
+		'slug'  => PLM_TEXT_DOMAIN,
+		'title' => __( 'Product Link Maker', PLM_TEXT_DOMAIN ),
 	);
 
 	// ウィジェットカテゴリーの前に挿入
