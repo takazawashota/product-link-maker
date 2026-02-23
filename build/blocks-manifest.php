@@ -9,7 +9,7 @@ return array(
 		'title' => '楽天商品リンク',
 		'category' => 'product-link-maker',
 		'icon' => 'cart',
-		'description' => '楽天市場の商品情報を取得して、アフィリエイトリンク付きの商品カードを表示するブロックです。',
+		'description' => '楽天商品のアフィリエイトリンクを表示するブロックです。',
 		'example' => array(
 			'attributes' => array(
 				'id' => 'book:11830886',
@@ -17,7 +17,7 @@ return array(
 				'title' => 'サンプル商品タイトル',
 				'price' => '1,980',
 				'imageUrl' => 'https://placehold.co/300x300/e8e8e8/666?text=Product+Image',
-				'desc' => '楽天市場の商品情報を自動取得してアフィリエイトリンク付きの商品カードを表示します。',
+				'desc' => '商品の説明文をここに入力できます',
 				'shopName' => '楽天ブックス',
 				'showShop' => true,
 				'showRakuten' => true,
