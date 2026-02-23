@@ -115,7 +115,10 @@ if ( isset( $data['error'] ) || ! isset( $data['Items'][0]['Item'] ) ) {
     // キーワードに応じてリンクを生成（hb.afl.rakuten.co.jp形式に統一）
     if ( $search_keyword !== '' && strlen( $search_keyword ) > 0 ) {
         // 検索キーワードがある場合：楽天検索リンク
-        $search_url = 'https://search.rakuten.co.jp/search/mall/' . urlencode( $search_keyword ) . '/';
+        // カンマ区切りのキーワードを半角スペース区切りに変換
+        $kw_tokens = array_filter( array_map( 'trim', explode( ',', $search_keyword ) ) );
+        $kw_for_search = implode( ' ', $kw_tokens );
+        $search_url = 'https://search.rakuten.co.jp/search/mall/' . urlencode( $kw_for_search ) . '/';
         if ( ! empty( $rakuten_affiliate_id_param ) ) {
             $rakuten_search_url = 'https://hb.afl.rakuten.co.jp/hgc/' . esc_attr( $rakuten_affiliate_id_param ) . '/?pc=' . urlencode( $search_url ) . '&m=' . urlencode( $search_url );
         } else {
