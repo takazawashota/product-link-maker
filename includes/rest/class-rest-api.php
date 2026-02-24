@@ -192,11 +192,17 @@ class PLM_REST_API {
 
 		// エラーが発生した場合はログに記録（レート制限以外）
 		if ( isset( $result['error'] ) && 'rate_limit' !== $result['error'] ) {
+			// post_idを検証（有効な投稿IDでない場合はnullにする）
+			$validated_post_id = ( $post_id && is_numeric( $post_id ) && $post_id > 0 ) ? (int) $post_id : null;
 			$post_title = '';
-			if ( $post_id ) {
-				$post = get_post( $post_id );
+			
+			if ( $validated_post_id ) {
+				$post = get_post( $validated_post_id );
 				if ( $post ) {
 					$post_title = $post->post_title;
+				} else {
+					// 投稿が存在しない場合はpost_idをnullに
+					$validated_post_id = null;
 				}
 			}
 
@@ -204,7 +210,7 @@ class PLM_REST_API {
 				$result['error'],
 				$result['error_description'] ?? '',
 				array(
-					'post_id'    => $post_id,
+					'post_id'    => $validated_post_id,
 					'post_title' => $post_title,
 					'item_id'    => $item_id,
 					'keyword'    => $keyword ?: $no,
@@ -289,8 +295,8 @@ class PLM_REST_API {
 			'test_error',
 			'これはテストエラーです。エラーログ機能が正常に動作しています。',
 			array(
-				'post_id'    => 0,
-				'post_title' => 'テスト',
+				'post_id'    => null,
+				'post_title' => null,
 				'item_id'    => 'test-12345',
 			)
 		);
@@ -364,8 +370,8 @@ class PLM_REST_API {
 			'timestamp'     => current_time( 'mysql' ),
 			'error_type'    => 'force_test',
 			'error_message' => '強制追加テスト - ' . time(),
-			'post_id'       => 999,
-			'post_title'    => '強制テスト投稿',
+			'post_id'       => null,
+			'post_title'    => null,
 			'item_id'       => 'force-test-' . time(),
 			'keyword'       => null,
 		);
@@ -442,6 +448,9 @@ class PLM_REST_API {
 		$item_id       = $request->get_param( 'item_id' );
 		$keyword       = $request->get_param( 'keyword' );
 		
+		// post_idを検証（有効な投稿IDでない場合はnullにする）
+		$post_id = ( $post_id && is_numeric( $post_id ) && $post_id > 0 ) ? (int) $post_id : null;
+		
 		// レート制限以外のエラーをログに記録
 		if ( 'rate_limit' !== $error_type ) {
 			$post_title = '';
@@ -449,6 +458,9 @@ class PLM_REST_API {
 				$post = get_post( $post_id );
 				if ( $post ) {
 					$post_title = $post->post_title;
+				} else {
+					// 投稿が存在しない場合はpost_idをnullに
+					$post_id = null;
 				}
 			}
 			

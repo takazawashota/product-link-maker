@@ -57,12 +57,17 @@ $error_logs = PLM_Error_Logger::get_logs();
                     </td>
                     <td><?= esc_html( $log['error_message'] ) ?></td>
                     <td>
-                        <?php if ( $log['post_id'] ) : ?>
-                            <a href="<?= get_edit_post_link( $log['post_id'] ) ?>" target="_blank">
-                                <?= esc_html( $log['post_title'] ?: '(タイトルなし)' ) ?>
-                                <span class="dashicons dashicons-external" style="font-size: 14px;"></span>
-                            </a>
-                            <br><small style="color: #666;">ID: <?= esc_html( $log['post_id'] ) ?></small>
+                        <?php if ( ! empty( $log['post_id'] ) && is_numeric( $log['post_id'] ) && $log['post_id'] > 0 ) : ?>
+                            <?php $edit_link = get_edit_post_link( $log['post_id'] ); ?>
+                            <?php if ( $edit_link ) : ?>
+                                <a href="<?= esc_url( $edit_link ) ?>" target="_blank">
+                                    <?= esc_html( $log['post_title'] ?: '(タイトルなし)' ) ?>
+                                    <span class="dashicons dashicons-external" style="font-size: 14px;"></span>
+                                </a>
+                                <br><small style="color: #666;">ID: <?= esc_html( $log['post_id'] ) ?></small>
+                            <?php else : ?>
+                                <span style="color: #999;">-</span>
+                            <?php endif; ?>
                         <?php else : ?>
                             <span style="color: #999;">-</span>
                         <?php endif; ?>
