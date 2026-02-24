@@ -164,6 +164,31 @@ class PLM_REST_API {
 				),
 			)
 		);
+
+		// 全エラーチェック（バッチ処理）
+		register_rest_route(
+			'product-link-maker/v1',
+			'/check-all-errors/',
+			array(
+				'methods'             => 'POST',
+				'callback'            => array( __CLASS__, 'check_all_errors' ),
+				'permission_callback' => function () {
+					return current_user_can( 'manage_options' );
+				},
+				'args'                => array(
+					'offset' => array(
+						'type'              => 'integer',
+						'sanitize_callback' => 'absint',
+						'default'           => 0,
+					),
+					'limit' => array(
+						'type'              => 'integer',
+						'sanitize_callback' => 'absint',
+						'default'           => 5,
+					),
+				),
+			)
+		);
 	}
 
 	/**
@@ -459,6 +484,128 @@ class PLM_REST_API {
 			array(
 				'success' => false,
 				'message' => 'Rate limit error not logged',
+			)
+		);
+	}
+
+	/**
+	 * 全エラーチェックREST APIハンドラー（バッチ処理）
+	 *
+	 * @param WP_REST_Request $request リクエストオブジェクト
+	 * @return WP_REST_Response レスポンス
+	 */
+	public static function check_all_errors( $request ) {
+		$offset = $request->get_param( 'offset' );
+		$limit  = $request->get_param( 'limit' );
+
+		// 公開済みの全投稿タイプを取得
+		$post_types = get_post_types(
+			array(
+				'public' => true,
+			),
+			'names'
+		);
+
+		// 公開済み投稿を取得（バッチ処理）
+		$posts = get_posts(
+			array(
+				'post_type'      => $post_types,
+				'post_status'    => 'publish',
+				'posts_per_page' => $limit,
+				'offset'         => $offset,
+				'orderby'        => 'ID',
+				'order'          => 'ASC',
+			)
+		);
+
+		$settings = get_option( PLM_OPTION_NAME, array() );
+		$checked_count = 0;
+		$error_count   = 0;
+		$blocks_found  = 0;
+
+		foreach ( $posts as $post ) {
+			$checked_count++;
+
+			// ブロックを解析
+			$blocks = parse_blocks( $post->post_content );
+
+			foreach ( $blocks as $block ) {
+				if ( 'product-link-maker/rakuten' === $block['blockName'] ) {
+					$blocks_found++;
+					$attrs = $block['attrs'];
+
+					$item_id = $attrs['id'] ?? '';
+					$keyword = $attrs['kw'] ?? $attrs['no'] ?? '';
+
+					if ( ! $item_id && ! $keyword ) {
+						continue;
+					}
+
+					// APIで商品情報をチェック
+					$json   = PLM_Cache_Manager::get_rakuten_item_cached(
+						$settings['rakuten_app_id'] ?? '',
+						$settings['rakuten_affiliate_id'] ?? '',
+						$item_id,
+						$keyword,
+						$attrs['no'] ?? ''
+					);
+					$result = json_decode( $json, true );
+
+					// エラーチェック
+					$has_error     = false;
+					$error_type    = '';
+					$error_message = '';
+
+					if ( isset( $result['error'] ) && 'rate_limit' !== $result['error'] ) {
+						$has_error     = true;
+						$error_type    = $result['error'];
+						$error_message = $result['error_description'] ?? $result['error'];
+					} elseif ( ! isset( $result['Items'] ) || ! isset( $result['Items'][0] ) || ! isset( $result['Items'][0]['Item'] ) ) {
+						$has_error     = true;
+						$error_type    = 'product_not_found';
+						$error_message = '商品が見つかりませんでした。商品が削除されたか、IDが正しくない可能性があります。';
+					}
+
+					// エラーがあればログに記録
+					if ( $has_error ) {
+						$error_count++;
+						PLM_Error_Logger::log(
+							$error_type,
+							$error_message,
+							array(
+								'post_id'    => $post->ID,
+								'post_title' => $post->post_title,
+								'item_id'    => $item_id,
+								'keyword'    => $keyword,
+							)
+						);
+					}
+				}
+			}
+		}
+
+		// 残りの投稿数を計算
+		$total_posts = wp_count_posts();
+		$total_count = 0;
+		foreach ( $post_types as $type ) {
+			$counts = wp_count_posts( $type );
+			if ( isset( $counts->publish ) ) {
+				$total_count += $counts->publish;
+			}
+		}
+
+		$has_more = ( $offset + $limit ) < $total_count;
+
+		return rest_ensure_response(
+			array(
+				'success'        => true,
+				'checked_count'  => $checked_count,
+				'error_count'    => $error_count,
+				'blocks_found'   => $blocks_found,
+				'has_more'       => $has_more,
+				'next_offset'    => $offset + $limit,
+				'total_count'    => $total_count,
+				'processed'      => min( $offset + $limit, $total_count ),
 			)
 		);
 	}

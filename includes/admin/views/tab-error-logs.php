@@ -23,7 +23,10 @@ $error_logs = PLM_Error_Logger::get_logs();
         <?php endif; ?>
     </h2>
     
-    <div style="margin-bottom: 12px; display: flex; gap: 8px; flex-wrap: wrap;">
+    <div style="margin-bottom: 12px; display: flex; gap: 8px; flex-wrap: wrap; align-items: center;">
+        <button type="button" id="plm-check-all-errors" class="button button-primary">
+            全エラーをチェック
+        </button>
         <?php if ( ! empty( $error_logs ) ) : ?>
             <button type="button" id="plm-clear-error-logs" class="button">
                 エラーログをクリア
@@ -33,6 +36,26 @@ $error_logs = PLM_Error_Logger::get_logs();
             エラーキャッシュをクリア
         </button>
     </div>
+    
+    <!-- プログレスバー -->
+    <div id="plm-check-progress" style="display: none; margin-bottom: 12px;">
+        <div style="background: #f0f0f1; border-radius: 4px; padding: 12px;">
+            <div style="margin-bottom: 8px;">
+                <strong id="plm-progress-text">チェック中...</strong>
+            </div>
+            <div style="background: #fff; height: 24px; border-radius: 4px; overflow: hidden; position: relative;">
+                <div id="plm-progress-bar" style="background: linear-gradient(90deg, #2271b1, #135e96); height: 100%; width: 0%; transition: width 0.3s;">
+                    <span id="plm-progress-percent" style="position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); color: #fff; font-weight: bold; font-size: 12px; text-shadow: 0 1px 2px rgba(0,0,0,0.3);">0%</span>
+                </div>
+            </div>
+            <div style="margin-top: 8px; font-size: 13px; color: #666;">
+                <span id="plm-progress-detail">処理中: 0 / 0 投稿</span>
+                <span style="margin-left: 12px;">エラー発見: <strong id="plm-error-found" style="color: #d63638;">0</strong>件</span>
+                <span style="margin-left: 12px;">ブロック: <strong id="plm-blocks-found">0</strong>個</span>
+            </div>
+        </div>
+    </div>
+    
     <div id="plm-error-log-message" style="margin-top: 10px;"></div>
     
     <?php if ( ! empty( $error_logs ) ) : ?>
