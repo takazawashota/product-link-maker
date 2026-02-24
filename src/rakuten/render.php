@@ -63,40 +63,9 @@ $keyword = $no ?: $kw; // 商品番号があれば優先してキーワードに
 $json = PLM_Cache_Manager::get_rakuten_item_cached($rakuten_application_id, $rakuten_affiliate_id, $item_id, $keyword, $no);
 $data = json_decode($json, true);
 
-// 投稿情報を取得（エラーログ用）
+// 投稿情報を取得
 $post_id = get_the_ID();
 $post_title = get_the_title( $post_id );
-
-// エラーチェック
-$should_log_error = false;
-$error_type = '';
-$error_message = '';
-
-if ( isset( $data['error'] ) ) {
-    // APIエラーレスポンス
-    $error_type = $data['error'];
-    $error_message = $data['error_description'] ?? $data['error'];
-    $should_log_error = ( 'rate_limit' !== $error_type ); // レート制限以外はログに記録
-} elseif ( ! isset( $data['Items'] ) || ! isset( $data['Items'][0] ) || ! isset( $data['Items'][0]['Item'] ) ) {
-    // データが存在しない（商品が見つからない等）
-    $error_type = 'product_not_found';
-    $error_message = '商品が見つかりませんでした。商品が削除されたか、IDが正しくない可能性があります。';
-    $should_log_error = true;
-}
-
-// エラーログに記録
-if ( $should_log_error ) {
-    PLM_Error_Logger::log(
-        $error_type,
-        $error_message,
-        array(
-            'post_id'    => $post_id,
-            'post_title' => $post_title,
-            'item_id'    => $item_id,
-            'keyword'    => $keyword,
-        )
-    );
-}
 
 // エラーまたはデータなしの場合は「楽天で商品を探す」リンクを表示
 if ( isset( $data['error'] ) || ! isset( $data['Items'][0]['Item'] ) ) {
@@ -135,8 +104,23 @@ if ( isset( $data['error'] ) || ! isset( $data['Items'][0]['Item'] ) ) {
         }
         $button_text = '楽天で探す';
     }
+    
+    // エラー情報を判定
+    $error_type = 'product_not_found';
+    $error_message = '商品が見つかりませんでした。商品が削除されたか、IDが正しくない可能性があります。';
+    if ( isset( $data['error'] ) ) {
+        $error_type = $data['error'];
+        $error_message = $data['error_description'] ?? $data['error'];
+    }
     ?>
-    <div class="plm-error-fallback" style="padding: 16px; text-align: center; background: #fff; border: 1px solid #e1e4e8; border-radius: 8px;">
+    <div class="plm-error-fallback" 
+         data-error-type="<?= esc_attr( $error_type ) ?>"
+         data-error-message="<?= esc_attr( $error_message ) ?>"
+         data-post-id="<?= esc_attr( $post_id ) ?>"
+         data-post-title="<?= esc_attr( $post_title ) ?>"
+         data-item-id="<?= esc_attr( $item_id ) ?>"
+         data-keyword="<?= esc_attr( $keyword ) ?>"
+         style="padding: 16px; text-align: center; background: #fff; border: 1px solid #e1e4e8; border-radius: 8px;">
         <p style="margin: 0 0 12px 0; color: #666; font-size: 14px;">楽天市場で商品を探す</p>
         <a href="<?php echo esc_url( $rakuten_search_url ); ?>" target="_blank" rel="nofollow noopener" style="display: inline-block; padding: 10px 20px; background-color: #bf0000; color: #fff; text-decoration: none; border-radius: 4px; font-weight: bold; transition: background-color 0.2s;" onmouseover="this.style.backgroundColor='#a00000'" onmouseout="this.style.backgroundColor='#bf0000'">
             <?php echo esc_html( $button_text ); ?>

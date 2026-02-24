@@ -430,49 +430,11 @@ export default function Edit({ attributes, setAttributes }) {
 				setItem(null);
 				setAttributes(prev => ({ ...prev, imageUrl: '' }));
 				setError(data.error_description || 'APIエラーが発生しました。しばらく待ってから再度お試しください。');
-
-				// エラーログに記録（初回データ取得完了後のみ、rate_limit以外）
-				if (hasInitialized && data.error !== 'rate_limit' && (attributes.id || attributes.kw || attributes.no)) {
-					try {
-						await apiFetch({
-							path: '/product-link-maker/v1/log-client-error/',
-							method: 'POST',
-							data: {
-								error_type: data.error,
-								error_message: data.error_description || data.error,
-								post_id: postId,
-								item_id: attributes.id || '',
-								keyword: attributes.kw || attributes.no || '',
-							}
-						});
-					} catch (logError) {
-						// エラーログの記録に失敗しても処理は継続
-					}
-				}
 			} else {
 				// データなし（商品が見つからない等）
 				setItem(null);
 				setAttributes(prev => ({ ...prev, imageUrl: '' }));
 				setError('データが取得できませんでした');
-
-				// 初回データ取得完了後のみエラーログに記録（商品削除の検知）
-				if (hasInitialized && (attributes.id || attributes.kw || attributes.no)) {
-					try {
-						await apiFetch({
-							path: '/product-link-maker/v1/log-client-error/',
-							method: 'POST',
-							data: {
-								error_type: 'product_not_found',
-								error_message: '商品が見つかりませんでした。商品が削除されたか、IDが正しくない可能性があります。',
-								post_id: postId,
-								item_id: attributes.id || '',
-								keyword: attributes.kw || attributes.no || '',
-							}
-						});
-					} catch (logError) {
-						// エラーログの記録に失敗しても処理は継続
-					}
-				}
 			}
 		} catch (error) {
 			console.error('Rakuten API fetch error:', error);
@@ -488,25 +450,6 @@ export default function Edit({ attributes, setAttributes }) {
 				errorMessage += ' ' + error.data.message;
 			}
 			setError(errorMessage);
-
-			// 例外もエラーログに記録（初回データ取得完了後のみ）
-			if (hasInitialized && (attributes.id || attributes.kw || attributes.no)) {
-				try {
-					await apiFetch({
-						path: '/product-link-maker/v1/log-client-error/',
-						method: 'POST',
-						data: {
-							error_type: 'fetch_exception',
-							error_message: 'API取得中に例外が発生: ' + (error.message || error.toString()),
-							post_id: postId,
-							item_id: attributes.id || '',
-							keyword: attributes.kw || attributes.no || '',
-						}
-					});
-				} catch (logError) {
-					// エラーログの記録に失敗しても処理は継続
-				}
-			}
 		} finally {
 			setIsLoading(false);
 			setHasInitialized(true);

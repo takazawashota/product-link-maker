@@ -190,34 +190,6 @@ class PLM_REST_API {
 
 		$result = json_decode( $json, true );
 
-		// エラーが発生した場合はログに記録（レート制限以外）
-		if ( isset( $result['error'] ) && 'rate_limit' !== $result['error'] ) {
-			// post_idを検証（有効な投稿IDでない場合はnullにする）
-			$validated_post_id = ( $post_id && is_numeric( $post_id ) && $post_id > 0 ) ? (int) $post_id : null;
-			$post_title = '';
-			
-			if ( $validated_post_id ) {
-				$post = get_post( $validated_post_id );
-				if ( $post ) {
-					$post_title = $post->post_title;
-				} else {
-					// 投稿が存在しない場合はpost_idをnullに
-					$validated_post_id = null;
-				}
-			}
-
-			PLM_Error_Logger::log(
-				$result['error'],
-				$result['error_description'] ?? '',
-				array(
-					'post_id'    => $validated_post_id,
-					'post_title' => $post_title,
-					'item_id'    => $item_id,
-					'keyword'    => $keyword ?: $no,
-				)
-			);
-		}
-
 		// affiliate_idsを追加
 		$result['affiliate_ids'] = array(
 			'amazon_tracking_id'   => $settings['amazon_tracking_id'] ?? '',
